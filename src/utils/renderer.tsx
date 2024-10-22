@@ -1,6 +1,6 @@
 import { jsxRenderer } from "hono/jsx-renderer";
 
-import { Head } from "../components/Head";
+import { Head } from "../components/head";
 import { Navbar } from "../components/navbar";
 
 export const renderer = jsxRenderer(
