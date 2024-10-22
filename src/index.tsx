@@ -1,35 +1,29 @@
-import { Hono } from "hono";
-import { renderer } from "./renderer";
-import { Navbar } from "./components/Navbar";
+import { Context, Hono } from "hono";
+import { logger } from "hono/logger";
 
-const app = new Hono();
+import { renderer } from "./utils/renderer";
 
+import home from "./pages/home";
+import projects from "./pages/projects";
+
+/* TYPES */
+
+/* APP */
+const app = new Hono<{}>();
+
+/* MIDDLEWARES */
+app.use(logger());
 app.use(renderer);
 
-const test = () => {
-  console.log(test);
-};
+/* ROUTES */
+app.route("/", home);
+app.route("/projects", projects);
 
-app.get("/", (c) => {
-  return c.render(
-    <body class="bg-background text-foreground">
-      <Navbar />
+/* ROOT */
+/* app.get("/", (c) => {
+  return c.render(home);
+}); */
 
-      <div class="uk-flex uk-flex-column uk-flex-middle uk-flex-center">
-        <h1 class="uk-heading-small uk-margin">Portofolio</h1>
-
-        <uk-select uk-cloak>
-          <option value="option1">Option 1</option>
-          <option value="option2">Option 2</option>
-          <option value="option3">Option 3</option>
-          <option value="option4">Option 4</option>
-          <option value="option5">Option 5</option>
-        </uk-select>
-
-        <uk-input-pin name="PIN" uk-cloak></uk-input-pin>
-      </div>
-    </body>
-  );
-});
+/* DEFAULT */
 
 export default app;

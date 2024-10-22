@@ -1,5 +1,23 @@
 {
-  "name": "my-app",
+  "name": "portfolio",
+  "version": "0.1.0",
+  "private": false,
+  "description": "Portfolio",
+  "author": {
+    "name": "cletqui"
+  },
+  "repository": {
+    "type": "github",
+    "url": "https://github.com/cletqui/portfolio"
+  },
+  "keywords": [
+    "portfolio"
+  ],
+  "homepage": "https://about.cybai.re/",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/cletqui/portfolio/issues"
+  },
   "type": "module",
   "scripts": {
     "dev": "vite",
@@ -8,7 +26,7 @@
     "deploy": "$npm_execpath run build && wrangler pages deploy"
   },
   "dependencies": {
-    "hono": "^4.6.5"
+    "hono": "^4.6.6"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20240529.0",
