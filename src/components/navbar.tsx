@@ -128,17 +128,15 @@ const Contact = () => (
 );
 
 const SearchBar = () => (
-  <div class="uk-margin">
-    <form class="uk-search uk-search-default">
-      <input
-        class="uk-search-input"
-        type="search"
-        placeholder="Search"
-        aria-label="Search"
-      />
-      <span class="uk-search-icon-flip" uk-search-icon></span>
-    </form>
-  </div>
+  <form class="uk-search uk-search-default">
+    <input
+      class="uk-search-input"
+      type="search"
+      placeholder="Search"
+      aria-label="Search"
+    />
+    <span class="uk-search-icon-flip" uk-search-icon></span>
+  </form>
 );
 
 const Palette = () => (

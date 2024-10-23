@@ -22,7 +22,7 @@ app.route("/projects", projects);
 app.route("/about", about);
 
 /* ROOT */
-/* app.get("/", (c) => {
+/* app.get("/", (c: Context) => {
   return c.render(home);
 }); */
 

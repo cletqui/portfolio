@@ -23,7 +23,8 @@
     "dev": "vite",
     "build": "vite build",
     "preview": "wrangler pages dev",
-    "deploy": "$npm_execpath run build && wrangler pages deploy"
+    "deploy": "$npm_execpath run build && wrangler pages deploy",
+    "log": "wrangler pages deployment tail"
   },
   "dependencies": {
     "hono": "^4.6.6"
