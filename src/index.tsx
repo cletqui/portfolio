@@ -4,7 +4,8 @@ import { logger } from "hono/logger";
 import { renderer } from "./utils/renderer";
 
 import home from "./pages/home";
-import projects from "./pages/projects";
+import projects from "./pages/project";
+import about from "./pages/about";
 
 /* TYPES */
 
@@ -18,6 +19,7 @@ app.use(renderer);
 /* ROUTES */
 app.route("/", home);
 app.route("/projects", projects);
+app.route("/about", about);
 
 /* ROOT */
 /* app.get("/", (c) => {

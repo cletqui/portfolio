@@ -95,7 +95,9 @@ const Project = () => (
   </>
 );
 
-const AboutMe = () => <a href="/about">About me</a>;
+const AboutMe = () => <a href="/about/me">About me</a>;
+
+const AboutYou = () => <a href="/about/you">About you</a>;
 
 const Contact = () => (
   <ul class="uk-iconnav">
@@ -169,6 +171,10 @@ export const Navbar = () => (
 
               <li>
                 <AboutMe />
+              </li>
+
+              <li>
+                <AboutYou />
               </li>
 
               <li>
