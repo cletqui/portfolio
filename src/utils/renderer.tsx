@@ -1,7 +1,8 @@
 import { jsxRenderer } from "hono/jsx-renderer";
 
 import { Head } from "../components/head";
-import { Navbar } from "../components/navbar";
+import { Header } from "../components/header";
+import { Footer } from "../components/footer";
 
 export const renderer = jsxRenderer(
   ({ children }) => {
@@ -10,8 +11,9 @@ export const renderer = jsxRenderer(
         <Head title="Portfolio" />
 
         <body class="bg-background text-foreground">
-          <Navbar />
+          <Header />
           {children}
+          <Footer />
         </body>
       </html>
     );

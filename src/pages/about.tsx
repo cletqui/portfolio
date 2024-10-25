@@ -2,6 +2,7 @@ import { Context, Hono } from "hono";
 import { getConnInfo } from "hono/cloudflare-workers";
 
 import { queryUserAgent } from "../utils/api";
+import { Title } from "../components/layout";
 
 /* COMPONENTS */
 const IP = ({ address }: { address: string }) => {
@@ -59,8 +60,7 @@ app.get("/", (c: Context) => c.redirect("/me"));
 app.get("/me", (c: Context) =>
   c.render(
     <div class="uk-flex uk-flex-column uk-flex-middle uk-flex-center">
-      <h1 class="uk-heading-medium uk-heading-divider uk-margin">About</h1>
-      <h2 class="uk-heading-small uk-margin">Me</h2>
+      <Title>About me</Title>
     </div>
   )
 );
@@ -73,8 +73,7 @@ app.get("/you", async (c: Context) => {
   console.log(userAgent, address);
   return c.render(
     <div class="uk-flex uk-flex-column uk-flex-middle uk-flex-center">
-      <h1 class="uk-heading-medium uk-heading-divider uk-margin">About</h1>
-      <h2 class="uk-heading-small uk-margin">you</h2>
+      <Title>About you</Title>
       {address && <IP address={address} />}
       {userAgent && <UserAgent userAgent={userAgent} />}
     </div>
