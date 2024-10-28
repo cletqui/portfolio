@@ -22,6 +22,15 @@ app.get("/petithub", (c: Context) => {
   );
 });
 
+app.get("/api", (c: Context) => {
+  return c.render(
+    <div class="uk-flex uk-flex-column uk-flex-middle uk-flex-center">
+      <Title>Projects</Title>
+      <h2 class="uk-heading-small uk-margin">API</h2>
+    </div>
+  );
+});
+
 app.get("/tide", (c: Context) => {
   return c.render(
     <div class="uk-flex uk-flex-column uk-flex-middle uk-flex-center">

@@ -4,9 +4,9 @@ const Logo = () => (
   </a>
 );
 
-const AboutMe = () => <a href="/about/me">about me</a>;
+const AboutMe = () => <a href="/about/me">About me</a>;
 
-const AboutYou = () => <a href="/about/you">about you</a>;
+const AboutYou = () => <a href="/about/you">About you</a>;
 
 const Project = ({
   name,
@@ -39,21 +39,27 @@ const Project = ({
 const Projects = () => (
   <>
     <a href="/projects">
-      <div>projects</div>
+      <div>Projects</div>
     </a>
     <div class="uk-navbar-dropdown">
       <ul class="uk-nav uk-navbar-dropdown-nav">
         <li>
           <Project
-            name="petithub"
+            name="PetitHub"
             githubLink="https://github.com/cletqui/petithub/"
             externalLink="https://petithub.cybai.re/"
           />
         </li>
 
+        <Project
+          name="API"
+          githubLink="https://github.com/cletqui/api/"
+          externalLink="https://api.cybai.re/"
+        />
+
         <li>
           <Project
-            name="tide"
+            name="Tide"
             githubLink="https://github.com/cletqui/tide/"
             externalLink="https://tide.cybai.re/"
           />
@@ -61,7 +67,7 @@ const Projects = () => (
 
         <li>
           <Project
-            name="apero"
+            name="Apéro"
             githubLink="https://github.com/cletqui/apero/"
             externalLink="https://apero.cybai.re/"
           />
@@ -69,7 +75,7 @@ const Projects = () => (
 
         <li>
           <Project
-            name="mail"
+            name="Mail"
             githubLink="https://github.com/cletqui/mail/"
             externalLink="https://mail.cybai.re/"
           />
@@ -81,8 +87,8 @@ const Projects = () => (
 
 const Contact = () => (
   <>
-    <a href="/projects">
-      <div>contact</div>
+    <a>
+      <div>Contact</div>
     </a>
     <div class="uk-navbar-dropdown">
       <ul class="uk-nav uk-navbar-dropdown-nav">
@@ -93,7 +99,7 @@ const Contact = () => (
             rel="noopener noreferrer"
           >
             <uk-icon class="uk-padding-small-right" icon="twitter"></uk-icon>
-            twitter
+            Twitter
           </a>
         </li>
 
@@ -104,7 +110,7 @@ const Contact = () => (
             rel="noopener noreferrer"
           >
             <uk-icon class="uk-padding-small-right" icon="github"></uk-icon>
-            github
+            GitHub
           </a>
         </li>
 
@@ -115,7 +121,7 @@ const Contact = () => (
             rel="noopener noreferrer"
           >
             <uk-icon class="uk-padding-small-right" icon="gitlab"></uk-icon>
-            gitlab
+            GitLab
           </a>
         </li>
 
@@ -126,7 +132,7 @@ const Contact = () => (
             rel="noopener noreferrer"
           >
             <uk-icon class="uk-padding-small-right" icon="mail"></uk-icon>
-            mail
+            Mail
           </a>
         </li>
 
@@ -137,7 +143,16 @@ const Contact = () => (
             rel="noopener noreferrer"
           >
             <uk-icon class="uk-padding-small-right" icon="map-pin"></uk-icon>
-            map
+            Map
+          </a>
+        </li>
+
+        <li>
+          <a uk-tooltip="E-mail me if you're interested!">
+            <button disabled class="uk-icon-button uk-icon-button-xsmall w-40">
+              <uk-icon disabled icon="linkedin"></uk-icon>
+            </button>
+            <p class="uk-text-muted">LinkedIn</p>
           </a>
         </li>
       </ul>
@@ -154,104 +169,124 @@ const Search = () => (
       <a class="uk-search-toggle" href="#" uk-search-icon></a>
     </button>
     <uk-command toggle="search" uk-cloak>
-      <a href="/about">
+      <a href="/">
         <uk-icon
           class="uk-padding-small-right"
           custom-class="mr-2"
           icon="home"
         ></uk-icon>
-        <span>home</span>
+        <span>Home</span>
       </a>
-      <a href="/about" data-group="about">
+
+      <a href="/about" data-group="About">
         <uk-icon
           class="uk-padding-small-right"
           custom-class="mr-2"
           icon="user-round"
         ></uk-icon>
-        <span>about me</span>
+        <span>About me</span>
       </a>
-      <a href="#" data-group="about">
+
+      <a href="#" data-group="About">
         <uk-icon
           class="uk-padding-small-right"
           custom-class="mr-2"
           icon="user-round-search"
         ></uk-icon>
-        <span>about you</span>
+        <span>About you</span>
       </a>
-      <a href="/projects/petithub" data-group="projects">
+
+      <a href="/projects/petithub" data-group="Projects">
         <uk-icon
           class="uk-padding-small-right"
           custom-class="mr-2"
           icon="github"
         ></uk-icon>
-        <span>petithub</span>
+        <span>PetitHub</span>
       </a>
-      <a href="/projects/tide" data-group="projects">
+
+      <a href="/projects/api" data-group="Projects">
+        <uk-icon
+          class="uk-padding-small-right"
+          custom-class="mr-2"
+          icon="webhook"
+        ></uk-icon>
+        <span>API</span>
+      </a>
+
+      <a href="/projects/tide" data-group="Projects">
         <uk-icon
           class="uk-padding-small-right"
           custom-class="mr-2"
           icon="waves"
         ></uk-icon>
-        <span>tide</span>
+        <span>Tide</span>
       </a>
-      <a href="/projects/apero" data-group="projects">
+
+      <a href="/projects/apero" data-group="Projects">
         <uk-icon
           class="uk-padding-small-right"
           custom-class="mr-2"
           icon="beer"
         ></uk-icon>
-        <span>apero</span>
+        <span>Apéro</span>
       </a>
-      <a href="/projects/mail" data-group="projects">
+
+      <a href="/projects/mail" data-group="Projects">
         <uk-icon
           class="uk-padding-small-right"
           custom-class="mr-2"
           icon="mail"
         ></uk-icon>
-        <span>mail</span>
+        <span>Mail</span>
       </a>
-      <a href="https://x.com/cletqui" data-group="projects">
+
+      <a href="https://x.com/cletqui" data-group="Contact">
         <uk-icon
           class="uk-padding-small-right"
           custom-class="mr-2"
           icon="twitter"
         ></uk-icon>
-        <span>twitter</span>
+        <span>Twitter</span>
       </a>
-      <a href="https://github.com/cletqui" data-group="contact">
+
+      <a href="https://github.com/cletqui" data-group="Contact">
         <uk-icon
           class="uk-padding-small-right"
           custom-class="mr-2"
           icon="github"
         ></uk-icon>
-        <span>github</span>
+        <span>GitHub</span>
       </a>
-      <a href="https://gitlab.com/cletqui" data-group="contact">
+
+      <a href="https://gitlab.com/cletqui" data-group="Contact">
         <uk-icon
           class="uk-padding-small-right"
           custom-class="mr-2"
           icon="gitlab"
         ></uk-icon>
-        <span>gitlab</span>
+        <span>GitLab</span>
       </a>
-      <a href="mailto:admin@cybai.re" data-group="contact">
+
+      <a href="mailto:admin@cybai.re" data-group="Contact">
         <uk-icon
           class="uk-padding-small-right"
           custom-class="mr-2"
           icon="mail"
         ></uk-icon>
-        <span>mail</span>
+        <span>Mail</span>
       </a>
+
       <a
         href="https://www.openstreetmap.org/#map=19/48.673657/-3.913592"
-        data-group="contact"
+        data-group="Contact"
       >
         <uk-icon
           class="uk-padding-small-right"
           custom-class="mr-2"
           icon="map-pin"
         ></uk-icon>
-        <span>map</span>
+        <span>Map</span>
       </a>
     </uk-command>
   </>
@@ -278,49 +313,58 @@ const Translate = () => (
   </button>
 );
 
+const Navbar = () => (
+  <div uk-navbar id="navbar" class="uk-visible@m">
+    <div class="uk-navbar-left">
+      <Logo />
+
+      <ul class="uk-navbar-nav uk-flex-middle uk-dropnav">
+        <li>
+          <AboutMe />
+        </li>
+
+        <li>
+          <AboutYou />
+        </li>
+
+        <li>
+          <Projects />
+        </li>
+
+        <li>
+          <Contact />
+        </li>
+      </ul>
+    </div>
+
+    <div class="uk-navbar-right">
+      <ul class="uk-iconnav uk-flex-middle uk-iconnav-small">
+        <li>
+          <Search />
+        </li>
+
+        <li>
+          <Palette />
+        </li>
+
+        <li>
+          <Translate />
+        </li>
+      </ul>
+    </div>
+  </div>
+);
+
 export const Header = () => (
   <div uk-sticky="sel-target: .uk-navbar-container; cls-active: uk-navbar-sticky">
     <nav class="uk-navbar-container">
       <div class="uk-container">
-        <div uk-navbar>
-          <div class="uk-navbar-left">
-            <Logo />
-
-            <ul class="uk-navbar-nav uk-flex-middle uk-dropnav">
-              <li>
-                <AboutMe />
-              </li>
-
-              <li>
-                <AboutYou />
-              </li>
-
-              <li>
-                <Projects />
-              </li>
-
-              <li>
-                <Contact />
-              </li>
-            </ul>
-          </div>
-
-          <div class="uk-navbar-right ">
-            <ul class="uk-iconnav uk-flex-middle uk-iconnav-small">
-              <li>
-                <Search />
-              </li>
-
-              <li>
-                <Palette />
-              </li>
-
-              <li>
-                <Translate />
-              </li>
-            </ul>
-          </div>
-        </div>
+        <button
+          class="uk-navbar-toggle-animate uk-navbar-toggle uk-hidden@m"
+          uk-navbar-toggle-icon
+          uk-toggle="target: #navbar; animation: uk-animation-fade"
+        />
+        <Navbar />
       </div>
     </nav>
   </div>

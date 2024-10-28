@@ -7,16 +7,18 @@ import { Footer } from "../components/footer";
 export const renderer = jsxRenderer(
   ({ children }) => {
     return (
-      <html>
+      <html lang="en">
         <Head title="Portfolio" />
 
         <body class="bg-background text-foreground">
-          <Header />
-          {children}
-          <Footer />
+          <div uk-height-viewport>
+            <Header />
+            {children}
+            <Footer />
+          </div>
         </body>
       </html>
     );
   },
-  { docType: "<!DOCTYPE html>" }
+  { docType: "<!DOCTYPE html>", stream: true }
 );
