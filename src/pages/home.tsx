@@ -28,11 +28,11 @@ const Welcome = () => (
 
 const Description = () => (
   <div class="uk-card uk-card-body uk-card-primary">
-    <p class="uk-paragraph">
+    <p class="uk-paragraph uk-text-justify">
       This portfolio is just a playground to showcase my projects, my passions,
       myself.
     </p>
-    <p class="uk-paragraph">
+    <p class="uk-paragraph uk-text-justify">
       I build things you can see... and secure things you can't. This site?
       Let's just say it has more than a few layers. Every click, every
       transition — crafted with purpose. Curious? Dive in.
@@ -43,23 +43,23 @@ const Description = () => (
 const Details = () => (
   <div class="uk-card uk-card-body uk-card-secondary">
     <p class="uk-paragraph uk-text-break">
-      {"It is built using"}
+      {"It is built using "}
       <a class="uk-link" href="https://hono.dev/">
-        <code class="uk-codespan">Hono</code>
+        Hono
       </a>
-      {"as the core,"}
+      {" as the core, "}
       <a class="uk-link" href="https://franken-ui.dev/">
-        <code class="uk-codespan">Franken UI</code>
+        Franken UI
       </a>
-      {"for design,"}
+      {" for design, "}
       <a class="uk-link" href="https://pages.cloudflare.com/">
-        <code class="uk-codespan">Cloudflare</code>
+        Cloudflare
       </a>
-      {"&"}
+      {" & "}
       <a class="uk-link" href="https://pages.github.com/">
-        <code class="uk-codespan">GitHub</code>
+        GitHub
       </a>
-      {"pages for hosting."}
+      {" pages for hosting."}
     </p>
   </div>
 );

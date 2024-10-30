@@ -314,11 +314,14 @@ const Translate = () => (
 );
 
 const Navbar = () => (
-  <div uk-navbar id="navbar" class="uk-visible@m">
+  <div uk-navbar>
     <div class="uk-navbar-left">
       <Logo />
 
-      <ul class="uk-navbar-nav uk-flex-middle uk-dropnav">
+      <ul
+        id="navbar"
+        class="uk-navbar-nav uk-flex-left uk-dropnav navbar-toggle"
+      >
         <li>
           <AboutMe />
         </li>
@@ -338,7 +341,7 @@ const Navbar = () => (
     </div>
 
     <div class="uk-navbar-right">
-      <ul class="uk-iconnav uk-flex-middle uk-iconnav-small">
+      <ul class="uk-iconnav uk-flex-right uk-iconnav-small navbar-toggle uk-margin-medium-left">
         <li>
           <Search />
         </li>
@@ -359,11 +362,6 @@ export const Header = () => (
   <div uk-sticky="sel-target: .uk-navbar-container; cls-active: uk-navbar-sticky">
     <nav class="uk-navbar-container">
       <div class="uk-container">
-        <button
-          class="uk-navbar-toggle-animate uk-navbar-toggle uk-hidden@m"
-          uk-navbar-toggle-icon
-          uk-toggle="target: #navbar; animation: uk-animation-fade"
-        />
         <Navbar />
       </div>
     </nav>

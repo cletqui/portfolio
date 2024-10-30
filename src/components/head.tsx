@@ -50,6 +50,17 @@ export const Head = (props: SiteData) =>
       htmlElement.classList.add(
         localStorage.getItem("theme") || "uk-theme-zinc"
       );
+
+      const userLanguage = navigator.language || navigator.userLanguage;
+      const preferredLanguage =
+        localStorage.getItem("language") ||
+        (userLanguage.startsWith("fr") ? "fr" : "en");
+
+      if (!localStorage.getItem("language")) {
+        localStorage.setItem("language", preferredLanguage);
+      }
+
+      htmlElement.setAttribute("lang", preferredLanguage);
     </script>
 
     <script
