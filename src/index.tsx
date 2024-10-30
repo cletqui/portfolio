@@ -19,11 +19,9 @@ app.use(renderer);
 app.use(redirect);
 
 /* ROUTES */
-app.route("/", home);
 app.route("/projects", projects);
 app.route("/about", about);
-
-/* ROOT */
+app.route("/", home);
 
 /* DEFAULT */
 app.get("*", (c: Context) => {

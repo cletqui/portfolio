@@ -24,13 +24,13 @@ const Project = ({
         class="uk-icon-button uk-icon-button-small uk-margin-small-left"
         href={githubLink}
       >
-        <uk-icon icon="github"></uk-icon>
+        <uk-icon icon="github" />
       </a>
       <a
         class="uk-icon-button uk-icon-button-small uk-margin-small-right"
         href={externalLink}
       >
-        <uk-icon icon="external-link"></uk-icon>
+        <uk-icon icon="external-link" />
       </a>
     </a>
   </div>
@@ -41,6 +41,7 @@ const Projects = () => (
     <a href="/projects">
       <div>Projects</div>
     </a>
+
     <div class="uk-navbar-dropdown">
       <ul class="uk-nav uk-navbar-dropdown-nav">
         <li>
@@ -90,6 +91,7 @@ const Contact = () => (
     <a>
       <div>Contact</div>
     </a>
+
     <div class="uk-navbar-dropdown">
       <ul class="uk-nav uk-navbar-dropdown-nav">
         <li>
@@ -98,7 +100,7 @@ const Contact = () => (
             target="_blank"
             rel="noopener noreferrer"
           >
-            <uk-icon class="uk-padding-small-right" icon="twitter"></uk-icon>
+            <uk-icon class="uk-padding-small-right" icon="twitter" />
             Twitter
           </a>
         </li>
@@ -109,7 +111,7 @@ const Contact = () => (
             target="_blank"
             rel="noopener noreferrer"
           >
-            <uk-icon class="uk-padding-small-right" icon="github"></uk-icon>
+            <uk-icon class="uk-padding-small-right" icon="github" />
             GitHub
           </a>
         </li>
@@ -120,7 +122,7 @@ const Contact = () => (
             target="_blank"
             rel="noopener noreferrer"
           >
-            <uk-icon class="uk-padding-small-right" icon="gitlab"></uk-icon>
+            <uk-icon class="uk-padding-small-right" icon="gitlab" />
             GitLab
           </a>
         </li>
@@ -131,7 +133,7 @@ const Contact = () => (
             target="_blank"
             rel="noopener noreferrer"
           >
-            <uk-icon class="uk-padding-small-right" icon="mail"></uk-icon>
+            <uk-icon class="uk-padding-small-right" icon="mail" />
             Mail
           </a>
         </li>
@@ -142,15 +144,15 @@ const Contact = () => (
             target="_blank"
             rel="noopener noreferrer"
           >
-            <uk-icon class="uk-padding-small-right" icon="map-pin"></uk-icon>
+            <uk-icon class="uk-padding-small-right" icon="map-pin" />
             Map
           </a>
         </li>
 
         <li>
-          <a uk-tooltip="E-mail me if you're interested!">
+          <a uk-tooltip="DM me if interested!">
             <button disabled class="uk-icon-button uk-icon-button-xsmall w-40">
-              <uk-icon disabled icon="linkedin"></uk-icon>
+              <uk-icon disabled icon="linkedin" />
             </button>
             <p class="uk-text-muted">LinkedIn</p>
           </a>
@@ -166,15 +168,16 @@ const Search = () => (
       class="uk-icon-button uk-icon-button-small uk-icon-button-outline"
       uk-toggle="target: #search"
     >
-      <a class="uk-search-toggle" href="#" uk-search-icon></a>
+      <a class="uk-search-toggle" href="#" uk-search-icon />
     </button>
+
     <uk-command toggle="search" uk-cloak>
       <a href="/">
         <uk-icon
           class="uk-padding-small-right"
           custom-class="mr-2"
           icon="home"
-        ></uk-icon>
+        />
         <span>Home</span>
       </a>
 
@@ -183,7 +186,7 @@ const Search = () => (
           class="uk-padding-small-right"
           custom-class="mr-2"
           icon="user-round"
-        ></uk-icon>
+        />
         <span>About me</span>
       </a>
 
@@ -192,7 +195,7 @@ const Search = () => (
           class="uk-padding-small-right"
           custom-class="mr-2"
           icon="user-round-search"
-        ></uk-icon>
+        />
         <span>About you</span>
       </a>
 
@@ -201,7 +204,7 @@ const Search = () => (
           class="uk-padding-small-right"
           custom-class="mr-2"
           icon="github"
-        ></uk-icon>
+        />
         <span>PetitHub</span>
       </a>
 
@@ -210,7 +213,7 @@ const Search = () => (
           class="uk-padding-small-right"
           custom-class="mr-2"
           icon="webhook"
-        ></uk-icon>
+        />
         <span>API</span>
       </a>
 
@@ -219,7 +222,7 @@ const Search = () => (
           class="uk-padding-small-right"
           custom-class="mr-2"
           icon="waves"
-        ></uk-icon>
+        />
         <span>Tide</span>
       </a>
 
@@ -228,7 +231,7 @@ const Search = () => (
           class="uk-padding-small-right"
           custom-class="mr-2"
           icon="beer"
-        ></uk-icon>
+        />
         <span>Apéro</span>
       </a>
 
@@ -237,7 +240,7 @@ const Search = () => (
           class="uk-padding-small-right"
           custom-class="mr-2"
           icon="mail"
-        ></uk-icon>
+        />
         <span>Mail</span>
       </a>
 
@@ -246,7 +249,7 @@ const Search = () => (
           class="uk-padding-small-right"
           custom-class="mr-2"
           icon="twitter"
-        ></uk-icon>
+        />
         <span>Twitter</span>
       </a>
 
@@ -255,7 +258,7 @@ const Search = () => (
           class="uk-padding-small-right"
           custom-class="mr-2"
           icon="github"
-        ></uk-icon>
+        />
         <span>GitHub</span>
       </a>
 
@@ -264,7 +267,7 @@ const Search = () => (
           class="uk-padding-small-right"
           custom-class="mr-2"
           icon="gitlab"
-        ></uk-icon>
+        />
         <span>GitLab</span>
       </a>
 
@@ -273,7 +276,7 @@ const Search = () => (
           class="uk-padding-small-right"
           custom-class="mr-2"
           icon="mail"
-        ></uk-icon>
+        />
         <span>Mail</span>
       </a>
 
@@ -285,7 +288,7 @@ const Search = () => (
           class="uk-padding-small-right"
           custom-class="mr-2"
           icon="map-pin"
-        ></uk-icon>
+        />
         <span>Map</span>
       </a>
     </uk-command>
@@ -295,21 +298,21 @@ const Search = () => (
 const Palette = () => (
   <div class="uk-inline">
     <button class="uk-icon-button uk-icon-button-small uk-icon-button-outline">
-      <uk-icon icon="palette" uk-cloak></uk-icon>
+      <uk-icon icon="palette" uk-cloak />
     </button>
     <div
       class="uk-card uk-card-body uk-card-default uk-drop uk-width-large"
       uk-drop="mode: click; offset: 8; pos: bottom-center"
     >
       <div class="uk-card-title uk-margin-medium-bottom">Customize</div>
-      <uk-theme-switcher></uk-theme-switcher>
+      <uk-theme-switcher />
     </div>
   </div>
 );
 
 const Translate = () => (
   <button class="uk-icon-button uk-icon-button-small uk-icon-button-outline">
-    <uk-icon icon="languages"></uk-icon>
+    <uk-icon icon="languages" />
   </button>
 );
 

@@ -13,60 +13,50 @@ const OpenStreetMap = ({
   longitude: number;
 }) => {
   return (
-    <iframe
-      src={`https://www.openstreetmap.org/export/embed.html?bbox=${
-        longitude - 0.02
-      }%2C${latitude - 0.02}%2C${longitude + 0.02}%2C${
-        latitude + 0.02
-      }&amp;layer=mapnik`}
-      width="400"
-      height="400"
-      class="uk-border-rounded"
-      uk-responsive
-    ></iframe>
+    <div class="uk-card uk-card-primary uk-padding-medium">
+      <h3 class="uk-card-title">{`(${latitude},${longitude})`}</h3>
+      <iframe
+        src={`https://www.openstreetmap.org/export/embed.html?bbox=${
+          longitude - 0.02
+        }%2C${latitude - 0.02}%2C${longitude + 0.02}%2C${
+          latitude + 0.02
+        }&amp;layer=mapnik`}
+        width="400"
+        height="400"
+        class="uk-border-rounded"
+        uk-responsive
+      ></iframe>
+    </div>
   );
 };
 
 const IPTable = ({ info }: { info: IPInfo }) => {
   return (
-    <table class="uk-margin uk-table uk-table-small uk-table-divider">
-      <thead>
-        <th class="uk-table-shrink uk-text-nowrap"></th>
-        <th class="uk-text-nowrap"></th>
-      </thead>
-      <tbody>
-        <tr>
-          <td>
-            <uk-icon icon="network" />
-          </td>
-          <td>{info.ipAddress}</td>
-        </tr>
-        <tr>
-          <td>
-            <uk-icon icon="earth" />
-          </td>
-          <td>{info.continent}</td>
-        </tr>
-        <tr>
-          <td>
-            <uk-icon icon="map-pin" />
-          </td>
-          <td>{info.countryName}</td>
-        </tr>
-        <tr>
-          <td>
-            <uk-icon icon="map-pin-house" />
-          </td>
-          <td>{info.cityName}</td>
-        </tr>
-        <tr>
-          <td>
-            <uk-icon icon="router" />
-          </td>
-          <td>{info.isProxy ? "proxy" : "not a proxy"}</td>
-        </tr>
-      </tbody>
-    </table>
+    <ul class="uk-list uk-list-divider">
+      <li class="uk-flex uk-flex-middle">
+        <uk-icon icon="earth" class="uk-margin-small-right uk-text-muted" />
+        <p class="uk-text-muted uk-margin-small-right">Continent:</p>
+        {info.continent}
+      </li>
+      <li class="uk-flex uk-flex-middle">
+        <uk-icon icon="map-pin" class="uk-margin-small-right uk-text-muted" />
+        <p class="uk-text-muted uk-margin-small-right">Country:</p>
+        {info.countryName}
+      </li>
+      <li class="uk-flex uk-flex-middle">
+        <uk-icon
+          icon="map-pin-house"
+          class="uk-margin-small-right uk-text-muted"
+        />
+        <p class="uk-text-muted uk-margin-small-right">City:</p>
+        {info.cityName}
+      </li>
+      <li class="uk-flex uk-flex-middle">
+        <uk-icon icon="router" class="uk-margin-small-right uk-text-muted" />
+        <p class="uk-text-muted uk-margin-small-right">Proxy:</p>
+        {new String(info.isProxy)}
+      </li>
+    </ul>
   );
 };
 
@@ -76,11 +66,13 @@ const IP = async ({ address }: { address: string }) => {
   return (
     <div class="uk-section uk-section-default">
       <div class="uk-panel uk-margin-small uk-margin-left">
-        <h3 class="uk-h3">IP</h3>
-        <p class="uk-text-muted">{address}</p>
+        <h3 class="uk-h3 uk-heading-bullet">IP</h3>
+        <code class="uk-codespan">{address}</code>
 
         <div class="uk-child-width-expand@s" uk-grid>
-          <IPTable info={info} />
+          <div class="uk-padding-medium">
+            <IPTable info={info} />
+          </div>
           <OpenStreetMap latitude={latitude} longitude={longitude} />
         </div>
       </div>
@@ -158,8 +150,8 @@ const UA = async ({ userAgent }: { userAgent: string }) => {
   return (
     <div class="uk-section uk-section-default">
       <div class="uk-panel uk-margin-small">
-        <h3 class="uk-h3">User-Agent</h3>
-        <p class="uk-text-muted">{ua.ua}</p>
+        <h3 class="uk-h3 uk-heading-bullet">User-Agent</h3>
+        <code class="uk-codespan">{ua.ua}</code>
       </div>
 
       <UATable ua={ua} />
@@ -177,6 +169,19 @@ app.get("/me", (c: Context) =>
   c.render(
     <div class="uk-flex uk-flex-column uk-flex-middle uk-flex-center">
       <Title>About me</Title>
+      <div>
+        I'm a french cybersecurity engineer with a deep love for technology,
+        solving problems, and, of course, secure code. My background in Computer
+        Science & Cybersecurity and professional experience has been all about
+        defending, designing, and optimizing digital experiences.
+      </div>
+      <div>
+        Technical skills I'm proud of: network security, penetration testing,
+        Python, JavaScript, HTML/CSS, SQL and a whole toolbox of cybersecurity
+        frameworks. Come check my GitHub profile for even more details.
+      </div>
+      <div>Academic: </div>
+      <div>Passions: </div>
     </div>
   )
 );
@@ -187,14 +192,21 @@ app.get("/you", async (c: Context) => {
   const {
     remote: { address },
   } = getConnInfo(c);
-  console.log(userAgent, address);
-  const ip = "162.10.209.81";
   return c.render(
     <div class="uk-flex uk-flex-column uk-flex-middle uk-flex-center">
       <Title>About you</Title>
+      <div class="uk-text-meta">
+        Now here's the fun part: I get to guess who's visiting my site. Here
+        goes…
+      </div>
 
-      {ip && <IP address={ip} />}
-      {userAgent && <UA userAgent={userAgent} />}
+      <div class="uk-child-width-expand@s uk-width-2-3@m" uk-grid>
+        {/*address && <IP address={address} />*/}
+        <IP address="162.10.209.81" />
+      </div>
+      <div class="uk-child-width-expand@s uk-width-2-3@m" uk-grid>
+        {userAgent && <UA userAgent={userAgent} />}
+      </div>
     </div>
   );
 });

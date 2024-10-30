@@ -27,7 +27,7 @@
     "log": "wrangler pages deployment tail"
   },
   "dependencies": {
-    "hono": "^4.6.7"
+    "hono": "^4.6.8"
   },
   "devDependencies": {
     "@cloudflare/workers-types": "^4.20241022.0",
