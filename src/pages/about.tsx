@@ -201,7 +201,7 @@ app.get("/you", async (c: Context) => {
       </div>
 
       <div class="uk-child-width-expand@s uk-width-2-3@m" uk-grid>
-        {/*address && <IP address={address} />*/}
+        {address && <IP address={address} />}
         <IP address="162.10.209.81" />
       </div>
       <div class="uk-child-width-expand@s uk-width-2-3@m" uk-grid>
