@@ -41,7 +41,15 @@ const IPTable = ({ info }: { info: IPInfo }) => {
       <li class="uk-flex uk-flex-middle">
         <uk-icon icon="map-pin" class="uk-margin-small-right uk-text-muted" />
         <p class="uk-text-muted uk-margin-small-right">Country:</p>
-        {info.countryName}
+        {info.country}
+      </li>
+      <li class="uk-flex uk-flex-middle">
+        <uk-icon
+          icon="map-pinned"
+          class="uk-margin-small-right uk-text-muted"
+        />
+        <p class="uk-text-muted uk-margin-small-right">Region:</p>
+        {info.regionName}
       </li>
       <li class="uk-flex uk-flex-middle">
         <uk-icon
@@ -49,12 +57,45 @@ const IPTable = ({ info }: { info: IPInfo }) => {
           class="uk-margin-small-right uk-text-muted"
         />
         <p class="uk-text-muted uk-margin-small-right">City:</p>
-        {info.cityName}
+        {info.city}
+      </li>
+      <li class="uk-flex uk-flex-middle">
+        <uk-icon icon="ethernet-port" class="uk-margin-small-right uk-text-muted" />
+        <p class="uk-text-muted uk-margin-small-right">ISP:</p>
+        {info.isp}
+      </li>
+      <li class="uk-flex uk-flex-middle">
+        <uk-icon icon="building2" class="uk-margin-small-right uk-text-muted" />
+        <p class="uk-text-muted uk-margin-small-right">AS:</p>
+        {info.asname}
+      </li>
+      {info.reverse && (
+        <li class="uk-flex uk-flex-middle">
+          <uk-icon
+            icon="database"
+            class="uk-margin-small-right uk-text-muted"
+          />
+          <p class="uk-text-muted uk-margin-small-right">Reverse DNS:</p>
+          {info.reverse}
+        </li>
+      )}
+      <li class="uk-flex uk-flex-middle">
+        <uk-icon
+          icon="tablet-smartphone"
+          class="uk-margin-small-right uk-text-muted"
+        />
+        <p class="uk-text-muted uk-margin-small-right">Mobile:</p>
+        {new String(info.mobile)}
       </li>
       <li class="uk-flex uk-flex-middle">
         <uk-icon icon="router" class="uk-margin-small-right uk-text-muted" />
         <p class="uk-text-muted uk-margin-small-right">Proxy:</p>
-        {new String(info.isProxy)}
+        {new String(info.proxy)}
+      </li>
+      <li class="uk-flex uk-flex-middle">
+        <uk-icon icon="server" class="uk-margin-small-right uk-text-muted" />
+        <p class="uk-text-muted uk-margin-small-right">Hosting:</p>
+        {new String(info.hosting)}
       </li>
     </ul>
   );
@@ -62,7 +103,7 @@ const IPTable = ({ info }: { info: IPInfo }) => {
 
 const IP = async ({ address }: { address: string }) => {
   const info = await queryIPInfo(address);
-  const { latitude, longitude } = info;
+  const { lat, lon } = info;
   return (
     <div class="uk-section uk-section-default">
       <div class="uk-panel uk-margin-small uk-margin-left">
@@ -73,7 +114,7 @@ const IP = async ({ address }: { address: string }) => {
           <div class="uk-padding-medium">
             <IPTable info={info} />
           </div>
-          <OpenStreetMap latitude={latitude} longitude={longitude} />
+          <OpenStreetMap latitude={lat} longitude={lon} />
         </div>
       </div>
     </div>
