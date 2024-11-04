@@ -9,6 +9,7 @@ import { renderer } from "./utils/renderer";
 import home from "./pages/home";
 import projects from "./pages/projects";
 import about from "./pages/about";
+import contact from "./pages/contact";
 
 /* TYPES */
 export type Bindings = {
@@ -33,6 +34,7 @@ app.use(renderer);
 app.route("", home);
 app.route("/about", about);
 app.route("/projects", projects);
+app.route("/contact", contact);
 
 /* DEFAULT */
 /* app.get("*", (c: Context) => {

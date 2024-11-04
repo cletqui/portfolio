@@ -1,9 +1,9 @@
 import { Context, Hono } from "hono";
 import { getConnInfo } from "hono/cloudflare-workers";
 
+import { Bindings, Variables } from "..";
 import { queryIPInfo, IPInfo, queryUserAgent, UserAgent } from "../utils/api";
 import { Title } from "../components/layout";
-import { Bindings, Variables } from "..";
 
 /* COMPONENTS */
 const OpenStreetMap = ({

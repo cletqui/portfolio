@@ -108,7 +108,7 @@ const Contact = () => {
   const { lang } = c.var;
   return (
     <>
-      <a>
+      <a href="/contact">
         <div>Contact</div>
       </a>
 
