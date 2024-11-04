@@ -25,22 +25,21 @@ export const handleLanguage = createMiddleware(
     c: Context<{ Bindings: Bindings; Variables: Variables }>,
     next: Next
   ) => {
-    const { SUPPORTS } = c.env;
-    console.log(c.env)
+    const supports = ["en", "fr"]; // TODO move array in Env
     const { path } = c.req;
     const splitted = path.split("/");
     const end = splitted.pop();
-    if (SUPPORTS.includes(end || "")) {
+    if (supports.includes(end || "")) {
       setLanguage(c, end || "en");
       return c.redirect(splitted.length > 1 ? splitted.join("/") : "/");
     }
     const cookie = getCookie(c, "lang");
     const accept = accepts(c, {
       header: "Accept-Language",
-      supports: SUPPORTS,
+      supports: supports,
       default: "en",
     });
-    const lang = cookie && SUPPORTS.includes(cookie) ? cookie : accept;
+    const lang = cookie && supports.includes(cookie) ? cookie : accept;
     if (!cookie) {
       setLanguage(c, lang);
     }
