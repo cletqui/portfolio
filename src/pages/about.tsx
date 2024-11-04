@@ -3,6 +3,7 @@ import { getConnInfo } from "hono/cloudflare-workers";
 
 import { queryIPInfo, IPInfo, queryUserAgent, UserAgent } from "../utils/api";
 import { Title } from "../components/layout";
+import { Bindings, Variables } from "..";
 
 /* COMPONENTS */
 const OpenStreetMap = ({
@@ -60,7 +61,10 @@ const IPTable = ({ info }: { info: IPInfo }) => {
         {info.city}
       </li>
       <li class="uk-flex uk-flex-middle">
-        <uk-icon icon="ethernet-port" class="uk-margin-small-right uk-text-muted" />
+        <uk-icon
+          icon="ethernet-port"
+          class="uk-margin-small-right uk-text-muted"
+        />
         <p class="uk-text-muted uk-margin-small-right">ISP:</p>
         {info.isp}
       </li>
@@ -204,12 +208,10 @@ const UA = async ({ userAgent }: { userAgent: string }) => {
 const app = new Hono<{}>();
 
 /* ENDPOINTS */
-app.get("/", (c: Context) => c.redirect("/me"));
-
-app.get("/me", (c: Context) =>
+app.get("/me", (c: Context<{ Bindings: Bindings; Variables: Variables }>) =>
   c.render(
     <div class="uk-flex uk-flex-column uk-flex-middle uk-flex-center">
-      <Title>About me</Title>
+      <Title>About me ({c.var.lang})</Title>
       <div>
         I'm a french cybersecurity engineer with a deep love for technology,
         solving problems, and, of course, secure code. My background in Computer
@@ -217,12 +219,16 @@ app.get("/me", (c: Context) =>
         defending, designing, and optimizing digital experiences.
       </div>
       <div>
-        Technical skills I'm proud of: network security, penetration testing,
-        Python, JavaScript, HTML/CSS, SQL and a whole toolbox of cybersecurity
-        frameworks. Come check my GitHub profile for even more details.
+        Technical skills I'm proud of: detection & response, network security,
+        penetration testing, Python, JavaScript, HTML/CSS, SQL and a whole
+        toolbox of cybersecurity frameworks. Come check my GitHub profile for
+        even more details.
       </div>
-      <div>Academic: </div>
-      <div>Passions: </div>
+      <div>
+        Academic: Engineering school (Computer science, cybersecurity),
+        cybersecurity consultant (blueteam)
+      </div>
+      <div>Passions: CTF (link to /ctf), Bouldering & cycling</div>
     </div>
   )
 );
@@ -242,8 +248,7 @@ app.get("/you", async (c: Context) => {
       </div>
 
       <div class="uk-child-width-expand@s uk-width-2-3@m" uk-grid>
-        {address && <IP address={address} />}
-        <IP address="162.10.209.81" />
+        {address ? <IP address={address} /> : <IP address="1.1.1.1" />}
       </div>
       <div class="uk-child-width-expand@s uk-width-2-3@m" uk-grid>
         {userAgent && <UA userAgent={userAgent} />}
@@ -251,5 +256,7 @@ app.get("/you", async (c: Context) => {
     </div>
   );
 });
+
+app.get("", (c: Context) => c.redirect("/about/me"));
 
 export default app;
