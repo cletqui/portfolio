@@ -15,6 +15,8 @@ export const Head = (props: SiteData) =>
     <link rel="preconnect" href="https://rsms.me/" />
     <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
 
+    <noscrip><style>body { visibility: visible; }</style></noscript>
+
     <style>
       :root {
         font-family: Inter, sans-serif;

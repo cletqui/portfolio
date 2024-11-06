@@ -375,50 +375,54 @@ const Translate = () => {
     </a>
   );
 };
-const Navbar = () => (
-  <div uk-navbar>
-    <div class="uk-navbar-left">
-      <Logo />
+const Navbar = () => {
+  const c = useRequestContext();
+  const { path } = c.req;
+  return (
+    <div uk-navbar>
+      <div class="uk-navbar-left">
+        <Logo />
 
-      <ul
-        id="navbar"
-        class="uk-navbar-nav uk-flex-left uk-dropnav navbar-toggle"
-      >
-        <li>
-          <AboutMe />
-        </li>
+        <ul
+          id="navbar"
+          class="uk-navbar-nav uk-flex-left uk-dropnav navbar-toggle"
+        >
+          <li class={path.startsWith("/about/me") ? "uk-active" : ""}>
+            <AboutMe />
+          </li>
 
-        <li>
-          <AboutYou />
-        </li>
+          <li class={path.startsWith("/about/you") ? "uk-active" : ""}>
+            <AboutYou />
+          </li>
 
-        <li>
-          <Projects />
-        </li>
+          <li class={path.startsWith("/projects") ? "uk-active" : ""}>
+            <Projects />
+          </li>
 
-        <li>
-          <Contact />
-        </li>
-      </ul>
+          <li class={path.startsWith("/contact") ? "uk-active" : ""}>
+            <Contact />
+          </li>
+        </ul>
+      </div>
+
+      <div class="uk-navbar-right">
+        <ul class="uk-iconnav uk-flex-right uk-iconnav-small navbar-toggle uk-margin-medium-left">
+          <li>
+            <Search />
+          </li>
+
+          <li>
+            <Palette />
+          </li>
+
+          <li>
+            <Translate />
+          </li>
+        </ul>
+      </div>
     </div>
-
-    <div class="uk-navbar-right">
-      <ul class="uk-iconnav uk-flex-right uk-iconnav-small navbar-toggle uk-margin-medium-left">
-        <li>
-          <Search />
-        </li>
-
-        <li>
-          <Palette />
-        </li>
-
-        <li>
-          <Translate />
-        </li>
-      </ul>
-    </div>
-  </div>
-);
+  );
+};
 
 export const Header = () => {
   return (
