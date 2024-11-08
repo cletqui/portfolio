@@ -12,6 +12,9 @@ export const Head = (props: SiteData) =>
     <meta name="viewport" content="width=device-width" />
     <title>${props.title}</title>
     <link rel="icon" type="image/x-icon" href="/favicon.ico" />
+    <link rel="manifest" href="/static/manifest.webmanifest" />
+    <link rel="text/plain" href="/static/robots.txt" />
+
     <link rel="preconnect" href="https://rsms.me/" />
     <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
 

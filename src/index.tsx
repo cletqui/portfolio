@@ -31,14 +31,14 @@ app.use(handleLanguage);
 app.use(renderer);
 
 /* ROUTES */
-app.route("", home);
 app.route("/about", about);
 app.route("/projects", projects);
 app.route("/contact", contact);
+app.route("", home);
 
 /* DEFAULT */
-/* app.get("*", (c: Context) => {
+app.get("*", (c: Context) => {
   return c.redirect("/");
-}); */
+});
 
 export default app;

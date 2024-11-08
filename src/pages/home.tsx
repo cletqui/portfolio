@@ -31,7 +31,7 @@ const Welcome = ({ lang }: { lang: string }) => (
 );
 
 const Description = ({ lang }: { lang: string }) => (
-  <div class="uk-card uk-card-body uk-card-primary">
+  <div class="uk-card uk-card-body uk-card-secondary">
     <p class="uk-paragraph uk-text-justify">
       {lang === "fr"
         ? "Ce portfolio est juste un terrain de jeu pour présenter mes projets, mes passions, moi-même."
@@ -46,7 +46,7 @@ const Description = ({ lang }: { lang: string }) => (
 );
 
 const Details = ({ lang }: { lang: string }) => (
-  <div class="uk-card uk-card-body uk-card-secondary">
+  <div class="uk-card uk-card-body uk-card-primary">
     <p class="uk-paragraph uk-text-break">
       {lang === "fr" ? "Il est construit en utilisant " : "It is built using "}
       <a class="uk-link" href="https://hono.dev/">
@@ -78,14 +78,17 @@ app.get("/", (c: Context) => {
         <div class="uk-width-2-3@m uk-flex-first">
           <Welcome lang={lang} />
         </div>
+
         <div class="uk-width-1-3@m uk-flex uk-flex-center">
           <Avatar />
         </div>
       </div>
+
       <div class="uk-child-width-expand@s uk-width-2-3@m" uk-grid>
         <div class="uk-width-2-3@m">
           <Description lang={lang} />
         </div>
+
         <div class="uk-width-1-3@m uk-flex-first">
           <Details lang={lang} />
         </div>
@@ -93,6 +96,8 @@ app.get("/", (c: Context) => {
     </div>
   );
 });
+
+app.get("/robots.txt", (c: Context) => c.redirect("/static/robots.txt", 301));
 
 /* EASTER EGGS */
 app

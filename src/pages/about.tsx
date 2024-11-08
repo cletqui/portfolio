@@ -1,9 +1,10 @@
 import { Context, Hono } from "hono";
+import { Suspense } from "hono/jsx";
 import { getConnInfo } from "hono/cloudflare-workers";
 
 import { Bindings, Variables } from "..";
 import { queryIPInfo, IPInfo, queryUserAgent, UserAgent } from "../utils/api";
-import { Title } from "../components/layout";
+import { Spinner, Title } from "../components/layout";
 
 /* COMPONENTS */
 const OpenStreetMap = ({
@@ -39,11 +40,13 @@ const IPTable = ({ info }: { info: IPInfo }) => {
         <p class="uk-text-muted uk-margin-small-right">Continent:</p>
         {info.continent}
       </li>
+
       <li class="uk-flex uk-flex-middle">
         <uk-icon icon="map-pin" class="uk-margin-small-right uk-text-muted" />
         <p class="uk-text-muted uk-margin-small-right">Country:</p>
         {info.country}
       </li>
+
       <li class="uk-flex uk-flex-middle">
         <uk-icon
           icon="map-pinned"
@@ -52,6 +55,7 @@ const IPTable = ({ info }: { info: IPInfo }) => {
         <p class="uk-text-muted uk-margin-small-right">Region:</p>
         {info.regionName}
       </li>
+
       <li class="uk-flex uk-flex-middle">
         <uk-icon
           icon="map-pin-house"
@@ -60,6 +64,7 @@ const IPTable = ({ info }: { info: IPInfo }) => {
         <p class="uk-text-muted uk-margin-small-right">City:</p>
         {info.city}
       </li>
+
       <li class="uk-flex uk-flex-middle">
         <uk-icon
           icon="ethernet-port"
@@ -68,11 +73,13 @@ const IPTable = ({ info }: { info: IPInfo }) => {
         <p class="uk-text-muted uk-margin-small-right">ISP:</p>
         {info.isp}
       </li>
+
       <li class="uk-flex uk-flex-middle">
         <uk-icon icon="building2" class="uk-margin-small-right uk-text-muted" />
         <p class="uk-text-muted uk-margin-small-right">AS:</p>
         {info.asname}
       </li>
+
       {info.reverse && (
         <li class="uk-flex uk-flex-middle">
           <uk-icon
@@ -83,6 +90,7 @@ const IPTable = ({ info }: { info: IPInfo }) => {
           {info.reverse}
         </li>
       )}
+
       <li class="uk-flex uk-flex-middle">
         <uk-icon
           icon="tablet-smartphone"
@@ -91,11 +99,13 @@ const IPTable = ({ info }: { info: IPInfo }) => {
         <p class="uk-text-muted uk-margin-small-right">Mobile:</p>
         {new String(info.mobile)}
       </li>
+
       <li class="uk-flex uk-flex-middle">
         <uk-icon icon="router" class="uk-margin-small-right uk-text-muted" />
         <p class="uk-text-muted uk-margin-small-right">Proxy:</p>
         {new String(info.proxy)}
       </li>
+
       <li class="uk-flex uk-flex-middle">
         <uk-icon icon="server" class="uk-margin-small-right uk-text-muted" />
         <p class="uk-text-muted uk-margin-small-right">Hosting:</p>
@@ -134,6 +144,7 @@ const UATable = ({ ua }: { ua: UserAgent }) => {
         <th class="uk-table-shrink uk-text-nowrap"></th>
         <th class="uk-table-shrink uk-text-nowrap"></th>
       </thead>
+
       <tbody>
         {ua.browser.name && (
           <tr>
@@ -145,6 +156,7 @@ const UATable = ({ ua }: { ua: UserAgent }) => {
             <td>{ua.browser.version || ""}</td>
           </tr>
         )}
+
         {ua.engine.name && (
           <tr>
             <td>
@@ -155,6 +167,7 @@ const UATable = ({ ua }: { ua: UserAgent }) => {
             <td>{ua.engine.version || ""}</td>
           </tr>
         )}
+
         {ua.os.name && (
           <tr>
             <td>
@@ -165,6 +178,7 @@ const UATable = ({ ua }: { ua: UserAgent }) => {
             <td>{ua.os.version || ""}</td>
           </tr>
         )}
+
         {ua.device.type && (
           <tr>
             <td>
@@ -175,6 +189,7 @@ const UATable = ({ ua }: { ua: UserAgent }) => {
             <td>{ua.device.model || ""}</td>
           </tr>
         )}
+
         {ua.cpu.architecture && (
           <tr>
             <td>
@@ -208,32 +223,69 @@ const UA = async ({ userAgent }: { userAgent: string }) => {
 const app = new Hono<{}>();
 
 /* ENDPOINTS */
-app.get("/me", (c: Context<{ Bindings: Bindings; Variables: Variables }>) =>
-  c.render(
+app.get("/me", (c: Context<{ Bindings: Bindings; Variables: Variables }>) => {
+  const { lang } = c.var;
+  return c.render(
     <div class="uk-flex uk-flex-column uk-flex-middle uk-flex-center">
-      <Title>About me ({c.var.lang})</Title>
-      <div>
-        I'm a french cybersecurity engineer with a deep love for technology,
-        solving problems, and, of course, secure code. My background in Computer
-        Science & Cybersecurity and professional experience has been all about
-        defending, designing, and optimizing digital experiences.
-      </div>
-      <div>
-        Technical skills I'm proud of: detection & response, network security,
-        penetration testing, Python, JavaScript, HTML/CSS, SQL and a whole
-        toolbox of cybersecurity frameworks. Come check my GitHub profile for
-        even more details.
-      </div>
-      <div>
-        Academic: Engineering school (Computer science, cybersecurity),
-        cybersecurity consultant (blueteam)
-      </div>
-      <div>Passions: CTF (link to /ctf), Bouldering & cycling</div>
-    </div>
-  )
-);
+      <Title>{lang === "fr" ? "A propos" : "About me"}</Title>
 
-app.get("/you", async (c: Context) => {
+      <div
+        class="uk-child-width-1-2@s uk-flex-center uk-grid-small uk-text-center"
+        uk-grid="parallax: 150"
+      >
+        <div>
+          <div class="uk-card uk-card-body uk-card-primary">
+            <p class="uk-paragraph uk-text-justify">
+              I'm a french <b>cybersecurity engineer</b> with a deep love for
+              technology, solving problems, and, of course, secure code. My
+              background in Computer Science & Cybersecurity and professional
+              experience has been all about defending, designing, and optimizing
+              digital experiences.
+            </p>
+          </div>
+        </div>
+
+        <div>
+          <div class="uk-card uk-card-body uk-card-secondary">
+            <h3 class="uk-card-title">Technical skills</h3>
+            <p class="uk-paragraph uk-text-justify">
+              {
+                "Technical skills I'm proud of: detection & response, network security, penetration testing, Python, JavaScript, HTML/CSS, SQL and a whole toolbox of cybersecurity frameworks. Come check my "
+              }
+              <a class="uk-link" href="https://github.com/cletqui/">
+                {"GitHub"}
+              </a>
+              {" profile for even more details."}
+            </p>
+          </div>
+        </div>
+
+        <div>
+          <div class="uk-card uk-card-body uk-card-secondary">
+            <h3 class="uk-card-title">
+              {lang === "fr" ? "Parcours académique" : "Academic"}
+            </h3>
+            <p class="uk-paragraph uk-text-justify">
+              Academic: Engineering school (Computer science, cybersecurity),
+              cybersecurity consultant (blueteam)
+            </p>
+          </div>
+        </div>
+
+        <div>
+          <div class="uk-card uk-card-body uk-card-secondary">
+            <h3 class="uk-card-title">Passions</h3>
+            <p class="uk-paragraph uk-text-justify">
+              Passions: CTF (link to /ctf), Bouldering & cycling
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  );
+});
+
+app.get("/you", (c: Context) => {
   // TODO use Suspense
   const { "user-agent": userAgent } = c.req.header();
   const {
@@ -248,8 +300,11 @@ app.get("/you", async (c: Context) => {
       </div>
 
       <div class="uk-child-width-expand@s uk-width-2-3@m" uk-grid>
-        {address ? <IP address={address} /> : <IP address="1.1.1.1" />}
+        <Suspense fallback={<Spinner />}>
+          <IP address={address || "1.1.1.1"} />
+        </Suspense>
       </div>
+
       <div class="uk-child-width-expand@s uk-width-2-3@m" uk-grid>
         {userAgent && <UA userAgent={userAgent} />}
       </div>
