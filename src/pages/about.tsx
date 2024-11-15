@@ -236,26 +236,34 @@ app.get("/me", (c: Context<{ Bindings: Bindings; Variables: Variables }>) => {
         <div>
           <div class="uk-card uk-card-body uk-card-primary">
             <p class="uk-paragraph uk-text-justify">
-              I'm a french <b>cybersecurity engineer</b> with a deep love for
-              technology, solving problems, and, of course, secure code. My
-              background in Computer Science & Cybersecurity and professional
-              experience has been all about defending, designing, and optimizing
-              digital experiences.
+              {lang === "fr" ? "Je suis un " : "I'm a french "}
+              <b>
+                {lang === "fr"
+                  ? "ingénieur en cybersécurité"
+                  : "cybersecurity engineer"}
+              </b>
+              {lang === "fr"
+                ? " français avec un intérêt prononcé pour la technologie, la résolution de problèmes et, bien sûr, le code sécurisé. Ma formation en informatique et cybersécurité ainsi que mon expérience professionnelle m'ont porté sur la sécurisation, la conception et l'optimisation des expériences numériques."
+                : " with a deep love for technology, solving problems, and, of course, secure code. My background in Computer Science & Cybersecurity and professional experience has been all about defending, designing, and optimizing digital experiences."}
             </p>
           </div>
         </div>
 
         <div>
           <div class="uk-card uk-card-body uk-card-secondary">
-            <h3 class="uk-card-title">Technical skills</h3>
+            <h3 class="uk-card-title">
+              {lang === "fr" ? "Compétences techniques" : "Technical skills"}
+            </h3>
             <p class="uk-paragraph uk-text-justify">
-              {
-                "Technical skills I'm proud of: detection & response, network security, penetration testing, Python, JavaScript, HTML/CSS, SQL and a whole toolbox of cybersecurity frameworks. Come check my "
-              }
+              {lang === "fr"
+                ? "Les compétences techniques dont je suis fier : détection et réaction, sécurité des réseaux, tests de pénétration, Python, JavaScript, HTML/CSS, SQL et toute une gamme de référentiels de cybersécurité. Venez voir mon profil "
+                : "Technical skills I'm proud of: detection & response, network security, penetration testing, Python, JavaScript, HTML/CSS, SQL and a whole toolbox of cybersecurity frameworks. Come check my "}
               <a class="uk-link" href="https://github.com/cletqui/">
                 {"GitHub"}
               </a>
-              {" profile for even more details."}
+              {lang === "fr"
+                ? " pour plus de détails."
+                : " profile for even more details."}
             </p>
           </div>
         </div>
@@ -274,7 +282,7 @@ app.get("/me", (c: Context<{ Bindings: Bindings; Variables: Variables }>) => {
 
         <div>
           <div class="uk-card uk-card-body uk-card-secondary">
-            <h3 class="uk-card-title">Passions</h3>
+            <h3 class="uk-card-title">{"Passions"}</h3>
             <p class="uk-paragraph uk-text-justify">
               Passions: CTF (link to /ctf), Bouldering & cycling
             </p>
@@ -287,16 +295,19 @@ app.get("/me", (c: Context<{ Bindings: Bindings; Variables: Variables }>) => {
 
 app.get("/you", (c: Context) => {
   // TODO use Suspense
+  const { lang } = c.var;
   const { "user-agent": userAgent } = c.req.header();
   const {
     remote: { address },
   } = getConnInfo(c);
   return c.render(
     <div class="uk-flex uk-flex-column uk-flex-middle uk-flex-center">
-      <Title>About you</Title>
+      <Title>{lang === "fr" ? "A propos de toi" : "About you"}</Title>
+
       <div class="uk-text-meta">
-        Now here's the fun part: I get to guess who's visiting my site. Here
-        goes…
+        {lang === "fr"
+          ? "Voici maintenant la partie la plus amusante : Je dois deviner qui visite mon site. Voici ce que je propose..."
+          : "Now here's the fun part: I get to guess who's visiting my site. Here goes…"}
       </div>
 
       <div class="uk-child-width-expand@s uk-width-2-3@m" uk-grid>
