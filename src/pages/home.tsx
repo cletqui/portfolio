@@ -1,5 +1,4 @@
 import { Context, Hono } from "hono";
-import { serveStatic } from '@hono/node-server/serve-static'
 
 /* APP */
 const app = new Hono<{}>();
