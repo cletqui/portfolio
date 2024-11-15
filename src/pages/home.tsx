@@ -1,4 +1,5 @@
 import { Context, Hono } from "hono";
+import { serveStatic } from '@hono/node-server/serve-static'
 
 /* APP */
 const app = new Hono<{}>();
@@ -98,6 +99,8 @@ app.get("/", (c: Context) => {
 });
 
 app.get("/robots.txt", (c: Context) => c.redirect("/static/robots.txt", 301));
+
+app.get("/keybase.txt", serveStatic({ path: "/public/static/keybase.txt" }));
 
 /* EASTER EGGS */
 app
