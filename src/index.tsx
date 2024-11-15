@@ -37,8 +37,8 @@ app.route("/contact", contact);
 app.route("", home);
 
 /* DEFAULT */
-app.get("*", (c: Context) => {
-  return c.redirect("/");
-});
+// app.get("*", (c: Context) => {
+//   return c.redirect("/");
+// });
 
 export default app;
