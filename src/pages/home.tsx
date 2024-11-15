@@ -100,7 +100,7 @@ app.get("/", (c: Context) => {
 
 app.get("/robots.txt", (c: Context) => c.redirect("/static/robots.txt", 301));
 
-app.get("/keybase.txt", serveStatic({ path: "/public/static/keybase.txt" }));
+app.get("/keybase.txt", serveStatic({ path: "./static/keybase.txt" }));
 
 /* EASTER EGGS */
 app
