@@ -34,11 +34,6 @@ app.use(renderer);
 app.route("/about", about);
 app.route("/projects", projects);
 app.route("/contact", contact);
-app.route("", home);
-
-/* DEFAULT */
-// app.get("*", (c: Context) => {
-//   return c.redirect("/");
-// });
+app.route("/", home);
 
 export default app;

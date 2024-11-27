@@ -1,29 +1,6 @@
 import { Context, Hono } from "hono";
-import { Title } from "../components/layout";
 
-/* COMPONENTS */
-const Button = ({
-  name,
-  link,
-  icon,
-  style = "primary",
-  disabled = false,
-}: {
-  name: string;
-  link: string;
-  icon: string;
-  style?: string;
-  disabled?: boolean;
-}) => {
-  return (
-    <a class={`uk-link${disabled && "-muted"} uk-link-toggle`} href={link}>
-      <button class={`uk-button uk-button-${style}`} disabled={disabled}>
-        <uk-icon class="uk-padding-small-right" icon={icon} />
-        <span class="uk-link-text">{name}</span>
-      </button>
-    </a>
-  );
-};
+import { Title, Button } from "../components/layout";
 
 /* APP */
 const app = new Hono<{}>();
@@ -41,56 +18,76 @@ app.get("", (c: Context) => {
       </p>
 
       <div
-        class="uk-child-width-1-3@s uk-grid-row-large uk-grid-column-small uk-text-center"
+        class="uk-child-width-1-4@s uk-grid-row-medium uk-grid-column-small uk-text-center"
         uk-grid
       >
-        <div>
-          <Button name="Twitter" link="https://x.com/cletqui/" icon="twitter" />
-        </div>
-        <div>
-          <Button
-            name="GitHub"
-            link="https://github.com/cletqui/"
-            icon="github"
-          />
-        </div>
+        <Button text="Twitter" href="https://x.com/cletqui/" icon="twitter" />
 
-        <div>
-          <Button
-            name="GitLab"
-            link="https://gitlab.com/cletqui/"
-            icon="gitlab"
-          />
-        </div>
+        <Button
+          text="BlueSky"
+          href="https://bsky.app/profile/cybai.re"
+          icon="earth"
+        />
 
-        <div>
-          <Button
-            name="Mail"
-            link="mailto@admin.cybai.re"
-            icon="mail"
-            style="secondary"
-          />
-        </div>
+        <Button
+          text="GitHub"
+          href="https://github.com/cletqui/"
+          icon="github"
+        />
 
-        <div>
-          <Button
-            name={lang === "fr" ? "Carte" : "Map"}
-            link="https://www.openstreetmap.org/#map=19/48.673657/-3.913592"
-            icon="map-pin"
-            style="secondary"
-          />
-        </div>
+        <Button
+          text="GitLab"
+          href="https://gitlab.com/cletqui/"
+          icon="gitlab"
+        />
 
-        <div>
-          <Button
-            name="LinkedIn"
-            link=""
-            icon="linkedin"
-            style="secondary"
-            disabled={true}
-          />
-        </div>
+        <Button
+          text="Keybase"
+          href="https://keybase.io/clet"
+          icon="file-key"
+          style="secondary"
+        />
+
+        <Button
+          text="GPG key"
+          href="https://github.com/cletqui.gpg"
+          icon="key"
+          style="secondary"
+        />
+
+        <Button
+          text="Mail"
+          href="mailto@admin.cybai.re"
+          icon="mail"
+          style="secondary"
+        />
+
+        <Button
+          text={lang === "fr" ? "Carte" : "Map"}
+          href="https://www.openstreetmap.org/#map=19/48.673657/-3.913592"
+          icon="map-pin"
+          style="secondary"
+        />
+
+        <Button
+          text="LinkedIn"
+          icon="linkedin"
+          style="secondary"
+          tooltip={
+            lang === "fr" ? "PM moi si intéressé !" : "DM me if interested!"
+          }
+        />
       </div>
+
+      <p class="uk-paragraph uk-padding-medium uk-text-center">
+        {lang === "fr" ? "Je suis les " : "I follow "}
+        <a class="uk-link" href="http://sl4.org/crocker.html">
+          {lang === "fr" ? "règles de Crocker" : "Crocker's rules"}
+        </a>
+        {lang === "fr"
+          ? " donc pas besoin de faire des excès de diplomatie."
+          : ", so there's no need to be overly diplomatic."}
+      </p>
     </div>
   );
 });

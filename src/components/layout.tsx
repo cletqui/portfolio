@@ -7,6 +7,47 @@ export const Title = ({ children }: { children: Child }) => (
   </h1>
 );
 
+export const Button = ({
+  text,
+  icon,
+  href,
+  style = "primary",
+  reverse = false,
+  external = false,
+  tooltip,
+}: {
+  text: string;
+  icon: string;
+  href?: string;
+  style?: string;
+  reverse?: boolean;
+  external?: boolean;
+  tooltip?: string;
+}) => (
+  <div>
+    <a
+      href={href}
+      class={`uk-link${!href && "-muted"} uk-link-toggle`}
+      target={external ? "_blank" : "_self"}
+      rel={external ? "noopener noreferrer" : ""}
+      uk-tooltip={tooltip && `pos:bottom;title:${tooltip}`}
+    >
+      <button
+        class={`uk-button uk-button-${style} uk-flex-row${
+          reverse && "-reverse"
+        }`}
+        disabled={!href}
+      >
+        <uk-icon
+          class={`uk-padding-small-${reverse ? "left" : "right"}`}
+          icon={icon}
+        />
+        <span class="uk-link-text">{text}</span>
+      </button>
+    </a>
+  </div>
+);
+
 export const Spinner = () => <div uk-spinner></div>;
 
 export const Epochalypse = () => {

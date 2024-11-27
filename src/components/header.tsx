@@ -68,11 +68,13 @@ const Projects = () => {
             />
           </li>
 
-          <Project
-            name="API"
-            githubLink="https://github.com/cletqui/api/"
-            externalLink="https://api.cybai.re/"
-          />
+          <li>
+            <Project
+              name="API"
+              githubLink="https://github.com/cletqui/api/"
+              externalLink="https://api.cybai.re/"
+            />
+          </li>
 
           <li>
             <Project
@@ -103,6 +105,30 @@ const Projects = () => {
   );
 };
 
+const Link = ({
+  icon,
+  text,
+  href,
+  tooltip,
+}: {
+  icon: string;
+  text: string;
+  href?: string;
+  tooltip?: string;
+}) => (
+  <a
+    href={href}
+    target="_blank"
+    rel="noopener noreferrer"
+    uk-tooltip={tooltip && `pos:bottom;title:${tooltip}`}
+  >
+    <button disabled={!href} class="uk-icon-button uk-icon-button-xsmall w-40">
+      <uk-icon disablied={!href} class="uk-padding-small-right" icon={icon} />
+    </button>
+    <p class={`uk-text${!href && "-muted"}`}>{text}</p>
+  </a>
+);
+
 const Contact = () => {
   const c = useRequestContext();
   const { lang } = c.var;
@@ -115,74 +141,53 @@ const Contact = () => {
       <div class="uk-navbar-dropdown">
         <ul class="uk-nav uk-navbar-dropdown-nav">
           <li>
-            <a
-              href="https://x.com/cletqui"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <uk-icon class="uk-padding-small-right" icon="twitter" />
-              Twitter
-            </a>
+            <Link href="https://x.com/cletqui" icon="twitter" text="Twitter" />
           </li>
 
           <li>
-            <a
+            <Link
+              href="https://bsky.app/profile/cybai.re"
+              icon="earth"
+              text="BlueSky"
+            />
+          </li>
+
+          <li>
+            <Link
               href="https://github.com/cletqui"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <uk-icon class="uk-padding-small-right" icon="github" />
-              GitHub
-            </a>
+              icon="github"
+              text="GitHub"
+            />
           </li>
 
           <li>
-            <a
+            <Link
               href="https://gitlab.com/cletqui"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <uk-icon class="uk-padding-small-right" icon="gitlab" />
-              GitLab
-            </a>
+              icon="gitlab"
+              text="GitLab"
+            />
           </li>
 
           <li>
-            <a
-              href="mailto:admin@cybai.re"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <uk-icon class="uk-padding-small-right" icon="mail" />
-              Mail
-            </a>
+            <Link href="mailto:admin@cybai.re" icon="mail" text="Mail" />
           </li>
 
           <li>
-            <a
+            <Link
               href="https://www.openstreetmap.org/#map=19/48.673657/-3.913592"
-              target="_blank"
-              rel="noopener noreferrer"
-            >
-              <uk-icon class="uk-padding-small-right" icon="map-pin" />
-              {lang === "fr" ? "Carte" : "Map"}
-            </a>
+              icon="map-pin"
+              text={lang === "fr" ? "Carte" : "Map"}
+            />
           </li>
 
           <li>
-            <a
-              uk-tooltip={
+            <Link
+              icon="linkedin"
+              text="LinkedIn"
+              tooltip={
                 lang === "fr" ? "PM moi si intéressé !" : "DM me if interested!"
               }
-            >
-              <button
-                disabled
-                class="uk-icon-button uk-icon-button-xsmall w-40"
-              >
-                <uk-icon disabled icon="linkedin" />
-              </button>
-              <p class="uk-text-muted">LinkedIn</p>
-            </a>
+            />
           </li>
         </ul>
       </div>
