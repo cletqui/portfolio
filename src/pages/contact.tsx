@@ -13,7 +13,7 @@ app.get("", (c: Context) => {
 
       <p class="uk-paragraph uk-padding-medium uk-text-center">
         {lang === "fr"
-          ? "Si vous souhaitez discuter de quoi que ce soit, si vous avez une question sur un projet ou si vous voulez simplement dire bonjour, j'adorerais que vous me contactiez !"
+          ? "Si vous souhaitez discuter de quoi que ce soit, si vous avez une question sur un projet ou si vous voulez simplement dire bonjour, n'hésitez pas à me contacter !"
           : "If you're interested in talking about anything, have a question about a project, or just want to say hello, I'd love to hear from you!"}
       </p>
 

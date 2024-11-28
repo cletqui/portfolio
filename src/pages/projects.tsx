@@ -1,5 +1,5 @@
 import { Context, Hono } from "hono";
-import { Title } from "../components/layout";
+import { Epochalypse, Title } from "../components/layout";
 
 /* APP */
 const app = new Hono<{}>();
@@ -51,6 +51,25 @@ app.get("/mail", (c: Context) => {
     <div class="uk-flex uk-flex-column uk-flex-middle uk-flex-center">
       <Title>{lang === "fr" ? "Projets" : "Projects"}</Title>
       <h2 class="uk-heading-small uk-margin">Mail</h2>
+    </div>
+  );
+});
+
+app.get("/epochalypse", (c: Context) => {
+  const { lang } = c.var;
+  return c.render(
+    <div class="uk-flex uk-flex-column uk-flex-middle uk-flex-center">
+      <Title>{"Epochalypse"}</Title>
+      <Epochalypse lang={lang} />
+      <a
+        class="uk-link-text"
+        href="https://en.wikipedia.org/wiki/Year_2038_problem"
+      >
+        Explanation
+      </a>
+      <a class="uk-link-text" href="https://www.epochalypse.today/">
+        Visualisation
+      </a>
     </div>
   );
 });

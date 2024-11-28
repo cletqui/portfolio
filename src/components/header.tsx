@@ -18,91 +18,7 @@ const AboutYou = ({ lang }: { lang: string }) => {
   return <a href="/about/you">{lang === "fr" ? "de toi ?" : "About you"}</a>;
 };
 
-const Project = ({
-  name,
-  githubLink,
-  externalLink,
-}: {
-  name: string;
-  githubLink: string;
-  externalLink: string;
-}) => {
-  return (
-    <div class="uk-flex uk-flex-middle uk-margin-left">
-      <a href={`/projects/${name.toLowerCase()}`}>
-        {name}
-        <a
-          class="uk-icon-button uk-icon-button-small uk-margin-small-left"
-          href={githubLink}
-        >
-          <uk-icon icon="github" />
-        </a>
-        <a
-          class="uk-icon-button uk-icon-button-small uk-margin-small-right"
-          href={externalLink}
-        >
-          <uk-icon icon="external-link" />
-        </a>
-      </a>
-    </div>
-  );
-};
-
-const Projects = ({ lang }: { lang: string }) => {
-  return (
-    <>
-      <a href="/projects">
-        <div>{lang === "fr" ? "Projets" : "Projects"}</div>
-      </a>
-
-      <div class="uk-navbar-dropdown">
-        <ul class="uk-nav uk-navbar-dropdown-nav">
-          <li>
-            <Project
-              name="PetitHub"
-              githubLink="https://github.com/cletqui/petithub/"
-              externalLink="https://petithub.cybai.re/"
-            />
-          </li>
-
-          <li>
-            <Project
-              name="API"
-              githubLink="https://github.com/cletqui/api/"
-              externalLink="https://api.cybai.re/"
-            />
-          </li>
-
-          <li>
-            <Project
-              name="Tide"
-              githubLink="https://github.com/cletqui/tide/"
-              externalLink="https://tide.cybai.re/"
-            />
-          </li>
-
-          <li>
-            <Project
-              name="Apéro"
-              githubLink="https://github.com/cletqui/apero/"
-              externalLink="https://apero.cybai.re/"
-            />
-          </li>
-
-          <li>
-            <Project
-              name="Mail"
-              githubLink="https://github.com/cletqui/mail/"
-              externalLink="https://mail.cybai.re/"
-            />
-          </li>
-        </ul>
-      </div>
-    </>
-  );
-};
-
-const Link = ({
+const Dropdown = ({
   icon,
   text,
   href,
@@ -126,6 +42,48 @@ const Link = ({
   </a>
 );
 
+const Projects = ({ lang }: { lang: string }) => {
+  return (
+    <>
+      <a href="/projects">
+        <div>{lang === "fr" ? "Projets" : "Projects"}</div>
+      </a>
+
+      <div class="uk-navbar-dropdown">
+        <ul class="uk-nav uk-navbar-dropdown-nav">
+          <li>
+            <Dropdown icon="github" text="PetitHub" href="/projects/petithub" />
+          </li>
+
+          <li>
+            <Dropdown icon="code-xml" text="API" href="/projects/api" />
+          </li>
+
+          <li>
+            <Dropdown icon="waves" text="Tide" href="/projects/tide" />
+          </li>
+
+          <li>
+            <Dropdown icon="beer" text="Apéro" href="/projects/apero" />
+          </li>
+
+          <li>
+            <Dropdown icon="mail" text="Mail" href="/projects/mail" />
+          </li>
+
+          <li>
+            <Dropdown
+              icon="clock"
+              text="Epochalypse"
+              href="/projects/epochalypse"
+            />
+          </li>
+        </ul>
+      </div>
+    </>
+  );
+};
+
 const Contact = ({ lang }: { lang: string }) => {
   return (
     <>
@@ -136,11 +94,15 @@ const Contact = ({ lang }: { lang: string }) => {
       <div class="uk-navbar-dropdown">
         <ul class="uk-nav uk-navbar-dropdown-nav">
           <li>
-            <Link text="Twitter" href="https://x.com/cletqui" icon="twitter" />
+            <Dropdown
+              text="Twitter"
+              href="https://x.com/cletqui"
+              icon="twitter"
+            />
           </li>
 
           <li>
-            <Link
+            <Dropdown
               text="BlueSky"
               href="https://bsky.app/profile/cybai.re"
               icon="earth"
@@ -148,7 +110,7 @@ const Contact = ({ lang }: { lang: string }) => {
           </li>
 
           <li>
-            <Link
+            <Dropdown
               text="GitHub"
               href="https://github.com/cletqui"
               icon="github"
@@ -156,7 +118,7 @@ const Contact = ({ lang }: { lang: string }) => {
           </li>
 
           <li>
-            <Link
+            <Dropdown
               text="GitLab"
               href="https://gitlab.com/cletqui"
               icon="gitlab"
@@ -164,7 +126,7 @@ const Contact = ({ lang }: { lang: string }) => {
           </li>
 
           <li>
-            <Link
+            <Dropdown
               text="Keybase"
               href="https://keybase.io/clet"
               icon="file-key"
@@ -172,11 +134,11 @@ const Contact = ({ lang }: { lang: string }) => {
           </li>
 
           <li>
-            <Link text="Mail" href="mailto:admin@cybai.re" icon="mail" />
+            <Dropdown text="Mail" href="mailto:admin@cybai.re" icon="mail" />
           </li>
 
           <li>
-            <Link
+            <Dropdown
               text={lang === "fr" ? "Carte" : "Map"}
               href="https://www.openstreetmap.org/#map=19/48.673657/-3.913592"
               icon="map-pin"
@@ -184,7 +146,7 @@ const Contact = ({ lang }: { lang: string }) => {
           </li>
 
           <li>
-            <Link
+            <Dropdown
               icon="linkedin"
               text="LinkedIn"
               tooltip={
@@ -305,6 +267,15 @@ const Search = ({ lang }: { lang: string }) => {
           <span>Twitter</span>
         </a>
 
+        <a href="https://bsky.app/profile/cybai.re" data-group="Contact">
+          <uk-icon
+            class="uk-padding-small-right"
+            custom-class="mr-2"
+            icon="earth"
+          />
+          <span>BlueSky</span>
+        </a>
+
         <a href="https://github.com/cletqui" data-group="Contact">
           <uk-icon
             class="uk-padding-small-right"
@@ -321,6 +292,15 @@ const Search = ({ lang }: { lang: string }) => {
             icon="gitlab"
           />
           <span>GitLab</span>
+        </a>
+
+        <a href="https://keybase.io/clet" data-group="Contact">
+          <uk-icon
+            class="uk-padding-small-right"
+            custom-class="mr-2"
+            icon="file-key"
+          />
+          <span>Keybase</span>
         </a>
 
         <a href="mailto:admin@cybai.re" data-group="Contact">
@@ -366,16 +346,21 @@ const Palette = ({ lang }: { lang: string }) => {
     </div>
   );
 };
+
 const Translate = ({ lang, path }: { lang: string; path: string }) => {
   return (
     <a
       href={`${path === "/" ? "" : path}/${toggleLanguage(lang)}`}
       class="uk-icon-button uk-icon-button-small uk-icon-button-outline"
+      uk-tooltip={`title: ${
+        lang === "fr" ? "Traduire en anglais" : "Translate to French"
+      }; pos: bottom`}
     >
       <uk-icon icon="languages" />
     </a>
   );
 };
+
 const Navbar = ({ lang, path }: { lang: string; path: string }) => {
   return (
     <div uk-navbar>
