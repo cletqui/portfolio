@@ -141,42 +141,50 @@ const Contact = () => {
       <div class="uk-navbar-dropdown">
         <ul class="uk-nav uk-navbar-dropdown-nav">
           <li>
-            <Link href="https://x.com/cletqui" icon="twitter" text="Twitter" />
+            <Link text="Twitter" href="https://x.com/cletqui" icon="twitter" />
           </li>
 
           <li>
             <Link
+              text="BlueSky"
               href="https://bsky.app/profile/cybai.re"
               icon="earth"
-              text="BlueSky"
             />
           </li>
 
           <li>
             <Link
+              text="GitHub"
               href="https://github.com/cletqui"
               icon="github"
-              text="GitHub"
             />
           </li>
 
           <li>
             <Link
+              text="GitLab"
               href="https://gitlab.com/cletqui"
               icon="gitlab"
-              text="GitLab"
             />
           </li>
 
           <li>
-            <Link href="mailto:admin@cybai.re" icon="mail" text="Mail" />
+            <Link
+              text="Keybase"
+              href="https://keybase.io/clet"
+              icon="file-key"
+            />
+          </li>
+
+          <li>
+            <Link text="Mail" href="mailto:admin@cybai.re" icon="mail" />
           </li>
 
           <li>
             <Link
+              text={lang === "fr" ? "Carte" : "Map"}
               href="https://www.openstreetmap.org/#map=19/48.673657/-3.913592"
               icon="map-pin"
-              text={lang === "fr" ? "Carte" : "Map"}
             />
           </li>
 
