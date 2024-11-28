@@ -1,10 +1,6 @@
-import { useRequestContext } from "hono/jsx-renderer";
-
 import { Title } from "./layout";
 
-export const WIP = () => {
-  const c = useRequestContext();
-  const { lang } = c.var;
+export const WIP = ({lang}: {lang: string}) => {
   return (
     <div class="uk-flex uk-flex-center uk-flex-middle uk-flex-column">
       <Title>{lang === "fr" ? "Travail en cours" : "Work In Progress"}</Title>

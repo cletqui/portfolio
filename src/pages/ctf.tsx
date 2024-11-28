@@ -7,7 +7,8 @@ const app = new Hono<{}>();
 // TODO
 
 app.get("/", (c: Context) => {
-  return c.render(<WIP />);
+  const { lang } = c.var;
+  return c.render(<WIP lang={lang} />);
 });
 
 export default app;

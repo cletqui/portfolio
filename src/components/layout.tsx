@@ -1,5 +1,4 @@
 import { Child } from "hono/jsx";
-import { useRequestContext } from "hono/jsx-renderer";
 
 export const Title = ({ children }: { children: Child }) => (
   <h1 class="uk-h1 uk-heading-medium uk-margin-large uk-heading-divider uk-margin-medium-top">
@@ -48,11 +47,22 @@ export const Button = ({
   </div>
 );
 
+export const Avatar = ({ size }: { size: number }) => (
+  <div class="uk-overflow-auto uk-flex-middle">
+    <img
+      class="uk-border-pill"
+      style="aspect-ratio: 1 / 1"
+      src="/static/avatar.jpg"
+      width={size}
+      height={size}
+      alt="avatar"
+    />
+  </div>
+);
+
 export const Spinner = () => <div uk-spinner></div>;
 
-export const Epochalypse = () => {
-  const c = useRequestContext();
-  const { lang } = c.var;
+export const Epochalypse = ({ lang }: { lang: string }) => {
   return (
     <>
       <h1 class="uk-h3 uk-margin uk-heading-divider">{"Epochalypse"}</h1>

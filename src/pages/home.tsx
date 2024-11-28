@@ -1,25 +1,13 @@
 import { Context, Hono } from "hono";
 
 import ctf from "./ctf";
+import { Avatar } from "../components/layout";
 import { Error } from "../components/error";
 
 /* APP */
 const app = new Hono<{}>();
 
 /* COMPONENTS */
-const Avatar = () => (
-  <div class="uk-overflow-auto uk-flex-middle">
-    <img
-      class="uk-border-pill"
-      style="aspect-ratio: 1 / 1"
-      src="/static/avatar.jpg"
-      width="400"
-      height="400"
-      alt="avatar"
-    />
-  </div>
-);
-
 const Welcome = ({ lang }: { lang: string }) => (
   <div class="uk-section uk-section-small">
     <h2 class="uk-h2 uk-heading-bullet">
@@ -83,7 +71,7 @@ app.get("/", (c: Context) => {
         </div>
 
         <div class="uk-width-1-3@m uk-flex uk-flex-center">
-          <Avatar />
+          <Avatar size={400} />
         </div>
       </div>
 
@@ -123,13 +111,16 @@ app.get("/rickroll", (c: Context) =>
   c.redirect("https://www.youtube.com/watch?v=dQw4w9WgXcQ&pp=ygUJcmljayByb2xs")
 );
 
+app.get("/fl@g.txt", (c: Context) => c.text("D1dY0uR34dTh3M4n1f3St?"));
+
 app.route("/ctf", ctf);
 
 /* DEFAULT */
 app.get("*", (c: Context) => {
+  const { lang } = c.var;
   const error = 404;
   c.status(error);
-  return c.render(<Error error={error} />);
+  return c.render(<Error lang={lang} error={error} />);
 });
 
 export default app;

@@ -4,7 +4,7 @@ import { getConnInfo } from "hono/cloudflare-workers";
 
 import { Bindings, Variables } from "..";
 import { queryIPInfo, IPInfo, queryUserAgent, UserAgent } from "../utils/api";
-import { Spinner, Title } from "../components/layout";
+import { Avatar, Spinner, Title } from "../components/layout";
 
 /* COMPONENTS */
 const OpenStreetMap = ({
@@ -233,6 +233,8 @@ app.get("/me", (c: Context<{ Bindings: Bindings; Variables: Variables }>) => {
         class="uk-child-width-1-2@s uk-flex-center uk-grid-small uk-text-center"
         uk-grid="parallax: 150"
       >
+        <Avatar size={200} />
+        
         <div>
           <div class="uk-card uk-card-body uk-card-primary">
             <p class="uk-paragraph uk-text-justify">

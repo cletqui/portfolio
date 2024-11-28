@@ -1,5 +1,3 @@
-import { useRequestContext } from "hono/jsx-renderer";
-
 import { Button, Title } from "./layout";
 
 const errors = {
@@ -24,9 +22,13 @@ const errors = {
   418: "I'm a teapot",
 };
 
-export const Error = ({ error }: { error: keyof typeof errors }) => {
-  const c = useRequestContext();
-  const { lang } = c.var;
+export const Error = ({
+  lang,
+  error,
+}: {
+  lang: string;
+  error: keyof typeof errors;
+}) => {
   return (
     <div class="uk-flex uk-flex-center uk-flex-middle uk-flex-column">
       <Title>{error}</Title>

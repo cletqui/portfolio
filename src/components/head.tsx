@@ -1,19 +1,20 @@
 import { html } from "hono/html";
 
-interface SiteData {
+export const Head = ({
+  title,
+  description = "",
+}: {
   title: string;
   description?: string;
-}
-
-export const Head = (props: SiteData) =>
+}) =>
   html`<head>
     <meta charset="utf-8" />
-    <meta name="description" content="${props.description || ""}" />
+    <meta name="description" content="${description}" />
     <meta name="viewport" content="width=device-width" />
-    <title>${props.title}</title>
-    <link rel="icon" type="image/x-icon" href="/favicon.ico" />
-    <link rel="manifest" href="/static/manifest.webmanifest" />
-    <link rel="text/plain" href="/static/robots.txt" />
+    <title>${title}</title>
+    <link rel="icon" type="image/x-icon" href="/static/favicon.ico" />
+    <link rel="manifest" href="/.well-known/manifest.webmanifest" />
+    <link rel="text/plain" href="/.well-known/robots.txt" />
 
     <link rel="preconnect" href="https://rsms.me/" />
     <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />

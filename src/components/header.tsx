@@ -1,21 +1,20 @@
-import { useRequestContext } from "hono/jsx-renderer";
 import { toggleLanguage } from "../utils/language";
 
-const Logo = () => (
-  <a class="uk-navbar-item uk-logo" href="/" aria-label="Back to Home">
+const Logo = ({ lang }: { lang: string }) => (
+  <a
+    class="uk-navbar-item uk-logo"
+    href="/"
+    aria-label={lang === "fr" ? "Retour à l'accueil" : "Back to Home"}
+  >
     🕳️
   </a>
 );
 
-const AboutMe = () => {
-  const c = useRequestContext();
-  const { lang } = c.var;
+const AboutMe = ({ lang }: { lang: string }) => {
   return <a href="/about/me">{lang === "fr" ? "A propos" : "About me"}</a>;
 };
 
-const AboutYou = () => {
-  const c = useRequestContext();
-  const { lang } = c.var;
+const AboutYou = ({ lang }: { lang: string }) => {
   return <a href="/about/you">{lang === "fr" ? "de toi ?" : "About you"}</a>;
 };
 
@@ -49,9 +48,7 @@ const Project = ({
   );
 };
 
-const Projects = () => {
-  const c = useRequestContext();
-  const { lang } = c.var;
+const Projects = ({ lang }: { lang: string }) => {
   return (
     <>
       <a href="/projects">
@@ -129,9 +126,7 @@ const Link = ({
   </a>
 );
 
-const Contact = () => {
-  const c = useRequestContext();
-  const { lang } = c.var;
+const Contact = ({ lang }: { lang: string }) => {
   return (
     <>
       <a href="/contact">
@@ -203,9 +198,7 @@ const Contact = () => {
   );
 };
 
-const Search = () => {
-  const c = useRequestContext();
-  const { lang } = c.var;
+const Search = ({ lang }: { lang: string }) => {
   return (
     <>
       <button
@@ -355,9 +348,7 @@ const Search = () => {
   );
 };
 
-const Palette = () => {
-  const c = useRequestContext();
-  const { lang } = c.var;
+const Palette = ({ lang }: { lang: string }) => {
   return (
     <div class="uk-inline">
       <button class="uk-icon-button uk-icon-button-small uk-icon-button-outline">
@@ -375,45 +366,40 @@ const Palette = () => {
     </div>
   );
 };
-const Translate = () => {
-  const c = useRequestContext();
+const Translate = ({ lang, path }: { lang: string; path: string }) => {
   return (
     <a
-      href={`${c.req.path === "/" ? "" : c.req.path}/${toggleLanguage(
-        c.var.lang
-      )}`}
+      href={`${path === "/" ? "" : path}/${toggleLanguage(lang)}`}
       class="uk-icon-button uk-icon-button-small uk-icon-button-outline"
     >
       <uk-icon icon="languages" />
     </a>
   );
 };
-const Navbar = () => {
-  const c = useRequestContext();
-  const { path } = c.req;
+const Navbar = ({ lang, path }: { lang: string; path: string }) => {
   return (
     <div uk-navbar>
       <div class="uk-navbar-left">
-        <Logo />
+        <Logo lang={lang} />
 
         <ul
           id="navbar"
           class="uk-navbar-nav uk-flex-left uk-dropnav navbar-toggle"
         >
           <li class={path.startsWith("/about/me") ? "uk-active" : ""}>
-            <AboutMe />
+            <AboutMe lang={lang} />
           </li>
 
           <li class={path.startsWith("/about/you") ? "uk-active" : ""}>
-            <AboutYou />
+            <AboutYou lang={lang} />
           </li>
 
           <li class={path.startsWith("/projects") ? "uk-active" : ""}>
-            <Projects />
+            <Projects lang={lang} />
           </li>
 
           <li class={path.startsWith("/contact") ? "uk-active" : ""}>
-            <Contact />
+            <Contact lang={lang} />
           </li>
         </ul>
       </div>
@@ -421,15 +407,15 @@ const Navbar = () => {
       <div class="uk-navbar-right">
         <ul class="uk-iconnav uk-flex-right uk-iconnav-small navbar-toggle uk-margin-medium-left">
           <li>
-            <Search />
+            <Search lang={lang} />
           </li>
 
           <li>
-            <Palette />
+            <Palette lang={lang} />
           </li>
 
           <li>
-            <Translate />
+            <Translate lang={lang} path={path} />
           </li>
         </ul>
       </div>
@@ -437,12 +423,12 @@ const Navbar = () => {
   );
 };
 
-export const Header = () => {
+export const Header = ({ lang, path }: { lang: string; path: string }) => {
   return (
     <div uk-sticky="sel-target: .uk-navbar-container; cls-active: uk-navbar-sticky">
       <nav class="uk-navbar-container">
         <div class="uk-container">
-          <Navbar />
+          <Navbar lang={lang} path={path} />
         </div>
       </nav>
     </div>

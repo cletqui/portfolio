@@ -1,5 +1,3 @@
-import { useRequestContext } from "hono/jsx-renderer";
-
 const FooterIcon = ({ icon, href }: { icon: string; href: string }) => (
   <a
     href={href}
@@ -11,9 +9,7 @@ const FooterIcon = ({ icon, href }: { icon: string; href: string }) => (
   </a>
 );
 
-const LoveAndCoffee = () => {
-  const c = useRequestContext();
-  const { lang } = c.var;
+const LoveAndCoffee = ({ lang }: { lang: string }) => {
   return (
     <div class="uk-flex uk-flex-middle">
       {lang === "fr" ? "Fait avec" : "Made with"}
@@ -24,9 +20,7 @@ const LoveAndCoffee = () => {
   );
 };
 
-const Issues = () => {
-  const c = useRequestContext();
-  const { lang } = c.var;
+const Issues = ({ lang }: { lang: string }) => {
   return (
     <div class="uk-flex uk-flex-middle">
       {lang === "fr" ? "Signale les bugs sur" : "Report bugs on"}
@@ -38,14 +32,14 @@ const Issues = () => {
   );
 };
 
-export const Footer = () => (
+export const Footer = ({ lang }: { lang: string }) => (
   <div uk-sticky="position: bottom">
     <div
-      class="uk-flex uk-flex-inline uk-flex-column uk-flex-middle uk-text-muted uk-padding-small uk-padding-small-bottom uk-padding-top" /* TODO use Grid */
+      class="uk-flex uk-flex-column uk-flex-middle uk-text-muted uk-padding-small uk-padding-small-bottom uk-padding-top" /* TODO use Grid */
     >
       <div class="uk-grid-divider uk-text-small" uk-grid>
-        <LoveAndCoffee />
-        <Issues />
+        <LoveAndCoffee lang={lang} />
+        <Issues lang={lang} />
       </div>
     </div>
   </div>
