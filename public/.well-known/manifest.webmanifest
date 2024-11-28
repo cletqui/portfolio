@@ -1,0 +1,50 @@
+{
+  "short_name": "Portfolio",
+  "name": "cybai.re - Portfolio",
+  "icons": [
+    {
+      "src": "favicon.ico",
+      "sizes": "98x96",
+      "type": "image/x.icon"
+    }
+  ],
+  "id": ".",
+  "start_url": ".",
+  "background_color": "#fff",
+  "display": "standalone",
+  "scope": "/",
+  "theme_color": "#fff",
+  "shortcuts": [
+    {
+      "name": "About me",
+      "short-name": "Me",
+      "description": "About me page",
+      "url": "/about/me"
+    },
+    {
+      "name": "About you",
+      "short-name": "You",
+      "description": "About you page",
+      "url": "/about/you"
+    },
+    {
+      "name": "Projects",
+      "short-name": "Projects",
+      "description": "Projects page",
+      "url": "/projects"
+    },
+    {
+      "name": "Contact",
+      "short-name": "Contact",
+      "description": "Contact page",
+      "url": "/contact"
+    },
+    {
+      "name": "Fl@g",
+      "short-name": "Fl@g",
+      "description": "Who even read this?",
+      "url": "/fl@g.txt"
+    }
+  ],
+  "description": "Personal portfolio."
+}
