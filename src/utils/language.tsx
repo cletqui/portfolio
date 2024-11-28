@@ -12,6 +12,7 @@ const setLanguage = (
   setCookie(c, "lang", lang, {
     secure: true,
     httpOnly: true,
+    maxAge: 2628000,
     sameSite: "Strict",
   });
 };
