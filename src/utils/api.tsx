@@ -1,6 +1,10 @@
+import { Context } from "hono";
+import { getCookie } from "hono/cookie";
+
 /* TYPES */
 export interface IPInfo {
-  query: string;
+  address?: string;
+  query?: string;
   status: string;
   continent: string;
   continentCode: string;
@@ -36,16 +40,43 @@ export interface UserAgent {
 }
 
 /* QUERIES */
-export const queryIPInfo = async (address: string): Promise<IPInfo> => {
+const queryIPInfo = async (address: string): Promise<IPInfo> => {
   const apiUrl = new URL("https://api.cybai.re/ip/info");
   apiUrl.pathname += `/${address}`;
   const response = await fetch(apiUrl);
   return response.json();
 };
 
-export const queryUserAgent = async (userAgent: string): Promise<UserAgent> => {
+export const getIPInfo = async (
+  c: Context,
+  address: string
+): Promise<IPInfo> => {
+  const cookie = getCookie(c, "you");
+  if (cookie) {
+    const { ipInfo }: { ipInfo: IPInfo } = JSON.parse(cookie);
+    if (ipInfo.address && ipInfo.address === address) {
+      return ipInfo;
+    }
+  }
+  const info = await queryIPInfo(address);
+  return info;
+};
+
+const queryUserAgent = async (userAgent: string): Promise<UserAgent> => {
   const apiUrl = new URL("https://api.cybai.re/user-agent");
   apiUrl.searchParams.append("ua", userAgent);
   const response = await fetch(apiUrl);
   return response.json();
+};
+
+export const getUserAgent = async (c: Context, userAgent: string) => {
+  const cookie = getCookie(c, "you");
+  if (cookie) {
+    const { ua }: { ua: UserAgent } = JSON.parse(cookie);
+    if (ua.ua === userAgent) {
+      return ua;
+    }
+  }
+  const ua = queryUserAgent(userAgent);
+  return ua;
 };

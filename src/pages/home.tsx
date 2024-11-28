@@ -30,8 +30,8 @@ const Description = ({ lang }: { lang: string }) => (
     </p>
     <p class="uk-paragraph uk-text-justify">
       {lang === "fr"
-        ? "Je construis des projets que vous pouvez voir... et je sécurise des projets que vous ne pouvez pas voir. Ce site... disons qu'il a plus que quelques niveaux. Chaque clic, chaque transition, a été conçu dans un but précis. Vous êtes curieux ? Plongez-y."
-        : "I build things you can see... and secure things you can't. This site? Let's just say it has more than a few layers. Every click, every transition — crafted with purpose. Curious? Dive in."}
+        ? "Je construis des projets que vous pouvez voir… et je sécurise des projets que vous ne pouvez pas voir. Ce site… disons qu'il a plus que quelques niveaux. Chaque clic, chaque transition, a été conçu dans un but précis. Vous êtes curieux ? Plongez-y."
+        : "I build things you can see… and secure things you can't. This site? Let's just say it has more than a few layers. Every click, every transition — crafted with purpose. Curious? Dive in."}
     </p>
   </div>
 );
