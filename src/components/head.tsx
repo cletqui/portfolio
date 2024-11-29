@@ -8,6 +8,7 @@ export const Head = ({
   description?: string;
 }) =>
   html`<head>
+    <!-- 4lw4y5Ch3ck50urc3C0d3 -->
     <meta charset="UTF-8" />
     <meta name="description" content="${description}" />
     <meta name="viewport" content="width=device-width" />
@@ -19,7 +20,7 @@ export const Head = ({
     <link rel="preconnect" href="https://rsms.me/" />
     <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
 
-    <noscrip><style>body { visibility: visible; }</style></noscript>
+    <noscript><style>body { visibility: visible; }</style></noscript>
 
     <style>
       :root {

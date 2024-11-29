@@ -52,7 +52,7 @@ export const Avatar = ({ size }: { size: number }) => (
     <img
       class="uk-border-pill"
       style="aspect-ratio: 1 / 1"
-      src="/static/avatar.jpg"
+      src="/static/avatar.png"
       width={size}
       height={size}
       alt="avatar"

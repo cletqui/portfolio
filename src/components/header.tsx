@@ -1,5 +1,8 @@
 import { toggleLanguage } from "../utils/language";
 
+import { projects } from "../pages/projects";
+import { contacts } from "../pages/contact";
+
 const Logo = ({ lang }: { lang: string }) => (
   <a
     class="uk-navbar-item uk-logo"
@@ -49,35 +52,13 @@ const Projects = ({ lang }: { lang: string }) => {
         <div>{lang === "fr" ? "Projets" : "Projects"}</div>
       </a>
 
-      <div class="uk-navbar-dropdown">
+      <div class="uk-navbar-dropdown" uk-drop="delay-show: 420">
         <ul class="uk-nav uk-navbar-dropdown-nav">
-          <li>
-            <Dropdown icon="github" text="PetitHub" href="/projects/petithub" />
-          </li>
-
-          <li>
-            <Dropdown icon="code-xml" text="API" href="/projects/api" />
-          </li>
-
-          <li>
-            <Dropdown icon="waves" text="Tide" href="/projects/tide" />
-          </li>
-
-          <li>
-            <Dropdown icon="beer" text="Apéro" href="/projects/apero" />
-          </li>
-
-          <li>
-            <Dropdown icon="mail" text="Mail" href="/projects/mail" />
-          </li>
-
-          <li>
-            <Dropdown
-              icon="clock"
-              text="Epochalypse"
-              href="/projects/epochalypse"
-            />
-          </li>
+          {projects.map(({ name, icon, internal }) => (
+            <li>
+              <Dropdown icon={icon} text={name} href={internal} />
+            </li>
+          ))}
         </ul>
       </div>
     </>
@@ -91,69 +72,13 @@ const Contact = ({ lang }: { lang: string }) => {
         <div>Contact</div>
       </a>
 
-      <div class="uk-navbar-dropdown">
+      <div class="uk-navbar-dropdown" uk-drop="delay-show: 500">
         <ul class="uk-nav uk-navbar-dropdown-nav">
-          <li>
-            <Dropdown
-              text="Twitter"
-              href="https://x.com/cletqui"
-              icon="twitter"
-            />
-          </li>
-
-          <li>
-            <Dropdown
-              text="BlueSky"
-              href="https://bsky.app/profile/cybai.re"
-              icon="earth"
-            />
-          </li>
-
-          <li>
-            <Dropdown
-              text="GitHub"
-              href="https://github.com/cletqui"
-              icon="github"
-            />
-          </li>
-
-          <li>
-            <Dropdown
-              text="GitLab"
-              href="https://gitlab.com/cletqui"
-              icon="gitlab"
-            />
-          </li>
-
-          <li>
-            <Dropdown
-              text="Keybase"
-              href="https://keybase.io/clet"
-              icon="file-key"
-            />
-          </li>
-
-          <li>
-            <Dropdown text="Mail" href="mailto:admin@cybai.re" icon="mail" />
-          </li>
-
-          <li>
-            <Dropdown
-              text={lang === "fr" ? "Carte" : "Map"}
-              href="https://www.openstreetmap.org/#map=19/48.673657/-3.913592"
-              icon="map-pin"
-            />
-          </li>
-
-          <li>
-            <Dropdown
-              icon="linkedin"
-              text="LinkedIn"
-              tooltip={
-                lang === "fr" ? "PM moi si intéressé !" : "DM me if interested!"
-              }
-            />
-          </li>
+          {contacts.map(({ name, icon, href, tooltip }) => (
+            <li>
+              <Dropdown text={name} href={href} icon={icon} tooltip={tooltip} />
+            </li>
+          ))}
         </ul>
       </div>
     </>
@@ -180,7 +105,7 @@ const Search = ({ lang }: { lang: string }) => {
           <span>{lang === "fr" ? "Accueil" : "Home"}</span>
         </a>
 
-        <a href="/about" data-group={lang === "fr" ? "A propos" : "About"}>
+        <a href="/about/me" data-group={lang === "fr" ? "A propos" : "About"}>
           <uk-icon
             class="uk-padding-small-right"
             custom-class="mr-2"
@@ -189,7 +114,7 @@ const Search = ({ lang }: { lang: string }) => {
           <span>{lang === "fr" ? "A propos" : "About me"}</span>
         </a>
 
-        <a href="#" data-group={lang === "fr" ? "A propos" : "About"}>
+        <a href="/about/you" data-group={lang === "fr" ? "A propos" : "About"}>
           <uk-icon
             class="uk-padding-small-right"
             custom-class="mr-2"
@@ -198,131 +123,30 @@ const Search = ({ lang }: { lang: string }) => {
           <span>{lang === "fr" ? "de toi ?" : "About you"}</span>
         </a>
 
-        <a
-          href="/projects/petithub"
-          data-group={lang === "fr" ? "Projets" : "Projects"}
-        >
-          <uk-icon
-            class="uk-padding-small-right"
-            custom-class="mr-2"
-            icon="github"
-          />
-          <span>PetitHub</span>
-        </a>
+        {projects.map(({ name, icon, internal }) => (
+          <a
+            href={internal}
+            data-group={lang === "fr" ? "Projets" : "Projects"}
+          >
+            <uk-icon
+              class="uk-padding-small-right"
+              custom-class="mr-2"
+              icon={icon}
+            />
+            <span>{name}</span>
+          </a>
+        ))}
 
-        <a
-          href="/projects/api"
-          data-group={lang === "fr" ? "Projets" : "Projects"}
-        >
-          <uk-icon
-            class="uk-padding-small-right"
-            custom-class="mr-2"
-            icon="webhook"
-          />
-          <span>API</span>
-        </a>
-
-        <a
-          href="/projects/tide"
-          data-group={lang === "fr" ? "Projets" : "Projects"}
-        >
-          <uk-icon
-            class="uk-padding-small-right"
-            custom-class="mr-2"
-            icon="waves"
-          />
-          <span>Tide</span>
-        </a>
-
-        <a
-          href="/projects/apero"
-          data-group={lang === "fr" ? "Projets" : "Projects"}
-        >
-          <uk-icon
-            class="uk-padding-small-right"
-            custom-class="mr-2"
-            icon="beer"
-          />
-          <span>Apéro</span>
-        </a>
-
-        <a
-          href="/projects/mail"
-          data-group={lang === "fr" ? "Projets" : "Projects"}
-        >
-          <uk-icon
-            class="uk-padding-small-right"
-            custom-class="mr-2"
-            icon="mail"
-          />
-          <span>Mail</span>
-        </a>
-
-        <a href="https://x.com/cletqui" data-group="Contact">
-          <uk-icon
-            class="uk-padding-small-right"
-            custom-class="mr-2"
-            icon="twitter"
-          />
-          <span>Twitter</span>
-        </a>
-
-        <a href="https://bsky.app/profile/cybai.re" data-group="Contact">
-          <uk-icon
-            class="uk-padding-small-right"
-            custom-class="mr-2"
-            icon="earth"
-          />
-          <span>BlueSky</span>
-        </a>
-
-        <a href="https://github.com/cletqui" data-group="Contact">
-          <uk-icon
-            class="uk-padding-small-right"
-            custom-class="mr-2"
-            icon="github"
-          />
-          <span>GitHub</span>
-        </a>
-
-        <a href="https://gitlab.com/cletqui" data-group="Contact">
-          <uk-icon
-            class="uk-padding-small-right"
-            custom-class="mr-2"
-            icon="gitlab"
-          />
-          <span>GitLab</span>
-        </a>
-
-        <a href="https://keybase.io/clet" data-group="Contact">
-          <uk-icon
-            class="uk-padding-small-right"
-            custom-class="mr-2"
-            icon="file-key"
-          />
-          <span>Keybase</span>
-        </a>
-
-        <a href="mailto:admin@cybai.re" data-group="Contact">
-          <uk-icon
-            class="uk-padding-small-right"
-            custom-class="mr-2"
-            icon="mail"
-          />
-          <span>Mail</span>
-        </a>
-
-        <a
-          href="https://www.openstreetmap.org/#map=19/48.673657/-3.913592"
-          data-group="Contact"
-        >
-          <uk-icon
-            class="uk-padding-small-right"
-            custom-class="mr-2"
-            icon="map-pin"
-          />
-          <span>{lang === "fr" ? "Carte" : "Map"}</span>
-        </a>
+        {contacts.map(({ name, icon, href }) => (
+          <a href={href} data-group="Contact">
+            <uk-icon
+              class="uk-padding-small-right"
+              custom-class="mr-2"
+              icon={icon}
+            />
+            <span>{name}</span>
+          </a>
+        ))}
       </uk-command>
     </>
   );
