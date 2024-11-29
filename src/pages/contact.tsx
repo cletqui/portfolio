@@ -8,7 +8,7 @@ const app = new Hono<{}>();
 app.get("", (c: Context) => {
   const { lang } = c.var;
   return c.render(
-    <div class="uk-flex uk-flex-column uk-flex-middle uk-flex-center">
+    <div class="uk-flex uk-flex-column uk-flex-middle">
       <Title>{lang === "fr" ? "Connectons-nous !" : "Let's connect!"}</Title>
 
       <p class="uk-paragraph uk-padding-medium uk-text-center">

@@ -30,7 +30,7 @@ export const Error = ({
   error: keyof typeof errors;
 }) => {
   return (
-    <div class="uk-flex uk-flex-center uk-flex-middle uk-flex-column">
+    <div class="uk-flex uk-flex-column uk-flex-middle">
       <Title>{error}</Title>
       <uk-icon icon="ban" height="64" width="64" />
       <h4 class="uk-h4 uk-padding-top">{errors[error]}</h4>

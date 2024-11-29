@@ -59,7 +59,7 @@ export const getIPInfo = async (
     }
   }
   const info = await queryIPInfo(address);
-  return info;
+  return { address, ...info };
 };
 
 const queryUserAgent = async (userAgent: string): Promise<UserAgent> => {

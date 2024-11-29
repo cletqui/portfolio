@@ -22,7 +22,7 @@ const Welcome = ({ lang }: { lang: string }) => (
 );
 
 const Description = ({ lang }: { lang: string }) => (
-  <div class="uk-card uk-card-body uk-card-secondary">
+  <div class="uk-card uk-card-body uk-card-primary">
     <p class="uk-paragraph uk-text-justify">
       {lang === "fr"
         ? "Ce portfolio est juste un terrain de jeu pour présenter mes projets, mes passions, moi-même."
@@ -37,8 +37,8 @@ const Description = ({ lang }: { lang: string }) => (
 );
 
 const Details = ({ lang }: { lang: string }) => (
-  <div class="uk-card uk-card-body uk-card-primary">
-    <p class="uk-paragraph uk-text-break">
+  <div class="uk-card uk-card-body uk-card-secondary">
+    <p class="uk-paragraph uk-text-justify">
       {lang === "fr" ? "Il est construit en utilisant " : "It is built using "}
       <a class="uk-link" href="https://hono.dev/">
         Hono
@@ -64,7 +64,7 @@ const Details = ({ lang }: { lang: string }) => (
 app.get("/", (c: Context) => {
   const { lang } = c.var;
   return c.render(
-    <div class="uk-flex uk-flex-column uk-flex-middle uk-flex-center uk-margin-large-top">
+    <div class="uk-flex uk-flex-column uk-flex-middle uk-margin-large-top">
       <div class="uk-child-width-expand@s uk-width-2-3@m" uk-grid>
         <div class="uk-width-2-3@m uk-flex-first">
           <Welcome lang={lang} />
