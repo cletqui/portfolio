@@ -35,7 +35,7 @@ export const Error = ({
       <uk-icon icon="ban" height="64" width="64" />
       <h4 class="uk-h4 uk-padding-top">{errors[error]}</h4>
 
-      <div class="uk-flex uk-flex-center uk-padding-top">
+      <div class="uk-flex uk-flex-center uk-flex-middle uk-padding-top">
         <Button
           text={lang === "fr" ? "Retour à l'accueil" : "Go back home"}
           icon="chevron-left"

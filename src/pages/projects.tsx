@@ -1,9 +1,21 @@
 import { Context, Hono } from "hono";
 import { Button, Epochalypse, Title } from "../components/layout";
 
+interface Project {
+  id: string;
+  name: string;
+  icon: string;
+  description?: string;
+  image?: string;
+  internal?: string;
+  href?: string;
+  github?: string;
+}
+
 /* GLOBAL CONSTANTS */
-export const projects = [
+export const projects: Project[] = [
   {
+    id: "petithub",
     name: "PetitHub",
     icon: "github",
     image: "/static/projects/petithub.png",
@@ -12,6 +24,7 @@ export const projects = [
     github: "https://github.com/cletqui/petithub",
   },
   {
+    id: "portfolio",
     name: "Portfolio",
     icon: "book-user",
     image: "/static/projects/portfolio.png",
@@ -20,6 +33,7 @@ export const projects = [
     github: "https://github.com/cletqui/portfolio",
   },
   {
+    id: "api",
     name: "API",
     icon: "code-xml",
     image: "/static/projects/api.png",
@@ -28,6 +42,7 @@ export const projects = [
     github: "https://github.com/cletqui/api",
   },
   {
+    id: "mail",
     name: "Mail",
     icon: "mail",
     image: "/static/projects/mail.png",
@@ -36,6 +51,7 @@ export const projects = [
     github: "https://github.com/cletqui/mail",
   },
   {
+    id: "tide",
     name: "Tide",
     icon: "waves",
     image: "/static/projects/tide.png",
@@ -44,6 +60,7 @@ export const projects = [
     github: "https://github.com/cletqui/api",
   },
   {
+    id: "apero",
     name: "Apéro",
     icon: "beer",
     image: "/static/projects/apéro.png",
@@ -52,6 +69,7 @@ export const projects = [
     github: "https://github.com/cletqui/apero",
   },
   {
+    id: "epochalypse",
     name: "Epochalypse",
     icon: "clock",
     image: "/static/projects/epochalypse.png",
@@ -67,20 +85,20 @@ const app = new Hono<{}>();
 const Thumbnail = ({
   lang,
   name,
+  icon,
   description,
   image,
-  icon,
   internal,
   href,
   github,
 }: {
   lang: string;
   name: string;
-  description?: string;
   icon: string;
+  description?: string;
   image?: string;
-  internal: string;
-  href: string;
+  internal?: string;
+  href?: string;
   github?: string;
 }) => (
   <div>
@@ -107,7 +125,7 @@ const Thumbnail = ({
         )}
       </div>
 
-      <div class="uk-card-footer uk-flex uk-flex-between">
+      <div class="uk-card-footer uk-flex uk-flex-between uk-flex-middle uk-flex-row@m uk-flex-column">
         {internal && (
           <Button
             text={lang === "fr" ? "Détails" : "Details"}
@@ -132,57 +150,72 @@ const Thumbnail = ({
   </div>
 );
 
-const Project = () => <></>;
+const Project = ({
+  lang,
+  name,
+  icon,
+  description,
+  image,
+  href,
+  github,
+}: {
+  lang: string;
+  name: string;
+  icon: string;
+  description?: string;
+  image?: string;
+  internal?: string;
+  href?: string;
+  github?: string;
+}) => (
+  <div class="uk-flex uk-flex-column uk-flex-middle">
+    <Title>{name}</Title>
+    <div
+      class="uk-child-width-expand@s uk-width-2-3@m uk-child-width-1-1"
+      uk-grid
+    >
+      <Thumbnail
+        lang={lang}
+        name={name}
+        description={description}
+        icon={icon}
+        image={image}
+        href={href}
+        github={github}
+      />
+    </div>
+  </div>
+);
 
 /* ENDPOINTS */
 app.get("/petithub", (c: Context) => {
   const { lang } = c.var;
-  return c.render(
-    <div class="uk-flex uk-flex-column uk-flex-middle">
-      <Title>{lang === "fr" ? "Projets" : "Projects"}</Title>
-      <h2 class="uk-heading-small uk-margin">PetitHub</h2>
-    </div>
-  );
+  const petithub = projects.find((project) => project.id === "petithub");
+  return c.render(<Project lang={lang} {...petithub} />);
 });
 
 app.get("/api", (c: Context) => {
   const { lang } = c.var;
-  return c.render(
-    <div class="uk-flex uk-flex-column uk-flex-middle">
-      <Title>{lang === "fr" ? "Projets" : "Projects"}</Title>
-      <h2 class="uk-heading-small uk-margin">API</h2>
-    </div>
-  );
+  const api = projects.find((project) => project.id === "api");
+  return c.render(<Project lang={lang} {...api} />);
 });
 
 app.get("/tide", (c: Context) => {
   const { lang } = c.var;
-  return c.render(
-    <div class="uk-flex uk-flex-column uk-flex-middle">
-      <Title>{lang === "fr" ? "Projets" : "Projects"}</Title>
-      <h2 class="uk-heading-small uk-margin">Tide</h2>
-    </div>
-  );
+  const tide = projects.find((project) => project.id === "tide");
+  return c.render(<Project lang={lang} {...tide} />);
 });
 
 app.get("/apéro", (c: Context) => {
   const { lang } = c.var;
-  return c.render(
-    <div class="uk-flex uk-flex-column uk-flex-middle">
-      <Title>{lang === "fr" ? "Projets" : "Projects"}</Title>
-      <h2 class="uk-heading-small uk-margin">Apéro</h2>
-    </div>
-  );
+  const apero = projects.find((project) => project.id === "apero");
+  return c.render(<Project lang={lang} {...apero} />);
 });
 
 app.get("/mail", (c: Context) => {
   const { lang } = c.var;
-  return c.render(
-    <div class="uk-flex uk-flex-column uk-flex-middle">
-      <Title>{lang === "fr" ? "Projets" : "Projects"}</Title>
-      <h2 class="uk-heading-small uk-margin">Mail</h2>
-    </div>
-  );
+  const mail = projects.find((project) => project.id === "mail");
+  return c.render(<Project lang={lang} {...mail} />);
 });
 
 app.get("/epochalypse", (c: Context) => {

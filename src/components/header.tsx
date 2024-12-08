@@ -26,16 +26,18 @@ const Dropdown = ({
   text,
   href,
   tooltip,
+  internal = false,
 }: {
   icon: string;
   text: string;
   href?: string;
   tooltip?: string;
+  internal?: boolean;
 }) => (
   <a
     href={href}
-    target="_blank"
-    rel="noopener noreferrer"
+    target={internal ? "_self" : "_blank"}
+    rel={internal ? "" : "noopener noreferrer"}
     uk-tooltip={tooltip && `pos:bottom;title:${tooltip}`}
   >
     <button disabled={!href} class="uk-icon-button uk-icon-button-xsmall w-40">
@@ -56,7 +58,12 @@ const Projects = ({ lang }: { lang: string }) => {
         <ul class="uk-nav uk-navbar-dropdown-nav">
           {projects.map(({ name, icon, internal }) => (
             <li>
-              <Dropdown icon={icon} text={name} href={internal} />
+              <Dropdown
+                icon={icon}
+                text={name}
+                href={internal}
+                internal={true}
+              />
             </li>
           ))}
         </ul>

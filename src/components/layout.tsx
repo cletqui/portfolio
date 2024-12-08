@@ -23,7 +23,7 @@ export const Button = ({
   external?: boolean;
   tooltip?: string;
 }) => (
-  <div>
+  <div class="uk-padding-small">
     <a
       href={href}
       class={`uk-link${!href && "-muted"} uk-link-toggle`}
