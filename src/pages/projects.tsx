@@ -194,10 +194,22 @@ app.get("/petithub", (c: Context) => {
   return c.render(<Project lang={lang} {...petithub} />);
 });
 
+app.get("/portfolio", (c: Context) => {
+  const { lang } = c.var;
+  const portfolio = projects.find((project) => project.id === "portfolio");
+  return c.render(<Project lang={lang} {...portfolio} />);
+})
+
 app.get("/api", (c: Context) => {
   const { lang } = c.var;
   const api = projects.find((project) => project.id === "api");
   return c.render(<Project lang={lang} {...api} />);
+});
+
+app.get("/mail", (c: Context) => {
+  const { lang } = c.var;
+  const mail = projects.find((project) => project.id === "mail");
+  return c.render(<Project lang={lang} {...mail} />);
 });
 
 app.get("/tide", (c: Context) => {
@@ -206,16 +218,10 @@ app.get("/tide", (c: Context) => {
   return c.render(<Project lang={lang} {...tide} />);
 });
 
-app.get("/apéro", (c: Context) => {
+app.get("/apero", (c: Context) => {
   const { lang } = c.var;
   const apero = projects.find((project) => project.id === "apero");
   return c.render(<Project lang={lang} {...apero} />);
-});
-
-app.get("/mail", (c: Context) => {
-  const { lang } = c.var;
-  const mail = projects.find((project) => project.id === "mail");
-  return c.render(<Project lang={lang} {...mail} />);
 });
 
 app.get("/epochalypse", (c: Context) => {
