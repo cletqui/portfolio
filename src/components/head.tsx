@@ -36,17 +36,20 @@ export const Head = ({
 
     <!-- For stability in production, it's recommended that you hardcode the latest version in the CDN link. -->
 
+    <link rel="preconnect" href="https://unpkg.com" />
     <link
       rel="stylesheet"
-      href="https://unpkg.com/franken-ui/dist/css/core.min.css"
+      href="https://unpkg.com/franken-ui@1.1.0/dist/css/core.min.css"
     />
 
     <script>
       const htmlElement = document.documentElement;
 
+      const __FRANKEN__ = JSON.parse(localStorage.getItem("__FRANKEN__") || "{}");
+
       if (
-        localStorage.getItem("mode") === "dark" ||
-        (!("mode" in localStorage) &&
+        __FRANKEN__.mode === "dark" ||
+        (!__FRANKEN__.mode &&
           window.matchMedia("(prefers-color-scheme: dark)").matches)
       ) {
         htmlElement.classList.add("dark");
@@ -54,18 +57,20 @@ export const Head = ({
         htmlElement.classList.remove("dark");
       }
 
-      htmlElement.classList.add(
-        localStorage.getItem("theme") || "uk-theme-zinc"
-      );
+      htmlElement.classList.add(__FRANKEN__.theme || "uk-theme-zinc");
+      htmlElement.classList.add(__FRANKEN__.radii || "uk-radii-md");
+      htmlElement.classList.add(__FRANKEN__.shadows || "uk-shadows-sm");
+      htmlElement.classList.add(__FRANKEN__.font || "uk-font-sm");
+      htmlElement.classList.add(__FRANKEN__.chart || "uk-chart-default");
     </script>
 
     <script
       type="module"
-      src="https://unpkg.com/franken-ui/dist/js/core.iife.js"
+      src="https://unpkg.com/franken-ui@1.1.0/dist/js/core.iife.js"
     ></script>
     <script
       type="module"
-      src="https://unpkg.com/franken-ui/dist/js/icon.iife.js"
+      src="https://unpkg.com/franken-ui@1.1.0/dist/js/icon.iife.js"
     ></script>
   </head>`;
 
