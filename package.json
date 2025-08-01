@@ -27,14 +27,14 @@
     "log": "wrangler pages deployment tail"
   },
   "dependencies": {
-    "hono": "^4.7.8"
+    "hono": "^4.8.10"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20250507.0",
+    "@cloudflare/workers-types": "^4.20250801.0",
     "@hono/vite-cloudflare-pages": "^0.4.2",
-    "@hono/vite-dev-server": "^0.19.0",
-    "@hono/vite-build": "^1.6.1",
-    "vite": "^6.3.5",
-    "wrangler": "^4.14.3"
+    "@hono/vite-dev-server": "^0.20.0",
+    "@hono/vite-build": "^1.6.2",
+    "vite": "^7.0.6",
+    "wrangler": "^4.27.0"
   }
 }
