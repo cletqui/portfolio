@@ -4,7 +4,6 @@ import { Head } from "../components/head";
 import { Header } from "../components/header";
 import { Footer } from "../components/footer";
 
-// TODO use Nested Layouts (https://hono.dev/docs/middleware/builtin/jsx-renderer#nested-layouts)
 export const renderer = jsxRenderer(
   ({ children }) => {
     const c = useRequestContext();
@@ -13,13 +12,10 @@ export const renderer = jsxRenderer(
     return (
       <html lang={lang}>
         <Head title="Portfolio" />
-
-        <body class="bg-background text-foreground">
-          <div uk-height-viewport>
-            <Header lang={lang} path={path} />
-            {children}
-            <Footer lang={lang} />
-          </div>
+        <body class="min-h-screen flex flex-col bg-background text-foreground">
+          <Header lang={lang} path={path} />
+          <main class="flex-1">{children}</main>
+          <Footer lang={lang} />
         </body>
       </html>
     );

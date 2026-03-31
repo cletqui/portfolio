@@ -1,5 +1,6 @@
 import { Context, Hono } from "hono";
 import { Button, Epochalypse, Title } from "../components/layout";
+import { Icon } from "../utils/icons";
 
 interface Project {
   id: string;
@@ -82,7 +83,7 @@ export const projects: Project[] = [
 const app = new Hono<{}>();
 
 /* COMPONENTS */
-const Thumbnail = ({
+const ProjectCard = ({
   lang,
   name,
   icon,
@@ -101,56 +102,47 @@ const Thumbnail = ({
   href?: string;
   github?: string;
 }) => (
-  <div>
-    <div class="uk-card">
-      <div class="uk-card-header">
-        <div class="uk-flex">
-          <uk-icon icon={icon} class="uk-margin-right" height="25" width="25" />
-          <h3 class="uk-h3 uk-card-title">{name}</h3>
-        </div>
-        <p class="uk-margin-xsmall-top uk-text-small text-muted-foreground">
-          {description || "Lorem Ipsum"}
-        </p>
+  <div class="card flex flex-col gap-3">
+    <div>
+      <div class="flex items-center gap-2 mb-1">
+        <Icon name={icon} size={18} class="text-muted-foreground" />
+        <h3 class="font-semibold">{name}</h3>
       </div>
+      <p class="text-sm text-muted-foreground">{description || "Lorem Ipsum"}</p>
+    </div>
 
-      <div class="uk-card-body">
-        {image && (
-          <div class="uk-flex uk-overflow-hide">
-            <img
-              class="uk-margin-right uk-border-rounded"
-              src={image}
-              alt="Border rounded"
-            />
-          </div>
-        )}
+    {image && (
+      <div class="overflow-hidden rounded-md border border-border">
+        <img src={image} alt={name} class="w-full object-cover" />
       </div>
+    )}
 
-      <div class="uk-card-footer uk-flex uk-flex-between uk-flex-middle uk-flex-row@m uk-flex-column">
-        {internal && (
-          <Button
-            text={lang === "fr" ? "Détails" : "Details"}
-            href={internal}
-            icon="eye"
-            style="secondary"
-          />
-        )}
-        {github && (
-          <Button text="GitHub" href={github} icon="github" style="primary" />
-        )}
-        {href && (
-          <Button
-            text={lang === "fr" ? "Ouvrir" : "Open"}
-            href={href}
-            icon="external-link"
-            style="primary"
-          />
-        )}
-      </div>
+    <div class="flex flex-wrap gap-2 pt-1">
+      {internal && (
+        <Button
+          text={lang === "fr" ? "Détails" : "Details"}
+          href={internal}
+          icon="eye"
+          style="secondary"
+        />
+      )}
+      {github && (
+        <Button text="GitHub" href={github} icon="github" style="secondary" external />
+      )}
+      {href && (
+        <Button
+          text={lang === "fr" ? "Ouvrir" : "Open"}
+          href={href}
+          icon="external-link"
+          style="primary"
+          external
+        />
+      )}
     </div>
   </div>
 );
 
-const Project = ({
+const ProjectDetail = ({
   lang,
   name,
   icon,
@@ -168,17 +160,14 @@ const Project = ({
   href?: string;
   github?: string;
 }) => (
-  <div class="uk-flex uk-flex-column uk-flex-middle">
+  <div class="mx-auto max-w-3xl px-4 py-12 flex flex-col items-center">
     <Title>{name}</Title>
-    <div
-      class="uk-child-width-expand@s uk-width-2-3@m uk-child-width-1-1"
-      uk-grid
-    >
-      <Thumbnail
+    <div class="w-full max-w-xl">
+      <ProjectCard
         lang={lang}
         name={name}
-        description={description}
         icon={icon}
+        description={description}
         image={image}
         href={href}
         github={github}
@@ -190,62 +179,63 @@ const Project = ({
 /* ENDPOINTS */
 app.get("/petithub", (c: Context) => {
   const { lang } = c.var;
-  const petithub = projects.find((project) => project.id === "petithub");
-  return c.render(<Project lang={lang} {...petithub} />);
+  const p = projects.find((p) => p.id === "petithub")!;
+  return c.render(<ProjectDetail lang={lang} {...p} />);
 });
 
 app.get("/portfolio", (c: Context) => {
   const { lang } = c.var;
-  const portfolio = projects.find((project) => project.id === "portfolio");
-  return c.render(<Project lang={lang} {...portfolio} />);
-})
+  const p = projects.find((p) => p.id === "portfolio")!;
+  return c.render(<ProjectDetail lang={lang} {...p} />);
+});
 
 app.get("/api", (c: Context) => {
   const { lang } = c.var;
-  const api = projects.find((project) => project.id === "api");
-  return c.render(<Project lang={lang} {...api} />);
+  const p = projects.find((p) => p.id === "api")!;
+  return c.render(<ProjectDetail lang={lang} {...p} />);
 });
 
 app.get("/mail", (c: Context) => {
   const { lang } = c.var;
-  const mail = projects.find((project) => project.id === "mail");
-  return c.render(<Project lang={lang} {...mail} />);
+  const p = projects.find((p) => p.id === "mail")!;
+  return c.render(<ProjectDetail lang={lang} {...p} />);
 });
 
 app.get("/tide", (c: Context) => {
   const { lang } = c.var;
-  const tide = projects.find((project) => project.id === "tide");
-  return c.render(<Project lang={lang} {...tide} />);
+  const p = projects.find((p) => p.id === "tide")!;
+  return c.render(<ProjectDetail lang={lang} {...p} />);
 });
 
 app.get("/apero", (c: Context) => {
   const { lang } = c.var;
-  const apero = projects.find((project) => project.id === "apero");
-  return c.render(<Project lang={lang} {...apero} />);
+  const p = projects.find((p) => p.id === "apero")!;
+  return c.render(<ProjectDetail lang={lang} {...p} />);
 });
 
 app.get("/epochalypse", (c: Context) => {
   const { lang } = c.var;
   return c.render(
-    <div class="uk-flex uk-flex-column uk-flex-middle">
-      <Title>{"Epochalypse"}</Title>
+    <div class="mx-auto max-w-3xl px-4 py-12 flex flex-col items-center">
+      <Title>Epochalypse</Title>
 
-      <div class="uk-padding-large-top uk-padding-large-bottom">
+      <div class="py-8">
         <Epochalypse lang={lang} />
       </div>
 
-      <div class="uk-padding">
+      <div class="flex gap-3">
         <Button
           text={lang === "fr" ? "Explication" : "Explanation"}
           icon="book-a"
           href="https://en.wikipedia.org/wiki/Year_2038_problem"
+          external
         />
-      </div>
-      <div class="uk-padding">
         <Button
           text={lang === "fr" ? "Visualisation" : "Visualisation"}
           icon="arrow-up-1-0"
           href="https://www.epochalypse.today/"
+          style="secondary"
+          external
         />
       </div>
     </div>
@@ -255,15 +245,14 @@ app.get("/epochalypse", (c: Context) => {
 app.get("", (c: Context) => {
   const { lang } = c.var;
   return c.render(
-    <div class="uk-flex uk-flex-column uk-flex-middle">
-      <Title>{lang === "fr" ? "Projets" : "Projects"}</Title>
+    <div class="mx-auto max-w-5xl px-4 py-12">
+      <div class="flex flex-col items-center mb-8">
+        <Title>{lang === "fr" ? "Projets" : "Projects"}</Title>
+      </div>
 
-      <div
-        class="uk-child-width-expand@s uk-width-3-4@l uk-child-width-1-2@s uk-flex-middle uk-grid-small"
-        uk-grid
-      >
+      <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {projects.map(({ name, icon, image, internal, href, github }) => (
-          <Thumbnail
+          <ProjectCard
             lang={lang}
             name={name}
             icon={icon}

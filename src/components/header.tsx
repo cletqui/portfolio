@@ -1,252 +1,120 @@
 import { toggleLanguage } from "../utils/language";
-
+import { Icon } from "../utils/icons";
 import { projects } from "../pages/projects";
 import { contacts } from "../pages/contact";
 
 const Logo = ({ lang }: { lang: string }) => (
   <a
-    class="uk-navbar-item uk-logo"
     href="/"
+    class="text-xl no-underline hover:no-underline!"
     aria-label={lang === "fr" ? "Retour à l'accueil" : "Back to Home"}
   >
     🕳️
   </a>
 );
 
-const AboutMe = ({ lang }: { lang: string }) => {
-  return <a href="/about/me">{lang === "fr" ? "A propos" : "About me"}</a>;
-};
-
-const AboutYou = ({ lang }: { lang: string }) => {
-  return <a href="/about/you">{lang === "fr" ? "de toi ?" : "About you"}</a>;
-};
-
-const Dropdown = ({
-  icon,
-  text,
+const NavLink = ({
   href,
-  tooltip,
-  internal = false,
+  active,
+  children,
 }: {
-  icon: string;
-  text: string;
-  href?: string;
-  tooltip?: string;
-  internal?: boolean;
+  href: string;
+  active: boolean;
+  children: unknown;
 }) => (
   <a
     href={href}
-    target={internal ? "_self" : "_blank"}
-    rel={internal ? "" : "noopener noreferrer"}
-    uk-tooltip={tooltip && `pos:bottom;title:${tooltip}`}
+    class={`text-sm font-medium transition-colors hover:text-foreground/80 no-underline! hover:no-underline! ${
+      active ? "text-foreground" : "text-muted-foreground"
+    }`}
   >
-    <button disabled={!href} class="uk-icon-button uk-icon-button-xsmall w-40">
-      <uk-icon disablied={!href} class="uk-padding-small-right" icon={icon} />
-    </button>
-    <p class={`uk-text${!href && "-muted"}`}>{text}</p>
+    {children}
   </a>
 );
 
-const Projects = ({ lang }: { lang: string }) => {
-  return (
-    <>
-      <a href="/projects">
-        <div>{lang === "fr" ? "Projets" : "Projects"}</div>
-      </a>
-
-      <div class="uk-navbar-dropdown" uk-drop="delay-show: 420">
-        <ul class="uk-nav uk-navbar-dropdown-nav">
-          {projects.map(({ name, icon, internal }) => (
-            <li>
-              <Dropdown
-                icon={icon}
-                text={name}
-                href={internal}
-                internal={true}
-              />
-            </li>
-          ))}
-        </ul>
-      </div>
-    </>
-  );
-};
-
-const Contact = ({ lang }: { lang: string }) => {
-  return (
-    <>
-      <a href="/contact">
-        <div>Contact</div>
-      </a>
-
-      <div class="uk-navbar-dropdown" uk-drop="delay-show: 500">
-        <ul class="uk-nav uk-navbar-dropdown-nav">
-          {contacts.map(({ name, icon, href, tooltip }) => (
-            <li>
-              <Dropdown text={name} href={href} icon={icon} tooltip={tooltip} />
-            </li>
-          ))}
-        </ul>
-      </div>
-    </>
-  );
-};
-
-const Search = ({ lang }: { lang: string }) => {
-  return (
-    <>
-      <button
-        class="uk-icon-button uk-icon-button-small uk-icon-button-outline"
-        uk-toggle="target: #search"
-      >
-        <a class="uk-search-toggle" href="#" uk-search-icon />
-      </button>
-
-      <uk-command toggle="search" uk-cloak>
-        <a href="/">
-          <uk-icon
-            class="uk-padding-small-right"
-            custom-class="mr-2"
-            icon="home"
-          />
-          <span>{lang === "fr" ? "Accueil" : "Home"}</span>
-        </a>
-
-        <a href="/about/me" data-group={lang === "fr" ? "A propos" : "About"}>
-          <uk-icon
-            class="uk-padding-small-right"
-            custom-class="mr-2"
-            icon="user-round"
-          />
-          <span>{lang === "fr" ? "A propos" : "About me"}</span>
-        </a>
-
-        <a href="/about/you" data-group={lang === "fr" ? "A propos" : "About"}>
-          <uk-icon
-            class="uk-padding-small-right"
-            custom-class="mr-2"
-            icon="user-round-search"
-          />
-          <span>{lang === "fr" ? "de toi ?" : "About you"}</span>
-        </a>
-
-        {projects.map(({ name, icon, internal }) => (
-          <a
-            href={internal}
-            data-group={lang === "fr" ? "Projets" : "Projects"}
-          >
-            <uk-icon
-              class="uk-padding-small-right"
-              custom-class="mr-2"
-              icon={icon}
-            />
-            <span>{name}</span>
-          </a>
-        ))}
-
-        {contacts.map(({ name, icon, href }) => (
-          <a href={href} data-group="Contact">
-            <uk-icon
-              class="uk-padding-small-right"
-              custom-class="mr-2"
-              icon={icon}
-            />
-            <span>{name}</span>
-          </a>
-        ))}
-      </uk-command>
-    </>
-  );
-};
-
-const Palette = ({ lang }: { lang: string }) => {
-  return (
-    <div class="uk-inline">
-      <button class="uk-icon-button uk-icon-button-small uk-icon-button-outline">
-        <uk-icon icon="palette" uk-cloak />
-      </button>
-      <div
-        class="uk-card uk-card-body uk-card-default uk-drop uk-width-large"
-        uk-drop="mode: click; offset: 8; pos: bottom-center"
-      >
-        <div class="uk-card-title uk-margin-medium-bottom">
-          {lang === "fr" ? "Personnalise" : "Customize"}
-        </div>
-        <uk-theme-switcher />
-      </div>
-    </div>
-  );
-};
-
-const Translate = ({ lang, path }: { lang: string; path: string }) => {
-  return (
+const DropdownNav = ({
+  label,
+  href,
+  active,
+  items,
+}: {
+  label: string;
+  href: string;
+  active: boolean;
+  items: { name: string; href?: string; icon: string }[];
+}) => (
+  <div class="relative group">
     <a
-      href={`${path === "/" ? "" : path}/${toggleLanguage(lang)}`}
-      class="uk-icon-button uk-icon-button-small uk-icon-button-outline"
-      uk-tooltip={`title: ${
-        lang === "fr" ? "Traduire en anglais" : "Translate to French"
-      }; pos: bottom`}
+      href={href}
+      class={`text-sm font-medium transition-colors hover:text-foreground/80 no-underline! hover:no-underline! ${
+        active ? "text-foreground" : "text-muted-foreground"
+      }`}
     >
-      <uk-icon icon="languages" />
+      {label}
     </a>
-  );
-};
-
-const Navbar = ({ lang, path }: { lang: string; path: string }) => {
-  return (
-    <div uk-navbar>
-      <div class="uk-navbar-left">
-        <Logo lang={lang} />
-
-        <ul
-          id="navbar"
-          class="uk-navbar-nav uk-flex-left uk-dropnav navbar-toggle"
+    <div
+      class="absolute top-full left-0 mt-1 hidden group-hover:flex flex-col gap-0.5 z-50 min-w-36 rounded-md border border-border bg-card p-1 shadow-md"
+      style="will-change: transform;"
+    >
+      {items.map(({ name, href: itemHref, icon }) => (
+        <a
+          href={itemHref}
+          class="flex items-center gap-2 rounded px-2 py-1.5 text-sm text-card-foreground hover:bg-accent hover:text-accent-foreground no-underline! hover:no-underline! transition-colors"
         >
-          <li class={path.startsWith("/about/me") ? "uk-active" : ""}>
-            <AboutMe lang={lang} />
-          </li>
+          <Icon name={icon} size={14} />
+          {name}
+        </a>
+      ))}
+    </div>
+  </div>
+);
 
-          <li class={path.startsWith("/about/you") ? "uk-active" : ""}>
-            <AboutYou lang={lang} />
-          </li>
+const Translate = ({ lang, path }: { lang: string; path: string }) => (
+  <a
+    href={`${path === "/" ? "" : path}/${toggleLanguage(lang)}`}
+    class="icon-btn"
+    title={lang === "fr" ? "Traduire en anglais" : "Translate to French"}
+  >
+    <Icon name="languages" size={16} />
+  </a>
+);
 
-          <li class={path.startsWith("/projects") ? "uk-active" : ""}>
-            <Projects lang={lang} />
-          </li>
+export const Header = ({ lang, path }: { lang: string; path: string }) => (
+  <header class="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-md">
+    <nav class="mx-auto flex h-12 max-w-5xl items-center gap-6 px-4">
+      <Logo lang={lang} />
 
-          <li class={path.startsWith("/contact") ? "uk-active" : ""}>
-            <Contact lang={lang} />
-          </li>
-        </ul>
+      <div class="flex items-center gap-4">
+        <NavLink href="/about/me" active={path.startsWith("/about/me")}>
+          {lang === "fr" ? "À propos" : "About me"}
+        </NavLink>
+
+        <NavLink href="/about/you" active={path.startsWith("/about/you")}>
+          {lang === "fr" ? "De toi ?" : "About you"}
+        </NavLink>
+
+        <DropdownNav
+          label={lang === "fr" ? "Projets" : "Projects"}
+          href="/projects"
+          active={path.startsWith("/projects")}
+          items={projects
+            .filter((p) => p.internal)
+            .map((p) => ({ name: p.name, href: p.internal, icon: p.icon }))}
+        />
+
+        <DropdownNav
+          label="Contact"
+          href="/contact"
+          active={path.startsWith("/contact")}
+          items={contacts
+            .filter((c) => c.href)
+            .map((c) => ({ name: c.name, href: c.href, icon: c.icon }))}
+        />
       </div>
 
-      <div class="uk-navbar-right">
-        <ul class="uk-iconnav uk-flex-right uk-iconnav-small navbar-toggle uk-margin-medium-left">
-          <li>
-            <Search lang={lang} />
-          </li>
-
-          <li>
-            <Palette lang={lang} />
-          </li>
-
-          <li>
-            <Translate lang={lang} path={path} />
-          </li>
-        </ul>
+      <div class="ml-auto">
+        <Translate lang={lang} path={path} />
       </div>
-    </div>
-  );
-};
-
-export const Header = ({ lang, path }: { lang: string; path: string }) => {
-  return (
-    <div uk-sticky="sel-target: .uk-navbar-container; cls-active: uk-navbar-sticky">
-      <nav class="uk-navbar-container">
-        <div class="uk-container">
-          <Navbar lang={lang} path={path} />
-        </div>
-      </nav>
-    </div>
-  );
-};
+    </nav>
+  </header>
+);

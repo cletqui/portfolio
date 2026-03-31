@@ -1,7 +1,8 @@
 import { Child } from "hono/jsx";
+import { Icon } from "../utils/icons";
 
 export const Title = ({ children }: { children: Child }) => (
-  <h1 class="uk-h1 uk-heading-medium uk-margin-large uk-heading-divider uk-margin-medium-top">
+  <h1 class="text-3xl font-bold tracking-tight border-b border-border pb-3 mb-6">
     {children}
   </h1>
 );
@@ -23,79 +24,78 @@ export const Button = ({
   external?: boolean;
   tooltip?: string;
 }) => (
-  <div class="uk-padding-small">
-    <a
-      href={href}
-      class={`uk-link${!href && "-muted"} uk-link-toggle`}
-      target={external ? "_blank" : "_self"}
-      rel={external ? "noopener noreferrer" : ""}
-      uk-tooltip={tooltip && `pos:bottom;title:${tooltip}`}
-    >
-      <button
-        class={`uk-button uk-button-${style} uk-flex-row${
-          reverse && "-reverse"
-        }`}
-        disabled={!href}
-      >
-        <uk-icon
-          class={`uk-padding-small-${reverse ? "left" : "right"}`}
-          icon={icon}
-        />
-        <span class="uk-link-text">{text}</span>
-      </button>
-    </a>
-  </div>
+  <a
+    href={href}
+    target={external ? "_blank" : "_self"}
+    rel={external ? "noopener noreferrer" : ""}
+    title={tooltip}
+    class={`btn btn-${href ? style : "ghost"} ${reverse ? "flex-row-reverse" : ""} ${!href ? "opacity-50 pointer-events-none" : ""}`}
+  >
+    <Icon name={icon} size={15} />
+    <span>{text}</span>
+  </a>
 );
 
 export const Avatar = ({ size }: { size: number }) => (
-  <div class="uk-overflow-auto uk-flex-middle">
-    <img
-      class="uk-border-pill"
-      style="aspect-ratio: 1 / 1"
-      src="/static/avatar.png"
-      width={size}
-      height={size}
-      alt="avatar"
-    />
-  </div>
+  <img
+    class="rounded-full object-cover"
+    style={`width:${size}px;height:${size}px;aspect-ratio:1/1`}
+    src="/static/avatar.png"
+    width={size}
+    height={size}
+    alt="avatar"
+  />
 );
 
-export const Spinner = () => <div uk-spinner></div>;
+export const Spinner = () => (
+  <div
+    class="h-6 w-6 animate-spin rounded-full border-2 border-border border-t-foreground"
+    role="status"
+    aria-label="Loading"
+  />
+);
 
 export const Epochalypse = ({ lang }: { lang: string }) => {
+  const target = 2148609247000; // 2038-01-19T03:14:07Z
   return (
-    <div
-      class="uk-grid-small uk-margin uk-child-width-auto"
-      uk-grid
-      uk-countdown="date: 2038-01-19T03:14:07+00:00"
-    >
-      <div>
-        <div class="uk-countdown-days uk-countdown-number"></div>
-        <div class="uk-visible@s uk-countdown-label uk-margin-small uk-text-center">
-          {lang === "fr" ? "Jours" : "Days"}
-        </div>
+    <div>
+      <div class="flex items-end gap-3 font-mono text-center">
+        {(["days", "hours", "minutes", "seconds"] as const).map(
+          (unit, idx) => (
+            <>
+              {idx > 0 && (
+                <span class="text-4xl font-bold text-muted-foreground mb-5">
+                  :
+                </span>
+              )}
+              <div>
+                <div
+                  id={`epoch-${unit}`}
+                  class="text-5xl font-bold tabular-nums"
+                >
+                  --
+                </div>
+                <div class="text-xs text-muted-foreground mt-1 uppercase tracking-wide">
+                  {lang === "fr"
+                    ? unit === "days"
+                      ? "Jours"
+                      : unit === "hours"
+                        ? "Heures"
+                        : unit === "minutes"
+                          ? "Minutes"
+                          : "Secondes"
+                    : unit.charAt(0).toUpperCase() + unit.slice(1)}
+                </div>
+              </div>
+            </>
+          )
+        )}
       </div>
-      <div class="uk-countdown-separator">:</div>
-      <div>
-        <div class="uk-countdown-hours uk-countdown-number"></div>
-        <div class="uk-visible@s uk-countdown-label uk-margin-small uk-text-center">
-          {lang === "fr" ? "Heures" : "Hours"}
-        </div>
-      </div>
-      <div class="uk-countdown-separator">:</div>
-      <div>
-        <div class="uk-countdown-minutes uk-countdown-number"></div>
-        <div class="uk-visible@s uk-countdown-label uk-margin-small uk-text-center">
-          {lang === "fr" ? "Minutes" : "Minutes"}
-        </div>
-      </div>
-      <div class="uk-countdown-separator">:</div>
-      <div>
-        <div class="uk-countdown-seconds uk-countdown-number"></div>
-        <div class="uk-visible@s uk-countdown-label uk-margin-small uk-text-center">
-          {lang === "fr" ? "Secondes" : "Seconds"}
-        </div>
-      </div>
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `(function(){var t=${target};function p(n){return String(n).padStart(2,'0')}function u(){var d=Math.max(0,t-Date.now());document.getElementById('epoch-days').textContent=Math.floor(d/86400000);document.getElementById('epoch-hours').textContent=p(Math.floor(d%86400000/3600000));document.getElementById('epoch-minutes').textContent=p(Math.floor(d%3600000/60000));document.getElementById('epoch-seconds').textContent=p(Math.floor(d%60000/1000))}u();setInterval(u,1000)})();`,
+        }}
+      />
     </div>
   );
 };

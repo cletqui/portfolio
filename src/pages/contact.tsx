@@ -66,19 +66,16 @@ const app = new Hono<{}>();
 app.get("", (c: Context) => {
   const { lang } = c.var;
   return c.render(
-    <div class="uk-flex uk-flex-column uk-flex-middle">
+    <div class="mx-auto max-w-3xl px-4 py-12 flex flex-col items-center">
       <Title>{lang === "fr" ? "Connectons-nous !" : "Let's connect!"}</Title>
 
-      <p class="uk-paragraph uk-padding-medium uk-text-center">
+      <p class="text-muted-foreground text-center mb-8 max-w-lg">
         {lang === "fr"
           ? "Si vous souhaitez discuter de quoi que ce soit, si vous avez une question sur un projet ou si vous voulez simplement dire bonjour, n'hésitez pas à me contacter !"
           : "If you're interested in talking about anything, have a question about a project, or just want to say hello, I'd love to hear from you!"}
       </p>
 
-      <div
-        class="uk-child-width-1-4@s uk-grid-row-medium uk-grid-column-small uk-text-center"
-        uk-grid
-      >
+      <div class="grid grid-cols-2 sm:grid-cols-3 gap-3 w-full mb-8">
         {contacts.map(({ name, icon, href, style, tooltip }) => (
           <Button
             text={name}
@@ -86,13 +83,17 @@ app.get("", (c: Context) => {
             icon={icon}
             style={style}
             tooltip={tooltip}
+            external
           />
         ))}
       </div>
 
-      <p class="uk-paragraph uk-padding-medium uk-text-center">
+      <p class="text-sm text-muted-foreground text-center">
         {lang === "fr" ? "Je suis les " : "I follow "}
-        <a class="uk-link" href="http://sl4.org/crocker.html">
+        <a
+          class="text-foreground font-medium"
+          href="http://sl4.org/crocker.html"
+        >
           {lang === "fr" ? "règles de Crocker" : "Crocker's rules"}
         </a>
         {lang === "fr"
