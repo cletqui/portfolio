@@ -9,11 +9,11 @@ const app = new Hono<{}>();
 
 /* COMPONENTS */
 const Welcome = ({ lang }: { lang: string }) => (
-  <div class="uk-section uk-section-small">
-    <h2 class="uk-h2 uk-heading-bullet">
+  <div>
+    <h2 class="text-2xl font-bold mb-3">
       {lang === "fr" ? "Bienvenue !" : "Welcome!"}
     </h2>
-    <p class="uk-paragraph uk-text-lead uk-text-justify">
+    <p class="text-lg text-muted-foreground leading-relaxed">
       {lang === "fr"
         ? "Vous avez trouvé une entrée. Maintenant, oserez-vous explorer ?"
         : "You've found your way in. Now, dare to explore?"}
@@ -22,13 +22,13 @@ const Welcome = ({ lang }: { lang: string }) => (
 );
 
 const Description = ({ lang }: { lang: string }) => (
-  <div class="uk-card uk-card-body uk-card-primary">
-    <p class="uk-paragraph uk-text-justify">
+  <div class="card-primary">
+    <p class="leading-relaxed mb-3">
       {lang === "fr"
         ? "Ce portfolio est juste un terrain de jeu pour présenter mes projets, mes passions, moi-même."
         : "This portfolio is just a playground to showcase my projects, my passions, myself."}
     </p>
-    <p class="uk-paragraph uk-text-justify">
+    <p class="leading-relaxed">
       {lang === "fr"
         ? "Je construis des projets que vous pouvez voir… et je sécurise des projets que vous ne pouvez pas voir. Ce site… disons qu'il a plus que quelques niveaux. Chaque clic, chaque transition, a été conçu dans un but précis. Vous êtes curieux ? Plongez-y."
         : "I build things you can see… and secure things you can't. This site? Let's just say it has more than a few layers. Every click, every transition — crafted with purpose. Curious? Dive in."}
@@ -37,25 +37,24 @@ const Description = ({ lang }: { lang: string }) => (
 );
 
 const Details = ({ lang }: { lang: string }) => (
-  <div class="uk-card uk-card-body uk-card-secondary">
-    <p class="uk-paragraph uk-text-justify">
-      {lang === "fr" ? "Il est construit en utilisant " : "It is built using "}
-      <a class="uk-link" href="https://hono.dev/">
+  <div class="card">
+    <p class="text-sm leading-relaxed text-muted-foreground">
+      {lang === "fr" ? "Il est construit en utilisant " : "Built with "}
+      <a class="text-foreground font-medium" href="https://hono.dev/">
         Hono
       </a>
-      {lang === "fr" ? " comme noyau " : " as the core, "}
-      <a class="uk-link" href="https://franken-ui.dev/">
-        Franken UI
+      {lang === "fr" ? " comme noyau, " : ", "}
+      <a class="text-foreground font-medium" href="https://tailwindcss.com/">
+        Tailwind CSS
       </a>
-      {lang === "fr" ? " pour le design " : " for design, "}
-      <a class="uk-link" href="https://pages.cloudflare.com/">
-        Cloudflare
+      {lang === "fr" ? " pour le design, " : " for design, "}
+      <a
+        class="text-foreground font-medium"
+        href="https://pages.cloudflare.com/"
+      >
+        Cloudflare Pages
       </a>
-      {" & "}
-      <a class="uk-link" href="https://pages.github.com/">
-        GitHub
-      </a>
-      {lang === "fr" ? " pages pour l'hébergement." : " pages for hosting."}
+      {lang === "fr" ? " pour l'hébergement." : " for hosting."}
     </p>
   </div>
 );
@@ -64,23 +63,21 @@ const Details = ({ lang }: { lang: string }) => (
 app.get("/", (c: Context) => {
   const { lang } = c.var;
   return c.render(
-    <div class="uk-flex uk-flex-column uk-flex-middle uk-margin-large-top">
-      <div class="uk-child-width-expand@s uk-width-2-3@m" uk-grid>
-        <div class="uk-width-2-3@m uk-flex-first">
+    <div class="mx-auto max-w-5xl px-4 py-12">
+      <div class="grid md:grid-cols-3 gap-8 items-center mb-8">
+        <div class="md:col-span-2">
           <Welcome lang={lang} />
         </div>
-
-        <div class="uk-width-1-3@m uk-flex uk-flex-center">
-          <Avatar size={400} />
+        <div class="flex justify-center">
+          <Avatar size={200} />
         </div>
       </div>
 
-      <div class="uk-child-width-expand@s uk-width-2-3@m" uk-grid>
-        <div class="uk-width-2-3@m">
+      <div class="grid md:grid-cols-3 gap-4">
+        <div class="md:col-span-2">
           <Description lang={lang} />
         </div>
-
-        <div class="uk-width-1-3@m uk-flex-first">
+        <div>
           <Details lang={lang} />
         </div>
       </div>

@@ -1,31 +1,46 @@
-const FooterIcon = ({ icon, href }: { icon: string; href: string }) => (
+import { Icon } from "../utils/icons";
+
+const FooterLink = ({
+  icon,
+  href,
+  label,
+}: {
+  icon: string;
+  href: string;
+  label: string;
+}) => (
   <a
     href={href}
     target="_blank"
     rel="noopener noreferrer"
-    class="uk-icon-link uk-margin-small-left uk-margin-small-right"
+    class="inline-flex items-center no-underline! hover:text-foreground transition-colors"
+    aria-label={label}
   >
-    <uk-icon icon={icon} />
+    <Icon name={icon} size={14} />
   </a>
 );
 
 export const Footer = ({ lang }: { lang: string }) => (
-  <div uk-sticky="position: bottom">
-    <div class="uk-flex uk-flex-center uk-text-muted uk-padding-small-bottom uk-padding-top">
-      <div class="uk-flex uk-flex-middle">
-        {lang === "fr" ? "Fait avec" : "Made with"}
-        <FooterIcon
-          icon="heart"
-          href="https://beautifulhandwrittenletters.com"
-        />
-        {lang === "fr" ? "et" : "and"}
-        <FooterIcon icon="coffee" href="https://www.buymeacoffee.com/cletqui" />
-        {lang === "fr" ? "| Signale les bugs sur" : "| Report bugs on"}
-        <FooterIcon
-          icon="github"
-          href="https://github.com/cletqui/portfolio/issues"
-        />
-      </div>
+  <footer class="border-t border-border">
+    <div class="mx-auto flex h-10 max-w-5xl items-center justify-center gap-1.5 px-4 text-sm text-muted-foreground">
+      {lang === "fr" ? "Fait avec" : "Made with"}
+      <FooterLink
+        icon="heart"
+        href="https://beautifulhandwrittenletters.com"
+        label="love"
+      />
+      {lang === "fr" ? "et" : "and"}
+      <FooterLink
+        icon="coffee"
+        href="https://www.buymeacoffee.com/cletqui"
+        label="coffee"
+      />
+      {lang === "fr" ? "· Bugs sur" : "· Bugs on"}
+      <FooterLink
+        icon="github"
+        href="https://github.com/cletqui/portfolio/issues"
+        label="GitHub issues"
+      />
     </div>
-  </div>
+  </footer>
 );

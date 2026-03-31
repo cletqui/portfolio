@@ -1,6 +1,6 @@
 {
   "name": "portfolio",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "private": false,
   "description": "Portfolio",
   "author": {
@@ -20,21 +20,29 @@
   },
   "type": "module",
   "scripts": {
-    "dev": "vite",
+    "dev": "node_modules/.bin/tailwindcss -i src/styles.css -o public/styles.css && vite",
+    "watch:css": "node_modules/.bin/tailwindcss -i src/styles.css -o public/styles.css --watch",
+    "build:css": "node_modules/.bin/tailwindcss -i src/styles.css -o public/styles.css --minify",
     "build": "vite build --mode bundle && vite build",
     "preview": "wrangler pages dev dist",
     "deploy": "$npm_execpath run build && wrangler pages deploy dist",
     "log": "wrangler pages deployment tail"
   },
   "dependencies": {
-    "hono": "^4.8.10"
+    "hono": "^4.9.6"
+  },
+  "optionalDependencies": {
+    "@tailwindcss/oxide-linux-x64-gnu": "^4.2.2"
   },
   "devDependencies": {
-    "@cloudflare/workers-types": "^4.20250801.0",
+    "@cloudflare/workers-types": "^4.20250910.0",
+    "@hono/vite-build": "^1.7.0",
     "@hono/vite-cloudflare-pages": "^0.4.2",
-    "@hono/vite-dev-server": "^0.20.0",
-    "@hono/vite-build": "^1.6.2",
-    "vite": "^7.0.6",
-    "wrangler": "^4.27.0"
+    "@hono/vite-dev-server": "^0.25.1",
+    "@tailwindcss/cli": "^4.2.2",
+    "lucide-static": "^1.7.0",
+    "tailwindcss": "^4.2.2",
+    "vite": "^8.0.3",
+    "wrangler": "^4.35.0"
   }
 }

@@ -1,4 +1,5 @@
 import { Button, Title } from "./layout";
+import { Icon } from "../utils/icons";
 
 const errors = {
   400: "Bad Request",
@@ -28,30 +29,26 @@ export const Error = ({
 }: {
   lang: string;
   error: keyof typeof errors;
-}) => {
-  return (
-    <div class="uk-flex uk-flex-column uk-flex-middle">
-      <Title>{error}</Title>
-      <uk-icon icon="ban" height="64" width="64" />
-      <h4 class="uk-h4 uk-padding-top">{errors[error]}</h4>
-
-      <div class="uk-flex uk-flex-center uk-flex-middle uk-padding-top">
-        <Button
-          text={lang === "fr" ? "Retour à l'accueil" : "Go back home"}
-          icon="chevron-left"
-          style="ghost"
-          href="/"
-          external={false}
-        />
-
-        <Button
-          text={lang === "fr" ? "Signaler l'erreur" : "Report error"}
-          icon="chevron-right"
-          style="ghost"
-          href="https://github.com/cletqui/portfolio/issues"
-          reverse
-        />
-      </div>
+}) => (
+  <div class="flex flex-col items-center px-4 py-16 text-center">
+    <Title>{error}</Title>
+    <Icon name="ban" size={64} class="text-muted-foreground mb-4" />
+    <h4 class="text-lg font-semibold mb-8">{errors[error]}</h4>
+    <div class="flex items-center gap-3">
+      <Button
+        text={lang === "fr" ? "Retour à l'accueil" : "Go back home"}
+        icon="chevron-left"
+        style="ghost"
+        href="/"
+      />
+      <Button
+        text={lang === "fr" ? "Signaler l'erreur" : "Report error"}
+        icon="chevron-right"
+        style="ghost"
+        href="https://github.com/cletqui/portfolio/issues"
+        reverse
+        external
+      />
     </div>
-  );
-};
+  </div>
+);
