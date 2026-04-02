@@ -70,7 +70,9 @@
     background-color: var(--background);
     color: var(--foreground);
     font-family: Inter, system-ui, sans-serif;
-    font-feature-settings: "liga" 1, "calt" 1;
+    font-feature-settings:
+      "liga" 1,
+      "calt" 1;
   }
   @supports (font-variation-settings: normal) {
     body {
@@ -96,7 +98,9 @@
     border-radius: var(--radius);
     font-size: 0.875rem;
     font-weight: 500;
-    transition: background-color 0.15s, opacity 0.15s;
+    transition:
+      background-color 0.15s,
+      opacity 0.15s;
     cursor: pointer;
     white-space: nowrap;
     text-decoration: none !important;

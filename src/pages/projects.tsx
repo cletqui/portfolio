@@ -108,7 +108,9 @@ const ProjectCard = ({
         <Icon name={icon} size={18} class="text-muted-foreground" />
         <h3 class="font-semibold">{name}</h3>
       </div>
-      <p class="text-sm text-muted-foreground">{description || "Lorem Ipsum"}</p>
+      <p class="text-sm text-muted-foreground">
+        {description || "Lorem Ipsum"}
+      </p>
     </div>
 
     {image && (
@@ -127,7 +129,13 @@ const ProjectCard = ({
         />
       )}
       {github && (
-        <Button text="GitHub" href={github} icon="github" style="secondary" external />
+        <Button
+          text="GitHub"
+          href={github}
+          icon="github"
+          style="secondary"
+          external
+        />
       )}
       {href && (
         <Button
@@ -238,7 +246,7 @@ app.get("/epochalypse", (c: Context) => {
           external
         />
       </div>
-    </div>
+    </div>,
   );
 });
 
@@ -263,7 +271,7 @@ app.get("", (c: Context) => {
           />
         ))}
       </div>
-    </div>
+    </div>,
   );
 });
 

@@ -13,7 +13,9 @@ const Me = ({ lang }: { lang: string }) => (
     <p class="leading-relaxed">
       {lang === "fr" ? "Je suis un " : "I'm a french "}
       <strong>
-        {lang === "fr" ? "ingénieur en cybersécurité" : "cybersecurity engineer"}
+        {lang === "fr"
+          ? "ingénieur en cybersécurité"
+          : "cybersecurity engineer"}
       </strong>
       {lang === "fr"
         ? " français avec un intérêt prononcé pour la technologie, la résolution de problèmes et, bien sûr, le code sécurisé. Ma formation en informatique et cybersécurité ainsi que mon expérience professionnelle m'ont porté sur la sécurisation, la conception et l'optimisation des expériences numériques."
@@ -23,24 +25,27 @@ const Me = ({ lang }: { lang: string }) => (
 );
 
 const SkillCard = ({
-  lang,
+  icon,
   title,
   children,
 }: {
-  lang: string;
+  icon: string;
   title: string;
   children: unknown;
 }) => (
   <div class="card-secondary">
-    <h3 class="font-semibold text-center mb-3">{title}</h3>
+    <h3 class="font-semibold text-center mb-3">
+      <Icon name={icon} size={14} class="text-muted-foreground shrink-0" />
+      {title}
+    </h3>
     <p class="text-sm leading-relaxed">{children}</p>
   </div>
 );
 
 const TechnicalSkills = ({ lang }: { lang: string }) => (
   <SkillCard
-    lang={lang}
-    title={lang === "fr" ? "🛠️ Compétences techniques 💻" : "🛠️ Technical skills 💻"}
+    icon="laptop-minimal-check"
+    title={lang === "fr" ? "Compétences techniques" : "Technical skills"}
   >
     {lang === "fr"
       ? "Les compétences techniques dont je suis fier : détection et réaction, sécurité des réseaux, tests de pénétration, Python, JavaScript, HTML/CSS, SQL et toute une gamme de référentiels de cybersécurité. Venez voir mon profil "
@@ -48,14 +53,16 @@ const TechnicalSkills = ({ lang }: { lang: string }) => (
     <a class="font-medium text-foreground" href="https://github.com/cletqui/">
       GitHub
     </a>
-    {lang === "fr" ? " pour plus de détails." : " profile for even more details."}
+    {lang === "fr"
+      ? " pour plus de détails."
+      : " profile for even more details."}
   </SkillCard>
 );
 
 const Academic = ({ lang }: { lang: string }) => (
   <SkillCard
-    lang={lang}
-    title={lang === "fr" ? "🎓 Parcours académique 🈺" : "🎓 Academic 🈺"}
+    icon="graduation-cap"
+    title={lang === "fr" ? "Parcours académique" : "Academic"}
   >
     {lang === "fr"
       ? "J'ai étudié l'informatique et la cybersécurité en école d'ingénieur, où j'ai acquis une solide base en sécurisation des systèmes et des réseaux. Professionnellement, j'ai travaillé comme analyste SOC et Consultant en Cybersécurité, spécialisé dans la surveillance, la détection des menaces et la mise en place de défenses sécurisées, affirmant ainsi mon expertise en tant qu'expert blue team."
@@ -64,7 +71,7 @@ const Academic = ({ lang }: { lang: string }) => (
 );
 
 const Passions = ({ lang }: { lang: string }) => (
-  <SkillCard lang={lang} title="🚴 Passions 🎸">
+  <SkillCard icon="heart" title="Passions">
     {lang === "fr"
       ? "Je suis passionné par tout ce qui touche à l'informatique : le développement web (comme ce site ou mes "
       : "I'm passionate about all things IT — whether it's web development (like this very website or my "}
@@ -164,7 +171,18 @@ const You = ({
   ipInfo: IPInfo;
   ua: UserAgent;
 }) => {
-  const { continent, country, regionName, city, lat, lon, isp, mobile, hosting, proxy } = ipInfo;
+  const {
+    continent,
+    country,
+    regionName,
+    city,
+    lat,
+    lon,
+    isp,
+    mobile,
+    hosting,
+    proxy,
+  } = ipInfo;
   const {
     browser: { name: browserName, major },
     cpu: { architecture },
@@ -222,10 +240,15 @@ const You = ({
           {hosting && (
             <>
               {lang === "fr" ? "un " : "a "}
-              <strong>{lang === "fr" ? "hébergement cloud" : "hosting solution"}</strong>
+              <strong>
+                {lang === "fr" ? "hébergement cloud" : "hosting solution"}
+              </strong>
             </>
           )}
-          {(proxy || hosting) && (lang === "fr" ? ", on en apprend sur toi : " : ", we learn about you: ")}
+          {(proxy || hosting) &&
+            (lang === "fr"
+              ? ", on en apprend sur toi : "
+              : ", we learn about you: ")}
           {lang === "fr" ? "Tu sembles être de " : "You seem to be from "}
           <strong>{city}</strong>
           {" ("}
@@ -318,17 +341,43 @@ const IPTable = ({ lang, info }: { lang: string; info: IPInfo }) => (
   <ul class="space-y-2 text-sm">
     {[
       { icon: "earth", label: "Continent", value: info.continent },
-      { icon: "map-pin", label: lang === "fr" ? "Pays" : "Country", value: info.country },
-      { icon: "map-pinned", label: lang === "fr" ? "Région" : "Region", value: info.regionName },
-      { icon: "map-pin-house", label: lang === "fr" ? "Ville" : "City", value: info.city },
+      {
+        icon: "map-pin",
+        label: lang === "fr" ? "Pays" : "Country",
+        value: info.country,
+      },
+      {
+        icon: "map-pinned",
+        label: lang === "fr" ? "Région" : "Region",
+        value: info.regionName,
+      },
+      {
+        icon: "map-pin-house",
+        label: lang === "fr" ? "Ville" : "City",
+        value: info.city,
+      },
       { icon: "ethernet-port", label: "ISP", value: info.isp },
       { icon: "building2", label: "AS", value: info.asname },
       ...(info.reverse
-        ? [{ icon: "database", label: lang === "fr" ? "DNS inversé" : "Reverse DNS", value: info.reverse }]
+        ? [
+            {
+              icon: "database",
+              label: lang === "fr" ? "DNS inversé" : "Reverse DNS",
+              value: info.reverse,
+            },
+          ]
         : []),
-      { icon: "tablet-smartphone", label: "Mobile", value: String(info.mobile) },
+      {
+        icon: "tablet-smartphone",
+        label: "Mobile",
+        value: String(info.mobile),
+      },
       { icon: "router", label: "Proxy", value: String(info.proxy) },
-      { icon: "server", label: lang === "fr" ? "Hébergement" : "Hosting", value: String(info.hosting) },
+      {
+        icon: "server",
+        label: lang === "fr" ? "Hébergement" : "Hosting",
+        value: String(info.hosting),
+      },
     ].map(({ icon, label, value }) => (
       <li class="flex items-center gap-2 border-b border-border pb-2 last:border-0 last:pb-0">
         <Icon name={icon} size={14} class="text-muted-foreground shrink-0" />
@@ -344,8 +393,12 @@ const IP = ({ lang, ipInfo }: { lang: string; ipInfo: IPInfo }) => {
   return (
     <div class="space-y-4">
       <div>
-        <h3 class="text-lg font-semibold border-l-4 border-border pl-3 mb-2">IP</h3>
-        <code class="text-xs bg-muted px-2 py-1 rounded font-mono">{address}</code>
+        <h3 class="text-lg font-semibold border-l-4 border-border pl-3 mb-2">
+          IP
+        </h3>
+        <code class="text-xs bg-muted px-2 py-1 rounded font-mono">
+          {address}
+        </code>
       </div>
       <div class="grid sm:grid-cols-2 gap-4">
         <IPTable lang={lang} info={ipInfo} />
@@ -392,10 +445,16 @@ const UATable = ({ lang, ua }: { lang: string; ua: UserAgent }) => (
       .filter(Boolean)
       .map((row: any) => (
         <div class="flex items-center gap-2 border-b border-border pb-2 last:border-0 last:pb-0">
-          <Icon name={row.icon} size={14} class="text-muted-foreground shrink-0" />
+          <Icon
+            name={row.icon}
+            size={14}
+            class="text-muted-foreground shrink-0"
+          />
           <span class="text-muted-foreground min-w-20">{row.label}:</span>
           <span>{row.name}</span>
-          {row.version && <span class="text-muted-foreground">{row.version}</span>}
+          {row.version && (
+            <span class="text-muted-foreground">{row.version}</span>
+          )}
         </div>
       ))}
   </div>
@@ -456,7 +515,7 @@ app.get("/me", (c: Context<{ Bindings: Bindings; Variables: Variables }>) => {
           <Reviews lang={lang} />
         </div>
       </div>
-    </div>
+    </div>,
   );
 });
 
@@ -481,7 +540,7 @@ app.get("/you", async (c: Context) => {
       httpOnly: true,
       maxAge: 2628000,
       sameSite: "Strict",
-    }
+    },
   );
   return c.render(
     <div class="mx-auto max-w-3xl px-4 py-12">
@@ -492,15 +551,13 @@ app.get("/you", async (c: Context) => {
       <div class="space-y-8">
         <You lang={lang} ipInfo={ipInfo} ua={ua} />
 
-        {(ipInfo || userAgent) && (
-          <hr class="border-border" />
-        )}
+        {(ipInfo || userAgent) && <hr class="border-border" />}
 
         {ipInfo && <IP lang={lang} ipInfo={ipInfo} />}
 
         {userAgent && <UA lang={lang} ua={ua} />}
       </div>
-    </div>
+    </div>,
   );
 });
 

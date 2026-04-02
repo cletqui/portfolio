@@ -49,7 +49,7 @@ const queryIPInfo = async (address: string): Promise<IPInfo> => {
 
 export const getIPInfo = async (
   c: Context,
-  address: string
+  address: string,
 ): Promise<IPInfo> => {
   const cookie = getCookie(c, "you");
   if (cookie) {

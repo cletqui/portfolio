@@ -60,36 +60,31 @@ export const Epochalypse = ({ lang }: { lang: string }) => {
   return (
     <div>
       <div class="flex items-end gap-3 font-mono text-center">
-        {(["days", "hours", "minutes", "seconds"] as const).map(
-          (unit, idx) => (
-            <>
-              {idx > 0 && (
-                <span class="text-4xl font-bold text-muted-foreground mb-5">
-                  :
-                </span>
-              )}
-              <div>
-                <div
-                  id={`epoch-${unit}`}
-                  class="text-5xl font-bold tabular-nums"
-                >
-                  --
-                </div>
-                <div class="text-xs text-muted-foreground mt-1 uppercase tracking-wide">
-                  {lang === "fr"
-                    ? unit === "days"
-                      ? "Jours"
-                      : unit === "hours"
-                        ? "Heures"
-                        : unit === "minutes"
-                          ? "Minutes"
-                          : "Secondes"
-                    : unit.charAt(0).toUpperCase() + unit.slice(1)}
-                </div>
+        {(["days", "hours", "minutes", "seconds"] as const).map((unit, idx) => (
+          <>
+            {idx > 0 && (
+              <span class="text-4xl font-bold text-muted-foreground mb-5">
+                :
+              </span>
+            )}
+            <div>
+              <div id={`epoch-${unit}`} class="text-5xl font-bold tabular-nums">
+                --
               </div>
-            </>
-          )
-        )}
+              <div class="text-xs text-muted-foreground mt-1 uppercase tracking-wide">
+                {lang === "fr"
+                  ? unit === "days"
+                    ? "Jours"
+                    : unit === "hours"
+                      ? "Heures"
+                      : unit === "minutes"
+                        ? "Minutes"
+                        : "Secondes"
+                  : unit.charAt(0).toUpperCase() + unit.slice(1)}
+              </div>
+            </div>
+          </>
+        ))}
       </div>
       <script
         dangerouslySetInnerHTML={{

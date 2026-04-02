@@ -35,9 +35,9 @@ export const Footer = ({ lang }: { lang: string }) => (
         href="https://www.buymeacoffee.com/cletqui"
         label="coffee"
       />
-      {lang === "fr" ? "· Bugs sur" : "· Bugs on"}
+      {lang === "fr" ? "· Signaler un " : "· Report a "}
       <FooterLink
-        icon="github"
+        icon="bug"
         href="https://github.com/cletqui/portfolio/issues"
         label="GitHub issues"
       />

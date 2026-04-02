@@ -7,7 +7,7 @@ import { Bindings, Variables } from "..";
 
 const setLanguage = (
   c: Context<{ Bindings: Bindings; Variables: Variables }>,
-  lang: string
+  lang: string,
 ) => {
   setCookie(c, "lang", lang, {
     secure: true,
@@ -24,7 +24,7 @@ export const toggleLanguage = (lang: string) => {
 export const handleLanguage = createMiddleware(
   async (
     c: Context<{ Bindings: Bindings; Variables: Variables }>,
-    next: Next
+    next: Next,
   ) => {
     const supports = ["en", "fr"]; // TODO move array in Env
     const { path } = c.req;
@@ -46,5 +46,5 @@ export const handleLanguage = createMiddleware(
     }
     c.set("lang", lang);
     await next();
-  }
+  },
 );
