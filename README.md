@@ -1,12 +1,12 @@
 # Portfolio
 
-```txt
-npm install
-npm run dev
+```
+bun install
+bun dev
 ```
 
-```txt
-npm run deploy
+```
+bun deploy
 ```
 
 - h@ck3rm@n69420

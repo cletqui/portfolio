@@ -36,9 +36,13 @@ import globeSvg from "lucide-static/icons/globe.svg?raw";
 import cogSvg from "lucide-static/icons/cog.svg?raw";
 import monitorCogSvg from "lucide-static/icons/monitor-cog.svg?raw";
 import memoryStickSvg from "lucide-static/icons/memory-stick.svg?raw";
+import bugSvg from "lucide-static/icons/bug.svg?raw";
+import laptopMinimalCheckSvg from "lucide-static/icons/laptop-minimal-check.svg?raw";
+import graduationCapSvg from "lucide-static/icons/graduation-cap.svg?raw";
 // Brand icon substitutes (lucide-static omits brand logos)
 import gitBranchSvg from "lucide-static/icons/git-branch.svg?raw";
 import gitForkSvg from "lucide-static/icons/git-fork.svg?raw";
+import gitGraphSvg from "lucide-static/icons/git-graph.svg?raw";
 import atSignSvg from "lucide-static/icons/at-sign.svg?raw";
 import briefcaseSvg from "lucide-static/icons/briefcase.svg?raw";
 import linkSvg from "lucide-static/icons/link.svg?raw";
@@ -82,13 +86,17 @@ const svgMap: Record<string, string> = {
   cog: cogSvg,
   "monitor-cog": monitorCogSvg,
   "memory-stick": memoryStickSvg,
+  bug: bugSvg,
+  "laptop-minimal-check": laptopMinimalCheckSvg,
+  "graduation-cap": graduationCapSvg,
   // Brand icons mapped to contextual substitutes
-  github: gitBranchSvg,
-  gitlab: gitForkSvg,
+  github: gitGraphSvg,
+  gitlab: gitGraphSvg,
   twitter: atSignSvg,
   linkedin: briefcaseSvg,
   "git-branch": gitBranchSvg,
   "git-fork": gitForkSvg,
+  "git-graph": gitGraphSvg,
   "at-sign": atSignSvg,
   briefcase: briefcaseSvg,
   link: linkSvg,

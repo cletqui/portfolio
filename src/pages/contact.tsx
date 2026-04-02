@@ -5,12 +5,6 @@ import { Title, Button } from "../components/layout";
 /* GLOBAL CONSTANTS */
 export const contacts = [
   {
-    name: "Twitter",
-    href: "https://x.com/cletqui/",
-    icon: "twitter",
-    style: "primary",
-  },
-  {
     name: "BlueSky",
     href: "https://bsky.app/profile/cybai.re",
     icon: "earth",

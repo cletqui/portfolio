@@ -81,31 +81,31 @@ app.get("/", (c: Context) => {
           <Details lang={lang} />
         </div>
       </div>
-    </div>
+    </div>,
   );
 });
 
 app.get("/robots.txt", (c: Context) =>
-  c.redirect("/.well-known/robots.txt", 301)
+  c.redirect("/.well-known/robots.txt", 301),
 );
 
 app.get("/keybase.txt", (c: Context) =>
-  c.redirect("/.well-known/keybase.txt", 301)
+  c.redirect("/.well-known/keybase.txt", 301),
 );
 
 /* EASTER EGGS */
 app.get("/.well-known", (c: Context) =>
-  c.redirect("https://www.rfc-editor.org/rfc/rfc8615")
+  c.redirect("https://www.rfc-editor.org/rfc/rfc8615"),
 );
 
 app
   .get("/teapot", (c: Context) => c.text("I'm a teapot", 418))
   .post((c: Context) =>
-    c.redirect("https://www.rfc-editor.org/rfc/rfc2324#section-2.3.2")
+    c.redirect("https://www.rfc-editor.org/rfc/rfc2324#section-2.3.2"),
   );
 
 app.get("/rickroll", (c: Context) =>
-  c.redirect("https://www.youtube.com/watch?v=dQw4w9WgXcQ&pp=ygUJcmljayByb2xs")
+  c.redirect("https://www.youtube.com/watch?v=dQw4w9WgXcQ&pp=ygUJcmljayByb2xs"),
 );
 
 app.get("/fl@g.txt", (c: Context) => c.text("D1dY0uR34dTh3M4n1f3St?"));

@@ -20,5 +20,5 @@ export const renderer = jsxRenderer(
       </html>
     );
   },
-  { stream: true, docType: "<!DOCTYPE html>" }
+  { stream: true, docType: "<!DOCTYPE html>" },
 );
