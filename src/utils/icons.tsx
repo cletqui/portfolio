@@ -46,6 +46,8 @@ import gitGraphSvg from "lucide-static/icons/git-graph.svg?raw";
 import atSignSvg from "lucide-static/icons/at-sign.svg?raw";
 import briefcaseSvg from "lucide-static/icons/briefcase.svg?raw";
 import linkSvg from "lucide-static/icons/link.svg?raw";
+import sunSvg from "lucide-static/icons/sun.svg?raw";
+import moonSvg from "lucide-static/icons/moon.svg?raw";
 
 const svgMap: Record<string, string> = {
   heart: heartSvg,
@@ -100,6 +102,8 @@ const svgMap: Record<string, string> = {
   "at-sign": atSignSvg,
   briefcase: briefcaseSvg,
   link: linkSvg,
+  sun: sunSvg,
+  moon: moonSvg,
 };
 
 export const Icon = ({

@@ -69,6 +69,18 @@ const DropdownNav = ({
   </div>
 );
 
+const themeScript = `(function(){document.addEventListener('DOMContentLoaded',function(){var b=document.getElementById('theme-toggle');if(!b)return;b.addEventListener('click',function(){var h=document.documentElement;var d=h.classList.contains('dark')||(!h.classList.contains('light')&&window.matchMedia('(prefers-color-scheme: dark)').matches);var n=d?'light':'dark';h.className=n;localStorage.setItem('theme',n)})})})();`;
+
+const ThemeToggle = () => (
+  <>
+    <button id="theme-toggle" class="icon-btn" title="Toggle theme" type="button">
+      <span class="theme-sun"><Icon name="sun" size={16} /></span>
+      <span class="theme-moon"><Icon name="moon" size={16} /></span>
+    </button>
+    <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+  </>
+);
+
 const Translate = ({ lang, path }: { lang: string; path: string }) => (
   <a
     href={`${path === "/" ? "" : path}/${toggleLanguage(lang)}`}
@@ -116,7 +128,8 @@ export const Header = ({ lang, path }: { lang: string; path: string }) => (
         />
       </div>
 
-      <div class="ml-auto">
+      <div class="ml-auto flex items-center gap-2">
+        <ThemeToggle />
         <Translate lang={lang} path={path} />
       </div>
     </nav>

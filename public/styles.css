@@ -923,7 +923,7 @@
   --radius: 0.5rem;
 }
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not(.light) {
     --background: oklch(0.145 0 0);
     --foreground: oklch(0.985 0 0);
     --card: oklch(0.21 0 0);
@@ -940,6 +940,43 @@
     --destructive-foreground: oklch(0.145 0 0);
     --border: oklch(0.274 0 0);
   }
+}
+:root.dark {
+  --background: oklch(0.145 0 0);
+  --foreground: oklch(0.985 0 0);
+  --card: oklch(0.21 0 0);
+  --card-foreground: oklch(0.985 0 0);
+  --primary: oklch(0.985 0 0);
+  --primary-foreground: oklch(0.21 0 0);
+  --secondary: oklch(0.274 0 0);
+  --secondary-foreground: oklch(0.985 0 0);
+  --muted: oklch(0.274 0 0);
+  --muted-foreground: oklch(0.709 0 0);
+  --accent: oklch(0.274 0 0);
+  --accent-foreground: oklch(0.985 0 0);
+  --destructive: oklch(0.704 0.191 22.216);
+  --destructive-foreground: oklch(0.145 0 0);
+  --border: oklch(0.274 0 0);
+}
+.theme-sun {
+  display: none;
+}
+.theme-moon {
+  display: inline-flex;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not(.light) .theme-sun {
+    display: inline-flex;
+  }
+  :root:not(.light) .theme-moon {
+    display: none;
+  }
+}
+:root.dark .theme-sun {
+  display: inline-flex;
+}
+:root.dark .theme-moon {
+  display: none;
 }
 @layer base {
   * {
