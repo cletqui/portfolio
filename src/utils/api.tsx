@@ -44,7 +44,10 @@ const queryIPInfo = async (address: string): Promise<IPInfo> => {
   const apiUrl = new URL("https://api.cybai.re/ip/info");
   apiUrl.pathname += `/${address}`;
   const response = await fetch(apiUrl);
-  return response.json();
+  if (!response.ok) throw new Error(`ip lookup ${response.status}`);
+  const data = (await response.json()) as IPInfo & { status?: string };
+  if (data.status === "fail") throw new Error("ip lookup failed");
+  return data;
 };
 
 export const getIPInfo = async (
@@ -53,9 +56,11 @@ export const getIPInfo = async (
 ): Promise<IPInfo> => {
   const cookie = getCookie(c, "you");
   if (cookie) {
-    const { ipInfo }: { ipInfo: IPInfo } = JSON.parse(cookie);
-    if (ipInfo.address && ipInfo.address === address) {
-      return ipInfo;
+    try {
+      const { ipInfo }: { ipInfo: IPInfo } = JSON.parse(decodeURIComponent(cookie));
+      if (ipInfo.address && ipInfo.address === address) return ipInfo;
+    } catch {
+      // malformed or stale cookie — fetch fresh
     }
   }
   const info = await queryIPInfo(address);
@@ -63,20 +68,23 @@ export const getIPInfo = async (
 };
 
 const queryUserAgent = async (userAgent: string): Promise<UserAgent> => {
+  if (!userAgent) throw new Error("no user-agent");
   const apiUrl = new URL("https://api.cybai.re/user-agent");
   apiUrl.searchParams.append("ua", userAgent);
   const response = await fetch(apiUrl);
+  if (!response.ok) throw new Error(`ua lookup ${response.status}`);
   return response.json();
 };
 
 export const getUserAgent = async (c: Context, userAgent: string) => {
   const cookie = getCookie(c, "you");
   if (cookie) {
-    const { ua }: { ua: UserAgent } = JSON.parse(cookie);
-    if (ua.ua === userAgent) {
-      return ua;
+    try {
+      const { ua }: { ua: UserAgent } = JSON.parse(decodeURIComponent(cookie));
+      if (ua.ua === userAgent) return ua;
+    } catch {
+      // malformed or stale cookie — fetch fresh
     }
   }
-  const ua = queryUserAgent(userAgent);
-  return ua;
+  return queryUserAgent(userAgent);
 };

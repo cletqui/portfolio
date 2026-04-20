@@ -13,7 +13,7 @@ import contact from "./pages/contact";
 
 /* TYPES */
 export type Bindings = {
-  SUPPORTS: string[];
+  CTF_FLAGS: KVNamespace;
 };
 
 export type Variables = {

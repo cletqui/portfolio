@@ -5,12 +5,12 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 ## Commands
 
 ```bash
-npm run dev        # Compile CSS once then start Vite dev server
-npm run watch:css  # Watch and recompile CSS (run alongside dev in a second terminal for hot CSS)
-npm run build      # Build for production (CSS + bundle mode + standard Vite build)
-npm run preview    # Preview build locally via Cloudflare Pages (wrangler pages dev dist)
-npm run deploy     # Build and deploy to Cloudflare Pages
-npm run log        # Tail deployment logs
+bun run dev        # Compile CSS once then start Vite dev server
+bun run watch:css  # Watch and recompile CSS (run alongside dev in a second terminal for hot CSS)
+bun run build      # Build for production (CSS + bundle mode + standard Vite build)
+bun run preview    # Preview build locally via Cloudflare Pages (wrangler pages dev dist)
+bun run deploy     # Build and deploy to Cloudflare Pages
+bun run log        # Tail deployment logs
 ```
 
 There are no tests in this project.
@@ -26,6 +26,7 @@ This is a **server-side rendered personal portfolio** built with [Hono](https://
 - **lucide-static** — inline SVG icons imported via `?raw` in `src/utils/icons.tsx`
 - **Vite** — build tool with `@hono/vite-cloudflare-pages` and `@hono/vite-build` plugins
 - **Wrangler** — Cloudflare CLI for deployment/preview
+- **Cloudflare KV** (`CTF_FLAGS` binding) — stores CTF flag definitions; required for `/ctf/submit`
 
 **No CDN dependencies** — all CSS is bundled at build time. Dark mode uses `@media (prefers-color-scheme: dark)` CSS variables only (no JS theme toggle).
 
@@ -41,14 +42,22 @@ Request → logger → poweredBy → handleRedirect → handleLanguage → rende
 
 ### Source layout
 
-- **`src/index.tsx`** — app entry point; defines `Bindings`/`Variables` types, wires middleware and mounts sub-apps
-- **`src/pages/`** — each file is a Hono sub-app mounted at a route prefix (`/`, `/about`, `/projects`, `/contact`)
+- **`src/index.tsx`** — app entry point; defines `Bindings` (`CTF_FLAGS: KVNamespace`) / `Variables` (`lang: string`) types, wires middleware and mounts sub-apps
+- **`src/pages/`** — each file is a Hono sub-app mounted at a route prefix (`/`, `/about`, `/projects`, `/contact`, `/ctf`)
 - **`src/components/`** — shared JSX components (`head`, `header`, `footer`, `layout`, `error`, `wip`)
 - **`src/utils/`** — middleware and helpers (`api`, `renderer`, `redirect`, `language`)
 
 ### i18n
 
-Language is stored in Hono context as `c.var.lang` (set by `handleLanguage` middleware). Pages branch on this value to render English or French content inline within the same component. Use `toggleLanguage(lang)` from `src/utils/language.tsx` to produce the alternate language href.
+Language is stored in Hono context as `c.var.lang` (set by `handleLanguage` middleware). Supported languages are defined in `SUPPORTED` constant in `src/utils/language.tsx`. Pages branch on this value to render English or French content inline within the same component. Use `toggleLanguage(lang)` from `src/utils/language.tsx` to produce the alternate language href.
+
+The translate link appends the target language as a URL suffix (e.g. `/about/me/fr`). The middleware detects it, sets the cookie, and redirects to the clean path.
+
+### CTF
+
+`/ctf` is a capture-the-flag page. 7 flags are hidden across the site and repository. Flag validation uses `POST /ctf/submit` → KV lookup. Scores are tracked client-side in localStorage. KV is not available in `bun run dev` (Vite); use `bun run preview` (wrangler) to test flag submission.
+
+KV entry format: key = flag string (e.g. `cybai{...}`), value = `{"id":"challenge_id","name":"Challenge Name","points":100}`.
 
 ### API calls
 
@@ -64,4 +73,4 @@ app.get("/", (c) => {
 })
 ```
 
-Special routes: `/teapot` (HTTP 418), `/rickroll`, `/fl@g.txt`, `/epochalypse`.
+Special routes: `/teapot` (HTTP 418), `/rickroll`, `/fl@g.txt`, `/ctf` (CTF challenges).

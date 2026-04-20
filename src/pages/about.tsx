@@ -9,17 +9,24 @@ import { setCookie } from "hono/cookie";
 
 /* COMPONENTS */
 const Me = ({ lang }: { lang: string }) => (
-  <div class="card-primary">
+  <div class="card-primary space-y-2">
     <p class="leading-relaxed">
-      {lang === "fr" ? "Je suis un " : "I'm a french "}
+      {lang === "fr"
+        ? "Je suis un "
+        : "I'm a French "}
       <strong>
         {lang === "fr"
-          ? "ingénieur en cybersécurité"
-          : "cybersecurity engineer"}
+          ? "ingénieur en cybersécurité et développeur full-stack"
+          : "cybersecurity engineer and full-stack developer"}
       </strong>
       {lang === "fr"
-        ? " français avec un intérêt prononcé pour la technologie, la résolution de problèmes et, bien sûr, le code sécurisé. Ma formation en informatique et cybersécurité ainsi que mon expérience professionnelle m'ont porté sur la sécurisation, la conception et l'optimisation des expériences numériques."
-        : " with a deep love for technology, solving problems, and, of course, secure code. My background in Computer Science & Cybersecurity and professional experience has been all about defending, designing, and optimizing digital experiences."}
+        ? ", avec une expérience dans les plateformes de threat intelligence et les SIEM."
+        : ", with a background in threat intelligence platforms and SIEM."}
+    </p>
+    <p class="leading-relaxed text-muted-foreground">
+      {lang === "fr"
+        ? "Je construis des outils ciblés à l'intersection de la sécurité et du web — tout en sécurisant des systèmes que vous ne verrez jamais. Ma stack couvre TypeScript, Python, et un homelab qui dort rarement."
+        : "I build focused tools at the intersection of security and the web — while securing systems you'll never see. My stack spans TypeScript, Python, and a homelab that rarely sleeps."}
     </p>
   </div>
 );
@@ -34,28 +41,39 @@ const SkillCard = ({
   children: unknown;
 }) => (
   <div class="card-secondary">
-    <h3 class="font-semibold text-center mb-3">
+    <h3 class="font-semibold text-center mb-3 flex items-center justify-center gap-1.5">
       <Icon name={icon} size={14} class="text-muted-foreground shrink-0" />
       {title}
     </h3>
-    <p class="text-sm leading-relaxed">{children}</p>
+    <div class="text-sm leading-relaxed">{children}</div>
   </div>
 );
+
+const SKILLS = ["TypeScript", "Python", "Bash", "SOC/SIEM", "Splunk", "Pentest", "Docker", "Linux"];
 
 const TechnicalSkills = ({ lang }: { lang: string }) => (
   <SkillCard
     icon="laptop-minimal-check"
     title={lang === "fr" ? "Compétences techniques" : "Technical skills"}
   >
-    {lang === "fr"
-      ? "Les compétences techniques dont je suis fier : détection et réaction, sécurité des réseaux, tests de pénétration, Python, JavaScript, HTML/CSS, SQL et toute une gamme de référentiels de cybersécurité. Venez voir mon profil "
-      : "Technical skills I'm proud of: detection & response, network security, penetration testing, Python, JavaScript, HTML/CSS, SQL and a whole toolbox of cybersecurity frameworks. Come check my "}
-    <a class="font-medium text-foreground" href="https://github.com/cletqui/">
-      GitHub
-    </a>
-    {lang === "fr"
-      ? " pour plus de détails."
-      : " profile for even more details."}
+    <p class="mb-3">
+      {lang === "fr"
+        ? "Les compétences techniques dont je suis fier : détection et réaction, sécurité des réseaux, tests de pénétration, Python, JavaScript, HTML/CSS, SQL et toute une gamme de référentiels de cybersécurité. Venez voir mon profil "
+        : "Technical skills I'm proud of: detection & response, network security, penetration testing, Python, JavaScript, HTML/CSS, SQL and a whole toolbox of cybersecurity frameworks. Come check my "}
+      <a class="font-medium text-foreground" href="https://github.com/cletqui/">
+        GitHub
+      </a>
+      {lang === "fr"
+        ? " pour plus de détails."
+        : " profile for even more details."}
+    </p>
+    <div class="flex flex-wrap gap-1">
+      {SKILLS.map((s) => (
+        <span class="text-xs px-1.5 py-0.5 rounded bg-background text-muted-foreground font-mono">
+          {s}
+        </span>
+      ))}
+    </div>
   </SkillCard>
 );
 
@@ -65,8 +83,8 @@ const Academic = ({ lang }: { lang: string }) => (
     title={lang === "fr" ? "Parcours académique" : "Academic"}
   >
     {lang === "fr"
-      ? "J'ai étudié l'informatique et la cybersécurité en école d'ingénieur, où j'ai acquis une solide base en sécurisation des systèmes et des réseaux. Professionnellement, j'ai travaillé comme analyste SOC et Consultant en Cybersécurité, spécialisé dans la surveillance, la détection des menaces et la mise en place de défenses sécurisées, affirmant ainsi mon expertise en tant qu'expert blue team."
-      : "I studied Computer Science & Cybersecurity in Engineering School where I built a strong foundation in defending systems and networks. Professionally, I've worked as a SOC Analyst and Cybersecurity Consultant, specializing in monitoring, threat detection, and building secure defenses — solidifying my role as a blue team expert."}
+      ? "J'ai étudié l'informatique et la cybersécurité en école d'ingénieur. Professionnellement, j'ai travaillé sur des plateformes de threat intelligence et des SIEM, comme analyste SOC et consultant, spécialisé dans la surveillance, la détection des menaces et la mise en place de défenses sécurisées."
+      : "I studied Computer Science & Cybersecurity in Engineering School. Professionally, I've worked on threat intelligence platforms and SIEM systems as a SOC Analyst and Cybersecurity Consultant, specializing in monitoring, threat detection, and building secure defenses."}
   </SkillCard>
 );
 
@@ -76,7 +94,7 @@ const Passions = ({ lang }: { lang: string }) => (
       ? "Je suis passionné par tout ce qui touche à l'informatique : le développement web (comme ce site ou mes "
       : "I'm passionate about all things IT — whether it's web development (like this very website or my "}
     <a class="font-medium text-foreground" href="/projects">
-      projects
+      {lang === "fr" ? "projets" : "projects"}
     </a>
     {lang === "fr"
       ? "), l'expérimentation dans mon homelab ou encore la résolution de défis lors de "
@@ -267,7 +285,7 @@ const You = ({
             ? "Ne panique pas pour les coordonnées GPS, c'est approximatif ! "
             : "Don't panic about the GPS coordinates, it's approximative! "}
           {country === "France" && lang === "fr"
-            ? `Nos chemins se sont peut-être déjà croisés, numériquement ou autrement. "C0c0r1c0" voilà un petit drapeau, si tu sais quoi en faire…`
+            ? `Nos chemins se sont peut-être déjà croisés, numériquement ou autrement. cybai{C0c0r1c0} voilà un petit drapeau, si tu sais quoi en faire…`
             : "Maybe our paths have crossed before, digitally or otherwise. Did you know there's a french version of this website?"}
         </p>
 
@@ -381,8 +399,8 @@ const IPTable = ({ lang, info }: { lang: string; info: IPInfo }) => (
     ].map(({ icon, label, value }) => (
       <li class="flex items-center gap-2 border-b border-border pb-2 last:border-0 last:pb-0">
         <Icon name={icon} size={14} class="text-muted-foreground shrink-0" />
-        <span class="text-muted-foreground min-w-20">{label}:</span>
-        <span>{value}</span>
+        <span class="text-muted-foreground min-w-20 shrink-0">{label}:</span>
+        <span class="font-mono text-xs">{value}</span>
       </li>
     ))}
   </ul>
@@ -393,10 +411,10 @@ const IP = ({ lang, ipInfo }: { lang: string; ipInfo: IPInfo }) => {
   return (
     <div class="space-y-4">
       <div>
-        <h3 class="text-lg font-semibold border-l-4 border-border pl-3 mb-2">
-          IP
+        <h3 class="text-xs font-mono text-muted-foreground uppercase tracking-wider mb-2">
+          {"// ip address"}
         </h3>
-        <code class="text-xs bg-muted px-2 py-1 rounded font-mono">
+        <code class="text-sm bg-muted px-2 py-1 rounded font-mono">
           {address}
         </code>
       </div>
@@ -450,10 +468,10 @@ const UATable = ({ lang, ua }: { lang: string; ua: UserAgent }) => (
             size={14}
             class="text-muted-foreground shrink-0"
           />
-          <span class="text-muted-foreground min-w-20">{row.label}:</span>
-          <span>{row.name}</span>
+          <span class="text-muted-foreground min-w-20 shrink-0">{row.label}:</span>
+          <span class="font-mono text-xs">{row.name}</span>
           {row.version && (
-            <span class="text-muted-foreground">{row.version}</span>
+            <span class="text-muted-foreground font-mono text-xs">{row.version}</span>
           )}
         </div>
       ))}
@@ -463,8 +481,8 @@ const UATable = ({ lang, ua }: { lang: string; ua: UserAgent }) => (
 const UA = ({ lang, ua }: { lang: string; ua: UserAgent }) => (
   <div class="space-y-4">
     <div>
-      <h3 class="text-lg font-semibold border-l-4 border-border pl-3 mb-2">
-        User-Agent
+      <h3 class="text-xs font-mono text-muted-foreground uppercase tracking-wider mb-2">
+        {"// user-agent"}
       </h3>
       <code class="text-xs bg-muted px-2 py-1 rounded font-mono break-all">
         {ua.ua}
@@ -521,42 +539,76 @@ app.get("/me", (c: Context<{ Bindings: Bindings; Variables: Variables }>) => {
 
 app.get("/you", async (c: Context) => {
   const { lang } = c.var;
-  const { "user-agent": userAgent } = c.req.header();
-  const {
-    remote: { address },
-  } = getConnInfo(c);
-  const ipInfo = await getIPInfo(c, address || "1.1.1.1");
-  const ua = await getUserAgent(c, userAgent);
-  setCookie(
-    c,
-    "you",
-    JSON.stringify({
-      ipInfo: { address: address || "1.1.1.1", ...ipInfo },
-      ua: ua,
-    }),
-    {
-      path: `${c.req.path}`,
-      secure: true,
-      httpOnly: true,
-      maxAge: 2628000,
-      sameSite: "Strict",
-    },
-  );
+  const userAgent = c.req.header("user-agent") ?? "";
+
+  // CF-Connecting-IP is the real client IP on Cloudflare Pages;
+  // fall back to getConnInfo for local dev (returns ::1 / 127.0.0.1)
+  let address: string | undefined = c.req.header("cf-connecting-ip");
+  if (!address) {
+    try {
+      address = getConnInfo(c).remote.address;
+    } catch {
+      address = undefined;
+    }
+  }
+
+  let ipInfo: IPInfo | null = null;
+  let ua: UserAgent | null = null;
+  try {
+    [ipInfo, ua] = await Promise.all([
+      getIPInfo(c, address ?? ""),
+      getUserAgent(c, userAgent),
+    ]);
+  } catch {
+    // private IP or API unavailable (local dev)
+  }
+
+  if (ipInfo && ua) {
+    setCookie(
+      c,
+      "you",
+      encodeURIComponent(
+        JSON.stringify({ ipInfo: { address, ...ipInfo }, ua }),
+      ),
+      {
+        path: c.req.path,
+        secure: true,
+        httpOnly: true,
+        maxAge: 2628000,
+        sameSite: "Strict",
+      },
+    );
+  }
+
   return c.render(
     <div class="mx-auto max-w-3xl px-4 py-12">
       <div class="flex flex-col items-center mb-8">
         <Title>{lang === "fr" ? "À propos de toi" : "About you"}</Title>
       </div>
 
-      <div class="space-y-8">
-        <You lang={lang} ipInfo={ipInfo} ua={ua} />
-
-        {(ipInfo || userAgent) && <hr class="border-border" />}
-
-        {ipInfo && <IP lang={lang} ipInfo={ipInfo} />}
-
-        {userAgent && <UA lang={lang} ua={ua} />}
-      </div>
+      {ipInfo && ua ? (
+        <div class="space-y-8">
+          <You lang={lang} ipInfo={ipInfo} ua={ua} />
+          <hr class="border-border" />
+          <IP lang={lang} ipInfo={ipInfo} />
+          <UA lang={lang} ua={ua} />
+        </div>
+      ) : (
+        <div class="text-center py-16 space-y-3">
+          <Icon name="wifi-off" size={40} class="text-muted-foreground mx-auto" />
+          <p class="font-mono text-sm text-muted-foreground">
+            {"// " +
+              (lang === "fr"
+                ? "Connexion non détectable depuis cet environnement."
+                : "Connection undetectable from this environment.")}
+          </p>
+          <p class="text-xs text-muted-foreground">
+            {lang === "fr"
+              ? "Visitez depuis une connexion publique pour voir vos informations."
+              : "Visit from a public connection to see your information."}
+          </p>
+        </div>
+      )}
     </div>,
   );
 });
