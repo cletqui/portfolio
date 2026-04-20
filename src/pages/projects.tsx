@@ -43,6 +43,7 @@ export const projects: Project[] = [
     icon: "scan-search",
     description:
       "OSINT Swiss-knife — paste a domain, IP, CVE, hash, or JWT for instant cyber intelligence. Backed by api.cybai.re.",
+    image: "/static/projects/app.png",
     internal: "/projects/app",
     href: "https://app.cybai.re/",
     github: "https://github.com/cletqui/app.cybai.re",
@@ -70,25 +71,26 @@ export const projects: Project[] = [
     github: "https://github.com/cletqui/mail",
   },
   {
-    id: "tide",
-    name: "Tide",
-    icon: "waves",
-    description:
-      "Tide predictions for French coastal stations. Fetches SHOM data and serves tide times and heights through a clean API endpoint.",
-    image: "/static/projects/tide.png",
-    internal: "/projects/tide",
-    href: "https://api.cybai.re/data/tide",
-    github: "https://github.com/cletqui/tide",
-  },
-  {
     id: "callot",
     name: "Callot",
     icon: "map-pin",
     description:
       "Tide accessibility tracker for Île Callot, a tidal island in Brittany. Live access windows, cosine-interpolated tide sparkline, and weather.",
+    image: "/static/projects/callot.png",
     internal: "/projects/callot",
-    href: "https://callot.cybai.re/",
+    href: "https://callot.pages.dev/",
     github: "https://github.com/cletqui/callot",
+  },
+  {
+    id: "tide",
+    name: "Tide",
+    icon: "waves",
+    description:
+      "Tide clock for French coastal stations. Serves tide times and heights through a clean UI.",
+    image: "/static/projects/tide.png",
+    internal: "/projects/tide",
+    href: "https://api.cybai.re/data/tide",
+    github: "https://github.com/cletqui/tide",
   },
   {
     id: "apero",
