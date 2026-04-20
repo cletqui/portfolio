@@ -8,7 +8,7 @@ export const Head = ({
   description?: string;
 }) =>
   html`<head>
-    <!-- 4lw4y5Ch3ck50urc3C0d3 -->
+    <!-- cybai{4lw4y5Ch3ck50urc3C0d3} -->
     <meta charset="UTF-8" />
     <meta name="description" content="${description}" />
     <meta name="viewport" content="width=device-width" />

@@ -5,6 +5,7 @@ compatibility_flags = [ "nodejs_compat" ]
 
 [vars]
 
-# [[kv_namespaces]]
-# binding = "MY_KV_NAMESPACE"
-# id = "xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+[[kv_namespaces]]
+binding = "CTF_FLAGS"
+id = "dc5b1086bc0d44b0a8cb774f3d0673fc"
+preview_id = "ddf2ae8618c04c4ba1391863c7e6ab04"

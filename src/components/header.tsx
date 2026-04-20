@@ -102,6 +102,10 @@ export const Header = ({ lang, path }: { lang: string; path: string }) => (
             .map((p) => ({ name: p.name, href: p.internal, icon: p.icon }))}
         />
 
+        <NavLink href="/ctf" active={path.startsWith("/ctf")}>
+          CTF
+        </NavLink>
+
         <DropdownNav
           label="Contact"
           href="/contact"

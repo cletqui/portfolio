@@ -30,10 +30,17 @@ export const Error = ({
   lang: string;
   error: keyof typeof errors;
 }) => (
-  <div class="flex flex-col items-center px-4 py-16 text-center">
-    <Title>{error}</Title>
-    <Icon name="ban" size={64} class="text-muted-foreground mb-4" />
-    <h4 class="text-lg font-semibold mb-8">{errors[error]}</h4>
+  <div class="flex flex-col items-center px-4 py-20 text-center">
+    <div class="font-mono font-bold text-muted-foreground/20 select-none mb-4"
+      style="font-size:clamp(5rem,20vw,10rem);line-height:1">
+      {error}
+    </div>
+    <div class="flex items-center gap-2 mb-10">
+      <Icon name="ban" size={14} class="text-destructive" />
+      <span class="font-mono text-sm text-muted-foreground">
+        [{errors[error].toLowerCase().replace(/ /g, "_")}]
+      </span>
+    </div>
     <div class="flex items-center gap-3">
       <Button
         text={lang === "fr" ? "Retour à l'accueil" : "Go back home"}

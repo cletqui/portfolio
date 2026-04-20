@@ -30,7 +30,7 @@ export const contacts = [
   },
   {
     name: "GPG key",
-    href: "https://bsky.app/profile/cybai.re",
+    href: "https://keybase.io/clet/pgp_keys.asc",
     icon: "key",
     style: "secondary",
   },

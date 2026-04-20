@@ -19,6 +19,8 @@ export const projects: Project[] = [
     id: "petithub",
     name: "PetitHub",
     icon: "github",
+    description:
+      "A lightweight GitHub profile explorer. Browse repositories, stars, and activity for any user — no login required.",
     image: "/static/projects/petithub.png",
     internal: "/projects/petithub",
     href: "https://petithub.cybai.re/",
@@ -28,15 +30,29 @@ export const projects: Project[] = [
     id: "portfolio",
     name: "Portfolio",
     icon: "book-user",
+    description:
+      "This very site. Built with Hono, deployed on Cloudflare Pages, with more layers than it appears.",
     image: "/static/projects/portfolio.png",
     internal: "/projects/portfolio",
     href: "https://www.cybai.re/",
     github: "https://github.com/cletqui/portfolio",
   },
   {
+    id: "app",
+    name: "App",
+    icon: "scan-search",
+    description:
+      "OSINT Swiss-knife — paste a domain, IP, CVE, hash, or JWT for instant cyber intelligence. Backed by api.cybai.re.",
+    internal: "/projects/app",
+    href: "https://app.cybai.re/",
+    github: "https://github.com/cletqui/app.cybai.re",
+  },
+  {
     id: "api",
     name: "API",
     icon: "code-xml",
+    description:
+      "A unified Cloudflare Worker for cyber intelligence — IP geolocation, domain analysis, CVE lookup, User-Agent parsing, and more.",
     image: "/static/projects/api.png",
     internal: "/projects/api",
     href: "https://api.cybai.re/",
@@ -46,6 +62,8 @@ export const projects: Project[] = [
     id: "mail",
     name: "Mail",
     icon: "mail",
+    description:
+      "A client-side email analyzer powered by postal-mime. Drag and drop a .eml file and read it entirely offline — no server involved.",
     image: "/static/projects/mail.png",
     internal: "/projects/mail",
     href: "https://mail.cybai.re/",
@@ -55,15 +73,29 @@ export const projects: Project[] = [
     id: "tide",
     name: "Tide",
     icon: "waves",
+    description:
+      "Tide predictions for French coastal stations. Fetches SHOM data and serves tide times and heights through a clean API endpoint.",
     image: "/static/projects/tide.png",
     internal: "/projects/tide",
-    href: "https://api.cybai.re/",
-    github: "https://github.com/cletqui/api",
+    href: "https://api.cybai.re/data/tide",
+    github: "https://github.com/cletqui/tide",
+  },
+  {
+    id: "callot",
+    name: "Callot",
+    icon: "map-pin",
+    description:
+      "Tide accessibility tracker for Île Callot, a tidal island in Brittany. Live access windows, cosine-interpolated tide sparkline, and weather.",
+    internal: "/projects/callot",
+    href: "https://callot.cybai.re/",
+    github: "https://github.com/cletqui/callot",
   },
   {
     id: "apero",
     name: "Apéro",
     icon: "beer",
+    description:
+      "The only security tool that truly matters: is it apéro time? Time-zone-aware, serverless, and critical infrastructure.",
     image: "/static/projects/apéro.png",
     internal: "/projects/apero",
     href: "https://apero.cybai.re/",
@@ -73,6 +105,8 @@ export const projects: Project[] = [
     id: "epochalypse",
     name: "Epochalypse",
     icon: "clock",
+    description:
+      "A countdown to the Unix Year 2038 problem — when 32-bit signed integers overflow and time itself breaks.",
     image: "/static/projects/epochalypse.png",
     internal: "/projects/epochalypse",
     href: "/projects/epochalypse",
@@ -108,9 +142,7 @@ const ProjectCard = ({
         <Icon name={icon} size={18} class="text-muted-foreground" />
         <h3 class="font-semibold">{name}</h3>
       </div>
-      <p class="text-sm text-muted-foreground">
-        {description || "Lorem Ipsum"}
-      </p>
+      <p class="text-sm text-muted-foreground">{description}</p>
     </div>
 
     {image && (
@@ -203,6 +235,12 @@ app.get("/api", (c: Context) => {
   return c.render(<ProjectDetail lang={lang} {...p} />);
 });
 
+app.get("/app", (c: Context) => {
+  const { lang } = c.var;
+  const p = projects.find((p) => p.id === "app")!;
+  return c.render(<ProjectDetail lang={lang} {...p} />);
+});
+
 app.get("/mail", (c: Context) => {
   const { lang } = c.var;
   const p = projects.find((p) => p.id === "mail")!;
@@ -212,6 +250,12 @@ app.get("/mail", (c: Context) => {
 app.get("/tide", (c: Context) => {
   const { lang } = c.var;
   const p = projects.find((p) => p.id === "tide")!;
+  return c.render(<ProjectDetail lang={lang} {...p} />);
+});
+
+app.get("/callot", (c: Context) => {
+  const { lang } = c.var;
+  const p = projects.find((p) => p.id === "callot")!;
   return c.render(<ProjectDetail lang={lang} {...p} />);
 });
 
@@ -259,17 +303,20 @@ app.get("", (c: Context) => {
       </div>
 
       <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-        {projects.map(({ name, icon, image, internal, href, github }) => (
-          <ProjectCard
-            lang={lang}
-            name={name}
-            icon={icon}
-            image={image}
-            internal={internal}
-            href={href}
-            github={github}
-          />
-        ))}
+        {projects.map(
+          ({ name, icon, description, image, internal, href, github }) => (
+            <ProjectCard
+              lang={lang}
+              name={name}
+              icon={icon}
+              description={description}
+              image={image}
+              internal={internal}
+              href={href}
+              github={github}
+            />
+          ),
+        )}
       </div>
     </div>,
   );
