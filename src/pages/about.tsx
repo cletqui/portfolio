@@ -555,13 +555,17 @@ app.get("/you", async (c: Context) => {
   let ipInfo: IPInfo | null = null;
   let ua: UserAgent | null = null;
   try {
-    [ipInfo, ua] = await Promise.all([
-      getIPInfo(c, address ?? ""),
-      getUserAgent(c, userAgent),
-    ]);
-  } catch {
-    // private IP or API unavailable (local dev)
+    ipInfo = await getIPInfo(c, address ?? "");
+  } catch (e) {
+    console.error("[/about/you] IP lookup failed for", address, ":", e);
   }
+  try {
+    ua = await getUserAgent(c, userAgent);
+  } catch (e) {
+    console.error("[/about/you] UA lookup failed:", e);
+  }
+
+  const isProduction = !!c.req.header("cf-connecting-ip");
 
   if (ipInfo && ua) {
     setCookie(
@@ -598,14 +602,22 @@ app.get("/you", async (c: Context) => {
           <Icon name="wifi-off" size={40} class="text-muted-foreground mx-auto" />
           <p class="font-mono text-sm text-muted-foreground">
             {"// " +
-              (lang === "fr"
-                ? "Connexion non détectable depuis cet environnement."
-                : "Connection undetectable from this environment.")}
+              (isProduction
+                ? lang === "fr"
+                  ? "Données temporairement indisponibles."
+                  : "Data temporarily unavailable."
+                : lang === "fr"
+                  ? "Connexion non détectable depuis cet environnement."
+                  : "Connection undetectable from this environment.")}
           </p>
           <p class="text-xs text-muted-foreground">
-            {lang === "fr"
-              ? "Visitez depuis une connexion publique pour voir vos informations."
-              : "Visit from a public connection to see your information."}
+            {isProduction
+              ? lang === "fr"
+                ? "Réessayez en rafraîchissant la page."
+                : "Try refreshing the page."
+              : lang === "fr"
+                ? "Visitez depuis une connexion publique pour voir vos informations."
+                : "Visit from a public connection to see your information."}
           </p>
         </div>
       )}

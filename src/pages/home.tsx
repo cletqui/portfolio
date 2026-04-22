@@ -16,11 +16,13 @@ const STACK = [
 ] as const;
 
 /* COMPONENTS */
+const typewriterScript = `(function(){document.addEventListener('DOMContentLoaded',function(){var el=document.getElementById('typewriter');if(!el)return;var text=el.textContent||'';el.textContent='';var cursor=document.createElement('span');cursor.className='cursor-blink';cursor.style.marginLeft='1px';cursor.textContent='|';el.appendChild(cursor);var i=0;var iv=setInterval(function(){if(i<text.length){el.insertBefore(document.createTextNode(text[i++]),cursor)}else{clearInterval(iv);setTimeout(function(){cursor.remove()},800)}},80)})})();`;
+
 const Welcome = ({ lang }: { lang: string }) => (
   <div class="space-y-4">
     <div class="flex items-baseline gap-2">
       <span class="font-mono text-muted-foreground select-none">~/</span>
-      <h2 class="text-2xl font-bold">
+      <h2 id="typewriter" class="text-2xl font-bold">
         {lang === "fr" ? "Bienvenue !" : "Welcome!"}
       </h2>
     </div>
@@ -29,6 +31,7 @@ const Welcome = ({ lang }: { lang: string }) => (
         ? "Vous avez trouvé une entrée. Maintenant, oserez-vous explorer ?"
         : "You've found your way in. Now, dare to explore?"}
     </p>
+    <script dangerouslySetInnerHTML={{ __html: typewriterScript }} />
   </div>
 );
 
