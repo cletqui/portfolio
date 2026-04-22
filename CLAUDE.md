@@ -28,7 +28,7 @@ This is a **server-side rendered personal portfolio** built with [Hono](https://
 - **Wrangler** — Cloudflare CLI for deployment/preview
 - **Cloudflare KV** (`CTF_FLAGS` binding) — stores CTF flag definitions; required for `/ctf/submit`
 
-**No CDN dependencies** — all CSS is bundled at build time. Dark mode uses `@media (prefers-color-scheme: dark)` CSS variables only (no JS theme toggle).
+**No CDN dependencies** — all CSS is bundled at build time. Dark mode is driven by `@media (prefers-color-scheme: dark)` CSS variables, with a JS theme toggle (`ThemeToggle` in `header.tsx`) that persists the user's choice in `localStorage` and applies a `light`/`dark` class to `<html>`.
 
 ### Request lifecycle
 
@@ -55,7 +55,7 @@ The translate link appends the target language as a URL suffix (e.g. `/about/me/
 
 ### CTF
 
-`/ctf` is a capture-the-flag page. 7 flags are hidden across the site and repository. Flag validation uses `POST /ctf/submit` → KV lookup. Scores are tracked client-side in localStorage. KV is not available in `bun run dev` (Vite); use `bun run preview` (wrangler) to test flag submission.
+`/ctf` is a capture-the-flag page. 9 challenges are listed, with flags hidden across the site, repository, and DNS. Flag validation uses `POST /ctf/submit` → KV lookup. Scores are tracked client-side in localStorage. KV is not available in `bun run dev` (Vite); use `bun run preview` (wrangler) to test flag submission.
 
 KV entry format: key = flag string (e.g. `cybai{...}`), value = `{"id":"challenge_id","name":"Challenge Name","points":100}`.
 
@@ -74,3 +74,13 @@ app.get("/", (c) => {
 ```
 
 Special routes: `/teapot` (HTTP 418), `/rickroll`, `/fl@g.txt`, `/ctf` (CTF challenges).
+
+## graphify
+
+This project has a graphify knowledge graph at graphify-out/.
+
+Rules:
+- Before answering architecture or codebase questions, read graphify-out/GRAPH_REPORT.md for god nodes and community structure
+- If graphify-out/wiki/index.md exists, navigate it instead of reading raw files
+- For cross-module "how does X relate to Y" questions, prefer `graphify query "<question>"`, `graphify path "<A>" "<B>"`, or `graphify explain "<concept>"` over grep — these traverse the graph's EXTRACTED + INFERRED edges instead of scanning files
+- After modifying code files in this session, run `graphify update .` to keep the graph current (AST-only, no API cost)
