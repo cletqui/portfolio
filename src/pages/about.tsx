@@ -635,8 +635,12 @@ app.get("/you", async (c: Context) => {
 
   // UA: try api.cybai.re for full parsing, fall back to built-in regex
   let ua: UserAgent | null = null;
-  try { ua = await getUserAgent(c, userAgent); }
-  catch { ua = userAgent ? parseUABasic(userAgent) : null; }
+  try {
+    ua = await getUserAgent(c, userAgent);
+  } catch (e) {
+    console.error("[/about/you] UA lookup failed:", e);
+    ua = userAgent ? parseUABasic(userAgent) : null;
+  }
 
   const isProduction = !!c.req.header("cf-connecting-ip");
 
