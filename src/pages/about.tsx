@@ -492,6 +492,84 @@ const UA = ({ lang, ua }: { lang: string; ua: UserAgent }) => (
   </div>
 );
 
+/* UTILS */
+
+// Regex UA fallback — used when api.cybai.re is unreachable
+const parseUABasic = (uaString: string): UserAgent => {
+  const edge    = /Edg\/([\d.]+)/.exec(uaString);
+  const chrome  = /Chrome\/([\d.]+)/.exec(uaString);
+  const firefox = /Firefox\/([\d.]+)/.exec(uaString);
+  const safari  = /Version\/([\d.]+)/.exec(uaString);
+
+  const name = edge ? "Edge" : chrome && !edge ? "Chrome" : firefox ? "Firefox" : safari && /Safari/.test(uaString) ? "Safari" : undefined;
+  const ver  = edge?.[1] ?? chrome?.[1] ?? firefox?.[1] ?? safari?.[1];
+
+  const ios     = /(?:iPhone|iPad) OS ([\d_]+)/.exec(uaString);
+  const android = /Android ([\d.]+)/.exec(uaString);
+  const win     = /Windows NT ([\d.]+)/.exec(uaString);
+  const mac     = /Mac OS X ([\d_]+)/.exec(uaString);
+  const linux   = /Linux/.test(uaString) && !android;
+
+  const osName = ios ? "iOS" : android ? "Android" : win ? "Windows" : mac ? "macOS" : linux ? "Linux" : undefined;
+  const osVer  = (ios?.[1] ?? android?.[1] ?? win?.[1] ?? mac?.[1])?.replace(/_/g, ".");
+
+  return {
+    ua: uaString,
+    browser: { name, version: ver, major: ver?.split(".")[0] },
+    engine:  { name: firefox ? "Gecko" : /WebKit/.test(uaString) ? "WebKit" : undefined, version: undefined },
+    os:      { name: osName, version: osVer },
+    device:  { type: ios || android ? "mobile" : undefined, model: undefined, vendor: undefined },
+    cpu:     { architecture: /x86_64|x64|WOW64|Win64/.test(uaString) ? "amd64" : /arm64|aarch64/.test(uaString) ? "arm64" : undefined },
+  };
+};
+
+// Extract geolocation from Cloudflare's built-in CF properties — no external API needed
+const getCFGeo = (c: Context, address: string | undefined, lang: string): IPInfo | null => {
+  const cf = (c.req.raw as any).cf as Record<string, unknown> | undefined;
+  if (!cf?.country) return null;
+
+  const countryCode = String(cf.country);
+  const countryName = (() => {
+    try { return new Intl.DisplayNames([lang === "fr" ? "fr" : "en"], { type: "region" }).of(countryCode) ?? countryCode; }
+    catch { return countryCode; }
+  })();
+
+  const continentNames: Record<string, [string, string]> = {
+    AF: ["Africa", "Afrique"], AN: ["Antarctica", "Antarctique"], AS: ["Asia", "Asie"],
+    EU: ["Europe", "Europe"], NA: ["North America", "Amérique du Nord"],
+    OC: ["Oceania", "Océanie"], SA: ["South America", "Amérique du Sud"],
+  };
+  const continentCode = String(cf.continent ?? "");
+  const continentName = continentNames[continentCode]?.[lang === "fr" ? 1 : 0] ?? continentCode;
+
+  return {
+    address,
+    status: "success",
+    continent:     continentName,
+    continentCode,
+    country:       countryName,
+    countryCode,
+    region:        String(cf.regionCode ?? ""),
+    regionName:    String(cf.region ?? ""),
+    city:          String(cf.city ?? ""),
+    district:      "",
+    zip:           String(cf.postalCode ?? ""),
+    lat:           parseFloat(String(cf.latitude  ?? "0")) || 0,
+    lon:           parseFloat(String(cf.longitude ?? "0")) || 0,
+    timezone:      String(cf.timezone ?? ""),
+    offset:        0,
+    currency:      "",
+    isp:           String(cf.asOrganization ?? ""),
+    org:           String(cf.asOrganization ?? ""),
+    as:            String(cf.asn ?? ""),
+    asname:        String(cf.asOrganization ?? ""),
+    reverse:       "",
+    mobile:        false,
+    proxy:         false,
+    hosting:       false,
+  };
+};
+
 /* APP */
 const app = new Hono<{}>();
 
@@ -541,29 +619,24 @@ app.get("/you", async (c: Context) => {
   const { lang } = c.var;
   const userAgent = c.req.header("user-agent") ?? "";
 
-  // CF-Connecting-IP is the real client IP on Cloudflare Pages;
-  // fall back to getConnInfo for local dev (returns ::1 / 127.0.0.1)
   let address: string | undefined = c.req.header("cf-connecting-ip");
   if (!address) {
-    try {
-      address = getConnInfo(c).remote.address;
-    } catch {
-      address = undefined;
-    }
+    try { address = getConnInfo(c).remote.address; } catch { address = undefined; }
+  }
+  if (!address || address === "::1" || address === "::ffff:127.0.0.1") address = "127.0.0.1";
+
+  // Geo: Cloudflare built-in properties (always available in production, no external call)
+  // Falls back to api.cybai.re only in local dev where CF properties aren't set
+  let ipInfo: IPInfo | null = getCFGeo(c, address, lang);
+  if (!ipInfo) {
+    try { ipInfo = await getIPInfo(c, address ?? ""); }
+    catch (e) { console.error("[/about/you] IP lookup failed:", e); }
   }
 
-  let ipInfo: IPInfo | null = null;
+  // UA: try api.cybai.re for full parsing, fall back to built-in regex
   let ua: UserAgent | null = null;
-  try {
-    ipInfo = await getIPInfo(c, address ?? "");
-  } catch (e) {
-    console.error("[/about/you] IP lookup failed for", address, ":", e);
-  }
-  try {
-    ua = await getUserAgent(c, userAgent);
-  } catch (e) {
-    console.error("[/about/you] UA lookup failed:", e);
-  }
+  try { ua = await getUserAgent(c, userAgent); }
+  catch { ua = userAgent ? parseUABasic(userAgent) : null; }
 
   const isProduction = !!c.req.header("cf-connecting-ip");
 
