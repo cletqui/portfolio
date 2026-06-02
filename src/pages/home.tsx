@@ -44,27 +44,19 @@ const COMMANDS: { cmd: string; res: string[] }[] = [
     res: ["# About", "cybersecurity engineer", "full-stack developer"],
   },
   {
+    cmd: "git log --oneline",
+    res: [
+      "a3f2b1c (HEAD) deploy: cloudflare pages",
+      "b2e1a0d feat: add ctf challenge flags",
+    ],
+  },
+  {
     cmd: "nmap -sV cybai.re",
     res: [
       "starting nmap 7.99...",
       "PORT     STATE SERVICE  VERSION",
       "80/tcp   open  http     Cloudflare http proxy",
       "443/tcp  open  ssl/http Cloudflare http proxy",
-    ],
-  },
-  {
-    cmd: "curl -s cybai.re/ctf.txt",
-    res: ["cybai{D1dY0uF1ndWh3r3T05ubm1tM3?}"],
-  },
-  {
-    cmd: "dig TXT cybai.re +short",
-    res: ['"v=spf1 include:_spf.mx.cloudflare.net ~all"'],
-  },
-  {
-    cmd: "git log --oneline",
-    res: [
-      "a3f2b1c (HEAD) deploy: cloudflare pages",
-      "b2e1a0d feat: add ctf challenge flags",
     ],
   },
   {
@@ -76,12 +68,27 @@ const COMMANDS: { cmd: string; res: string[] }[] = [
     ],
   },
   {
+    cmd: "apt install neovim docker",
+    res: [
+      "Error: Could not open lock file - open (13: Permission denied)",
+      "Error: Unable to acquire the dpkg frontend lock, are you root?",
+    ],
+  },
+  {
     cmd: "sudo !!",
     res: ["[sudo] password for user:", "Sorry, try again."],
   },
   {
     cmd: "npm install",
-    res: ["added 847 packages (239 vulnerabilities found)"],
+    res: ["added 1312 packages (29 vulnerabilities found)"],
+  },
+  {
+    cmd: "dig TXT cybai.re +short",
+    res: ['"v=spf1 include:_spf.mx.cloudflare.net ~all"'],
+  },
+  {
+    cmd: "curl -s cybai.re/ctf.txt",
+    res: ["cybai{D1dY0uF1ndWh3r3T05ubm1tM3?}"],
   },
 ];
 
