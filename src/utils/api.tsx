@@ -25,9 +25,9 @@ export interface IPInfo {
   as: string;
   asname: string;
   reverse: string;
-  mobile: boolean;
-  proxy: boolean;
-  hosting: boolean;
+  mobile: boolean | null;
+  proxy: boolean | null;
+  hosting: boolean | null;
 }
 
 export interface UserAgent {

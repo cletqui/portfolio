@@ -198,7 +198,6 @@ const ProjectDetail = ({
   icon: string;
   description?: string;
   image?: string;
-  internal?: string;
   href?: string;
   github?: string;
 }) => (

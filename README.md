@@ -20,6 +20,8 @@ bun run dev        # CSS once + Vite dev server
 bun run watch:css  # Hot CSS recompilation (second terminal)
 ```
 
+> Version control uses [jj (Jujutsu)](https://github.com/jj-vcs/jj). Two bookmarks: `main` (production) and `dev` (development).
+
 ## Deployment
 
 ```bash
