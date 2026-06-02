@@ -1,6 +1,10 @@
 # prod
 dist/
 
+# llm
+.claude/
+graphify-out/
+
 # dev
 .yarn/
 !.yarn/releases

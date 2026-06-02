@@ -119,6 +119,27 @@
   }
 }
 
+/* Glitch animation for logo */
+@keyframes glitch {
+  0%, 100% { transform: none; filter: none; }
+  20% { transform: skewX(-8deg) translateX(2px); filter: drop-shadow(2px 0 #ff0055); }
+  40% { transform: skewX(5deg) translateX(-2px); filter: drop-shadow(-2px 0 #0088ff); }
+  60% { transform: none; filter: drop-shadow(1px 0 #00ff88); }
+  80% { transform: skewX(-2deg); filter: none; }
+}
+.logo-glitch:hover {
+  animation: glitch 0.35s steps(1) forwards;
+}
+
+/* Blinking cursor */
+@keyframes blink {
+  0%, 50% { opacity: 1; }
+  51%, 100% { opacity: 0; }
+}
+.cursor-blink {
+  animation: blink 1s step-end infinite;
+}
+
 @layer components {
   .btn {
     display: inline-flex;

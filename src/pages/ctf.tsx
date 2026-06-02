@@ -144,6 +144,7 @@ const ctfScript = `(function(){
     for(var id in found){total+=found[id].points;count++}
     var el=document.getElementById('ctf-score');if(el)el.textContent=total;
     var cl=document.getElementById('ctf-count');if(cl)cl.textContent=count+'/'+N;
+    var prog=document.getElementById('ctf-progress');if(prog)prog.style.width=(N>0?Math.round(count/N*100):0)+'%';
     document.querySelectorAll('[data-challenge]').forEach(function(card){
       var id=card.getAttribute('data-challenge');
       var badge=card.querySelector('.challenge-status');
@@ -258,6 +259,13 @@ app.get("/", (c: Context<{ Bindings: Bindings; Variables: Variables }>) => {
             {TOTAL_POINTS} pts
           </div>
         </div>
+      </div>
+      <div class="mt-4 h-1.5 rounded-full bg-border overflow-hidden">
+        <div
+          id="ctf-progress"
+          class="h-full bg-primary rounded-full transition-all duration-500"
+          style="width:0%"
+        />
       </div>
 
       <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4 mb-10">
