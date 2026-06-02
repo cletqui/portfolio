@@ -59,9 +59,19 @@ The translate link appends the target language as a URL suffix (e.g. `/about/me/
 
 KV entry format: key = flag string (e.g. `cybai{...}`), value = `{"id":"challenge_id","name":"Challenge Name","points":100}`.
 
-### API calls
+### `/about/you` — IP & UA resolution
 
-`src/utils/api.tsx` fetches visitor IP geolocation and User-Agent data from `api.cybai.re`. Results are cached in cookies to avoid redundant requests. This is used exclusively by the `/about/you` route.
+The `/about/you` route resolves visitor geo and User-Agent data through two separate paths:
+
+**IP geolocation (two-stage):**
+1. `getCFGeo(c, address, lang)` — extracts geo from Cloudflare's built-in CF properties (`c.req.raw.cf`). Always succeeds in production (CF properties are always set). Returns `null` for `mobile`, `proxy`, and `hosting` because Cloudflare does not expose these fields.
+2. Falls back to `getIPInfo` → `api.cybai.re/ip/info` only when CF properties are absent (local dev). This path returns real `mobile/proxy/hosting` booleans.
+
+**User-Agent parsing (two-stage):**
+1. `getUserAgent` → `api.cybai.re/user-agent` (full UA-Parser.js parsing).
+2. Falls back to `parseUABasic(uaString)` (local regex) on any fetch failure, so the page always renders something.
+
+**`IPInfo` type note:** `mobile`, `proxy`, `hosting` are `boolean | null`. `null` means the CF geo path was used and the field is unavailable — not that the visitor is definitely not on a proxy. The `IPTable` component and `You` component both skip/ignore `null` values correctly.
 
 ### Routing pattern
 
@@ -74,6 +84,24 @@ app.get("/", (c) => {
 ```
 
 Special routes: `/teapot` (HTTP 418), `/rickroll`, `/fl@g.txt`, `/ctf` (CTF challenges).
+
+## Version control
+
+This project uses **jj (Jujutsu)** — not plain git. Use `jj` commands; don't run `git commit`, `git rebase`, etc. directly. Key workflow:
+
+```bash
+jj status               # working copy status
+jj log                  # commit graph
+jj describe -m "..."    # set message for current commit (@)
+jj new                  # create a new empty commit on top of @
+jj squash               # fold working copy changes into parent
+jj rebase -d <target>   # rebase @ onto target
+jj bookmark set <name>  # move a bookmark to @
+jj git push --bookmark <name>  # push to origin
+jj git fetch            # fetch from origin
+```
+
+The repo has two main bookmarks: `main` (production) and `dev` (development). PRs go `dev` → `main` on GitHub.
 
 ## graphify
 

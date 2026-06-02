@@ -278,7 +278,7 @@ const You = ({
           <strong>{country}</strong>
           {", "}
           <strong>{continent}</strong>
-          {lang == "fr"
+          {lang === "fr"
             ? " (mais avais-je même besoin de préciser…)."
             : " (but did I even need to specify…)."}
           {lang === "fr"
@@ -304,11 +304,11 @@ const You = ({
             ? ", as-tu vérifié s'ils offrent des fonctionnalités comme le DNS chiffré ou des options de sécurité supplémentaires ? "
             : ", have you checked if they offer features like encrypted DNS or additional security options? "}
           {lang === "fr" ? "Tu utilises " : "You're using "}
-          <strong>{`${browserName} ${major}`}</strong>
+          <strong>{[browserName, major].filter(Boolean).join(" ")}</strong>
           {lang === "fr" ? " avec " : " with "}
           <strong>{engineName}</strong>
           {lang === "fr" ? ", sur " : ", running on "}
-          <strong>{`${osName} ${version}`}</strong>
+          <strong>{[osName, version].filter(Boolean).join(" ")}</strong>
           {lang === "fr" ? " avec un CPU " : " with a "}
           <strong class="uppercase">{architecture}</strong>
           {lang === "fr"
@@ -385,17 +385,9 @@ const IPTable = ({ lang, info }: { lang: string; info: IPInfo }) => (
             },
           ]
         : []),
-      {
-        icon: "tablet-smartphone",
-        label: "Mobile",
-        value: String(info.mobile),
-      },
-      { icon: "router", label: "Proxy", value: String(info.proxy) },
-      {
-        icon: "server",
-        label: lang === "fr" ? "Hébergement" : "Hosting",
-        value: String(info.hosting),
-      },
+      ...(info.mobile !== null ? [{ icon: "tablet-smartphone", label: "Mobile", value: String(info.mobile) }] : []),
+      ...(info.proxy !== null ? [{ icon: "router", label: "Proxy", value: String(info.proxy) }] : []),
+      ...(info.hosting !== null ? [{ icon: "server", label: lang === "fr" ? "Hébergement" : "Hosting", value: String(info.hosting) }] : []),
     ].map(({ icon, label, value }) => (
       <li class="flex items-center gap-2 border-b border-border pb-2 last:border-0 last:pb-0">
         <Icon name={icon} size={14} class="text-muted-foreground shrink-0" />
@@ -564,9 +556,9 @@ const getCFGeo = (c: Context, address: string | undefined, lang: string): IPInfo
     as:            String(cf.asn ?? ""),
     asname:        String(cf.asOrganization ?? ""),
     reverse:       "",
-    mobile:        false,
-    proxy:         false,
-    hosting:       false,
+    mobile:        null,
+    proxy:         null,
+    hosting:       null,
   };
 };
 
@@ -635,8 +627,12 @@ app.get("/you", async (c: Context) => {
 
   // UA: try api.cybai.re for full parsing, fall back to built-in regex
   let ua: UserAgent | null = null;
-  try { ua = await getUserAgent(c, userAgent); }
-  catch { ua = userAgent ? parseUABasic(userAgent) : null; }
+  try {
+    ua = await getUserAgent(c, userAgent);
+  } catch (e) {
+    console.error("[/about/you] UA lookup failed:", e);
+    ua = userAgent ? parseUABasic(userAgent) : null;
+  }
 
   const isProduction = !!c.req.header("cf-connecting-ip");
 
