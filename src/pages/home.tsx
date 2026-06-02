@@ -40,22 +40,21 @@ const NAV_ITEMS = (lang: string) => [
 /* COMMANDS — edit freely: add, remove, reorder entries */
 const COMMANDS: { cmd: string; res: string[] }[] = [
   {
-    cmd: "head -n 2 readme.md",
-    res: [
-      "cybersecurity engineer",
-      "full-stack developer",
-    ],
+    cmd: "head -n 3 about.md",
+    res: ["# About", "cybersecurity engineer", "full-stack developer"],
   },
   {
     cmd: "nmap -sV cybai.re",
     res: [
-      "starting nmap 7.95...",
-      "443/tcp open  https  nginx/cloudflare",
+      "starting nmap 7.99...",
+      "PORT     STATE SERVICE  VERSION",
+      "80/tcp   open  http     Cloudflare http proxy",
+      "443/tcp  open  ssl/http Cloudflare http proxy",
     ],
   },
   {
-    cmd: "curl -s cybai.re/fl@g.txt",
-    res: ["cybai{D1dY0uR34dTh3M4n1f3St}"],
+    cmd: "curl -s cybai.re/ctf.txt",
+    res: ["cybai{D1dY0uF1ndWh3r3T05ubm1tM3?}"],
   },
   {
     cmd: "dig TXT cybai.re +short",
@@ -65,8 +64,24 @@ const COMMANDS: { cmd: string; res: string[] }[] = [
     cmd: "git log --oneline",
     res: [
       "a3f2b1c (HEAD) deploy: cloudflare pages",
-      "b2e1a0d feat: add ctf challenges",
+      "b2e1a0d feat: add ctf challenge flags",
     ],
+  },
+  {
+    cmd: "ping -c 2 8.8.8.8",
+    res: [
+      "PING 8.8.8.8 (8.8.8.8) 56(84) bytes of data.",
+      "64 bytes from 8.8.8.8: icmp_seq=1 ttl=118 time=1.337ms",
+      "64 bytes from 8.8.8.8: icmp_seq=2 ttl=118 time=1.337ms",
+    ],
+  },
+  {
+    cmd: "sudo !!",
+    res: ["[sudo] password for user:", "Sorry, try again."],
+  },
+  {
+    cmd: "npm install",
+    res: ["added 847 packages (239 vulnerabilities found)"],
   },
 ];
 
@@ -119,9 +134,13 @@ const typewriterScript = `(function(){
 const Welcome = () => (
   <div class="space-y-2">
     <div class="flex items-baseline gap-3">
-      <span class="font-mono text-muted-foreground select-none text-3xl">❯</span>
+      <span class="font-mono text-muted-foreground select-none text-3xl">
+        ❯
+      </span>
       <h2 id="typewriter" class="text-3xl font-bold font-mono" />
-      <span class="cursor-blink font-mono text-foreground/50 text-3xl select-none">|</span>
+      <span class="cursor-blink font-mono text-foreground/50 text-3xl select-none">
+        |
+      </span>
     </div>
     <div
       id="typewriter-responses"
@@ -171,11 +190,16 @@ const NavCard = ({
   desc: string;
   href: string;
 }) => (
-  <a href={href} class="card flex items-start gap-3 group no-underline! hover:no-underline!">
+  <a
+    href={href}
+    class="card flex items-start gap-3 group no-underline! hover:no-underline!"
+  >
     <Icon name={icon} size={18} class="text-muted-foreground mt-0.5 shrink-0" />
     <div class="flex-1 min-w-0">
       <div class="font-semibold text-sm mb-0.5">{title}</div>
-      <div class="text-xs font-mono text-muted-foreground leading-relaxed">{desc}</div>
+      <div class="text-xs font-mono text-muted-foreground leading-relaxed">
+        {desc}
+      </div>
     </div>
     <Icon
       name="chevron-right"
@@ -260,7 +284,9 @@ app.get("/rickroll", (c: Context) =>
 
 app.get("/fl@g.txt", (c: Context) => c.text("cybai{D1dY0uR34dTh3M4n1f3St}"));
 
-app.get("/ctf.txt", (c: Context) => c.text("cybai{D1dY0uF1ndWh3r3T05ubm1tM3?}"));
+app.get("/ctf.txt", (c: Context) =>
+  c.text("cybai{D1dY0uF1ndWh3r3T05ubm1tM3?}"),
+);
 
 app.options("/", (c: Context) => {
   c.header("Allow", "GET, HEAD, OPTIONS");
@@ -270,10 +296,9 @@ app.options("/", (c: Context) => {
 
 app.get("/humans.txt", (c: Context) =>
   c.text(
-    "/* TEAM */\nDeveloper: Antoine Q\nSite: https://cybai.re\n\n/* THANKS */\nHono · Tailwind CSS · Cloudflare Pages\n\n/* SITE */\nLast update: 2025\nLanguage: English / French\n\n# cybai{H3ll0Hum4ns}"
-  )
+    "/* TEAM */\nDeveloper: Antoine Q\nSite: https://cybai.re\n\n/* THANKS */\nHono · Tailwind CSS · Cloudflare Pages\n\n/* SITE */\nLast update: 2025\nLanguage: English / French\n\n# cybai{H3ll0Hum4ns}",
+  ),
 );
-
 
 app.route("/ctf", ctf);
 

@@ -331,7 +331,16 @@ app.get("", (c: Context) => {
 
       <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {projects.map(
-          ({ name, icon, description, descriptionFr, image, internal, href, github }) => (
+          ({
+            name,
+            icon,
+            description,
+            descriptionFr,
+            image,
+            internal,
+            href,
+            github,
+          }) => (
             <ProjectCard
               lang={lang}
               name={name}

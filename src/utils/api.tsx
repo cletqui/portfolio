@@ -57,7 +57,9 @@ export const getIPInfo = async (
   const cookie = getCookie(c, "you");
   if (cookie) {
     try {
-      const { ipInfo }: { ipInfo: IPInfo } = JSON.parse(decodeURIComponent(cookie));
+      const { ipInfo }: { ipInfo: IPInfo } = JSON.parse(
+        decodeURIComponent(cookie),
+      );
       if (ipInfo.address && ipInfo.address === address) return ipInfo;
     } catch {
       // malformed or stale cookie — fetch fresh

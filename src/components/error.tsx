@@ -43,7 +43,10 @@ export const Error = ({
         <div class="flex gap-3">
           <span class="text-green-500 select-none shrink-0">$</span>
           <span>
-            cd <span id="error-path" class="text-muted-foreground">/</span>
+            cd{" "}
+            <span id="error-path" class="text-muted-foreground">
+              /
+            </span>
           </span>
         </div>
         <div class="flex gap-3">
