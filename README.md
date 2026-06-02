@@ -8,9 +8,9 @@ Live at [www.cybai.re](https://www.cybai.re/).
 - **[Hono](https://hono.dev/)** — routing, middleware, JSX-based SSR
 - **[Tailwind CSS v4](https://tailwindcss.com/)** — utility-first CSS compiled via `@tailwindcss/cli`
 - **[Cloudflare Pages](https://pages.cloudflare.com/)** — edge deployment
-- **[Cloudflare KV](https://developers.cloudflare.com/kv/)** — CTF flag validation
+- **[Cloudflare KV](https://developers.cloudflare.com/kv/)** — CTF flag validation (`CTF_FLAGS` binding)
 
-No client-side hydration. All rendering happens at the edge.
+No client-side hydration. All rendering happens at the edge. English/French i18n via URL suffix, cookie, or `Accept-Language`.
 
 ## Development
 
@@ -18,28 +18,23 @@ No client-side hydration. All rendering happens at the edge.
 bun install
 bun run dev        # CSS once + Vite dev server
 bun run watch:css  # Hot CSS recompilation (second terminal)
-```
-
-> Version control uses [jj (Jujutsu)](https://github.com/jj-vcs/jj). Two bookmarks: `main` (production) and `dev` (development).
-
-## Deployment
-
-```bash
 bun run build      # Production build
-bun run preview    # Local preview via wrangler pages dev
+bun run preview    # Local preview via wrangler pages dev (KV available here, not in dev)
 bun run deploy     # Build + deploy to Cloudflare Pages
 ```
 
+> CSS is compiled separately from the JS bundle — run `bun run build:css` if styles don't update after `bun run build`.
+
+> Version control uses [jj (Jujutsu)](https://github.com/jj-vcs/jj). Two bookmarks: `main` (production) and `dev` (development).
+
+> KV is not available in `bun run dev` (Vite). Use `bun run preview` (wrangler) to test flag submission.
+
 ## CTF
 
-Flags are hidden throughout the site and repository. Visit [/ctf](https://www.cybai.re/ctf) to track your progress.
+Flags are hidden throughout the site, its HTTP headers, DNS records, and this repository. Visit [/ctf](https://www.cybai.re/ctf) to track progress — 15 challenges, 1800 pts total.
 
-Before deploying, create a KV namespace and seed the flags:
+KV entry format: key = flag string, value = `{"id":"challenge_id","name":"Challenge Name","points":N}`.
 
-```bash
-bunx wrangler kv namespace create CTF_FLAGS
-# Replace ids in wrangler.toml, then:
-bunx wrangler kv key put --namespace-id=<ID> 'cybai{...}' '{"id":"...","name":"...","points":0}'
-```
+Seeding commands and flag values are kept in `FLAGS.md` (gitignored).
 
 <!-- cybai{H1dd3nInPl41n51gh7} -->

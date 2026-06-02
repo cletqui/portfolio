@@ -4,6 +4,8 @@ dist/
 # llm
 .claude/
 graphify-out/
+CLAUDE.md
+FLAGS.md
 
 # dev
 .yarn/
