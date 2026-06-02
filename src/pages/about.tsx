@@ -638,6 +638,8 @@ app.get("/you", async (c: Context) => {
   try { ua = await getUserAgent(c, userAgent); }
   catch { ua = userAgent ? parseUABasic(userAgent) : null; }
 
+  const isProduction = !!c.req.header("cf-connecting-ip");
+
   if (ipInfo && ua) {
     setCookie(
       c,
@@ -673,14 +675,22 @@ app.get("/you", async (c: Context) => {
           <Icon name="wifi-off" size={40} class="text-muted-foreground mx-auto" />
           <p class="font-mono text-sm text-muted-foreground">
             {"// " +
-              (lang === "fr"
-                ? "Connexion non détectable depuis cet environnement."
-                : "Connection undetectable from this environment.")}
+              (isProduction
+                ? lang === "fr"
+                  ? "Données temporairement indisponibles."
+                  : "Data temporarily unavailable."
+                : lang === "fr"
+                  ? "Connexion non détectable depuis cet environnement."
+                  : "Connection undetectable from this environment.")}
           </p>
           <p class="text-xs text-muted-foreground">
-            {lang === "fr"
-              ? "Visitez depuis une connexion publique pour voir vos informations."
-              : "Visit from a public connection to see your information."}
+            {isProduction
+              ? lang === "fr"
+                ? "Réessayez en rafraîchissant la page."
+                : "Try refreshing the page."
+              : lang === "fr"
+                ? "Visitez depuis une connexion publique pour voir vos informations."
+                : "Visit from a public connection to see your information."}
           </p>
         </div>
       )}
