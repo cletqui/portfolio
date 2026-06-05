@@ -1,0 +1,7 @@
+Contact: https://cybai.re/contact
+Expires: 2027-01-01T00:00:00.000Z
+Preferred-Languages: en, fr
+Canonical: https://cybai.re/.well-known/security.txt
+
+# found something? submit it at https://cybai.re/ctf
+# cybai{RFC9116W4sH3r3}

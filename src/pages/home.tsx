@@ -274,11 +274,6 @@ app.get("/humans.txt", (c: Context) =>
   )
 );
 
-app.get("/.well-known/security.txt", (c: Context) =>
-  c.text(
-    "Contact: https://cybai.re/contact\nExpires: 2027-01-01T00:00:00.000Z\nPreferred-Languages: en, fr\nCanonical: https://cybai.re/.well-known/security.txt\n\n# found something? submit it at https://cybai.re/ctf\n# cybai{RFC9116W4sH3r3}"
-  )
-);
 
 app.route("/ctf", ctf);
 
