@@ -38,7 +38,7 @@ export const Button = ({
 
 export const Avatar = ({ size }: { size: number }) => (
   <img
-    class="rounded-full object-cover"
+    class="rounded-full object-cover ring-2 ring-foreground/20"
     style={`width:${size}px;height:${size}px;aspect-ratio:1/1`}
     src="/static/avatar.png"
     width={size}

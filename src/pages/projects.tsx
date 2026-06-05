@@ -7,6 +7,7 @@ interface Project {
   name: string;
   icon: string;
   description?: string;
+  descriptionFr?: string;
   image?: string;
   internal?: string;
   href?: string;
@@ -21,6 +22,8 @@ export const projects: Project[] = [
     icon: "github",
     description:
       "A lightweight GitHub profile explorer. Browse repositories, stars, and activity for any user — no login required.",
+    descriptionFr:
+      "Un explorateur de profil GitHub léger. Parcourez les dépôts, les étoiles et l'activité de n'importe quel utilisateur — sans connexion requise.",
     image: "/static/projects/petithub.png",
     internal: "/projects/petithub",
     href: "https://petithub.cybai.re/",
@@ -32,6 +35,8 @@ export const projects: Project[] = [
     icon: "book-user",
     description:
       "This very site. Built with Hono, deployed on Cloudflare Pages, with more layers than it appears.",
+    descriptionFr:
+      "Ce site même. Construit avec Hono, déployé sur Cloudflare Pages, avec plus de couches qu'il n'y paraît.",
     image: "/static/projects/portfolio.png",
     internal: "/projects/portfolio",
     href: "https://www.cybai.re/",
@@ -43,6 +48,8 @@ export const projects: Project[] = [
     icon: "scan-search",
     description:
       "OSINT Swiss-knife — paste a domain, IP, CVE, hash, or JWT for instant cyber intelligence. Backed by api.cybai.re.",
+    descriptionFr:
+      "Couteau suisse OSINT — collez un domaine, une IP, un CVE, un hash ou un JWT pour une cyber-intelligence instantanée. Propulsé par api.cybai.re.",
     image: "/static/projects/app.png",
     internal: "/projects/app",
     href: "https://app.cybai.re/",
@@ -54,6 +61,8 @@ export const projects: Project[] = [
     icon: "code-xml",
     description:
       "A unified Cloudflare Worker for cyber intelligence — IP geolocation, domain analysis, CVE lookup, User-Agent parsing, and more.",
+    descriptionFr:
+      "Un Cloudflare Worker unifié pour la cyber-intelligence — géolocalisation IP, analyse de domaine, recherche CVE, analyse User-Agent, et plus encore.",
     image: "/static/projects/api.png",
     internal: "/projects/api",
     href: "https://api.cybai.re/",
@@ -65,6 +74,8 @@ export const projects: Project[] = [
     icon: "mail",
     description:
       "A client-side email analyzer powered by postal-mime. Drag and drop a .eml file and read it entirely offline — no server involved.",
+    descriptionFr:
+      "Un analyseur d'e-mails côté client propulsé par postal-mime. Glissez-déposez un fichier .eml et lisez-le entièrement hors ligne — aucun serveur impliqué.",
     image: "/static/projects/mail.png",
     internal: "/projects/mail",
     href: "https://mail.cybai.re/",
@@ -76,6 +87,8 @@ export const projects: Project[] = [
     icon: "map-pin",
     description:
       "Tide accessibility tracker for Île Callot, a tidal island in Brittany. Live access windows, cosine-interpolated tide sparkline, and weather.",
+    descriptionFr:
+      "Suivi d'accessibilité des marées pour l'Île Callot, île tidale en Bretagne. Fenêtres d'accès en direct, sparkline de marée interpolée et météo.",
     image: "/static/projects/callot.png",
     internal: "/projects/callot",
     href: "https://callot.pages.dev/",
@@ -87,6 +100,8 @@ export const projects: Project[] = [
     icon: "waves",
     description:
       "Tide clock for French coastal stations. Serves tide times and heights through a clean UI.",
+    descriptionFr:
+      "Horloge des marées pour les stations côtières françaises. Affiche les horaires et hauteurs de marée dans une interface épurée.",
     image: "/static/projects/tide.png",
     internal: "/projects/tide",
     href: "https://api.cybai.re/data/tide",
@@ -98,6 +113,8 @@ export const projects: Project[] = [
     icon: "beer",
     description:
       "The only security tool that truly matters: is it apéro time? Time-zone-aware, serverless, and critical infrastructure.",
+    descriptionFr:
+      "Le seul outil de sécurité qui compte vraiment : est-ce l'heure de l'apéro ? Conscient des fuseaux horaires, sans serveur, et infrastructure critique.",
     image: "/static/projects/apéro.png",
     internal: "/projects/apero",
     href: "https://apero.cybai.re/",
@@ -109,6 +126,8 @@ export const projects: Project[] = [
     icon: "clock",
     description:
       "A countdown to the Unix Year 2038 problem — when 32-bit signed integers overflow and time itself breaks.",
+    descriptionFr:
+      "Un compte à rebours jusqu'au problème de l'an 2038 Unix — quand les entiers signés 32 bits débordent et que le temps lui-même se brise.",
     image: "/static/projects/epochalypse.png",
     internal: "/projects/epochalypse",
     href: "/projects/epochalypse",
@@ -124,6 +143,7 @@ const ProjectCard = ({
   name,
   icon,
   description,
+  descriptionFr,
   image,
   internal,
   href,
@@ -133,6 +153,7 @@ const ProjectCard = ({
   name: string;
   icon: string;
   description?: string;
+  descriptionFr?: string;
   image?: string;
   internal?: string;
   href?: string;
@@ -144,7 +165,9 @@ const ProjectCard = ({
         <Icon name={icon} size={18} class="text-muted-foreground" />
         <h3 class="font-semibold">{name}</h3>
       </div>
-      <p class="text-sm text-muted-foreground">{description}</p>
+      <p class="text-sm text-muted-foreground">
+        {lang === "fr" && descriptionFr ? descriptionFr : description}
+      </p>
     </div>
 
     {image && (
@@ -189,6 +212,7 @@ const ProjectDetail = ({
   name,
   icon,
   description,
+  descriptionFr,
   image,
   href,
   github,
@@ -197,6 +221,7 @@ const ProjectDetail = ({
   name: string;
   icon: string;
   description?: string;
+  descriptionFr?: string;
   image?: string;
   href?: string;
   github?: string;
@@ -209,6 +234,7 @@ const ProjectDetail = ({
         name={name}
         icon={icon}
         description={description}
+        descriptionFr={descriptionFr}
         image={image}
         href={href}
         github={github}
@@ -305,12 +331,13 @@ app.get("", (c: Context) => {
 
       <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
         {projects.map(
-          ({ name, icon, description, image, internal, href, github }) => (
+          ({ name, icon, description, descriptionFr, image, internal, href, github }) => (
             <ProjectCard
               lang={lang}
               name={name}
               icon={icon}
               description={description}
+              descriptionFr={descriptionFr}
               image={image}
               internal={internal}
               href={href}

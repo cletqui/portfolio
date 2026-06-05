@@ -23,7 +23,7 @@ const Me = ({ lang }: { lang: string }) => (
         ? ", avec une expérience dans les plateformes de threat intelligence et les SIEM."
         : ", with a background in threat intelligence platforms and SIEM."}
     </p>
-    <p class="leading-relaxed text-muted-foreground">
+    <p class="leading-relaxed text-primary-foreground/70">
       {lang === "fr"
         ? "Je construis des outils ciblés à l'intersection de la sécurité et du web — tout en sécurisant des systèmes que vous ne verrez jamais. Ma stack couvre TypeScript, Python, et un homelab qui dort rarement."
         : "I build focused tools at the intersection of security and the web — while securing systems you'll never see. My stack spans TypeScript, Python, and a homelab that rarely sleeps."}

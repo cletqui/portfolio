@@ -93,8 +93,15 @@
 :root.dark .theme-moon { display: none; }
 
 @layer base {
+  html {
+    scroll-behavior: smooth;
+  }
   * {
     border-color: var(--border);
+  }
+  ::selection {
+    background-color: oklch(0.45 0.15 145 / 0.25);
+    color: inherit;
   }
   body {
     background-color: var(--background);
@@ -156,6 +163,10 @@
     white-space: nowrap;
     text-decoration: none !important;
   }
+  .btn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--foreground);
+  }
   .btn:disabled {
     opacity: 0.5;
     cursor: not-allowed;
@@ -193,6 +204,11 @@
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
     padding: 1.25rem;
+    transition: box-shadow 0.2s, transform 0.2s;
+  }
+  .card:hover {
+    box-shadow: 0 4px 14px oklch(0 0 0 / 0.07);
+    transform: translateY(-1px);
   }
   .card-primary {
     background-color: var(--primary);
@@ -230,5 +246,29 @@
   .icon-btn:hover {
     background-color: var(--accent);
     text-decoration: none;
+  }
+  .icon-btn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--foreground);
+  }
+
+  .nav-btn {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    padding: 0.375rem;
+    border-radius: var(--radius-sm);
+    background-color: transparent;
+    color: var(--muted-foreground);
+    cursor: pointer;
+    transition: background-color 0.15s, color 0.15s;
+  }
+  .nav-btn:hover {
+    background-color: var(--accent);
+    color: var(--foreground);
+  }
+  .nav-btn:focus-visible {
+    outline: none;
+    box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--foreground);
   }
 }
