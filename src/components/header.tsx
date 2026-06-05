@@ -52,22 +52,18 @@ const DropdownNav = ({
     >
       {label}
     </a>
-    <div
-      class="absolute top-full left-0 pt-1 z-50 opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-opacity duration-150"
-    >
-    <div
-      class="flex flex-col gap-0.5 min-w-36 rounded-md border border-border bg-card p-1 shadow-md"
-    >
-      {items.map(({ name, href: itemHref, icon }) => (
-        <a
-          href={itemHref}
-          class="flex items-center gap-2 rounded px-2 py-1.5 text-sm text-card-foreground hover:bg-accent hover:text-accent-foreground no-underline! hover:no-underline! transition-colors"
-        >
-          <Icon name={icon} size={14} />
-          {name}
-        </a>
-      ))}
-    </div>
+    <div class="absolute top-full left-0 pt-1 z-50 opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-opacity duration-150">
+      <div class="flex flex-col gap-0.5 min-w-36 rounded-md border border-border bg-card p-1 shadow-md">
+        {items.map(({ name, href: itemHref, icon }) => (
+          <a
+            href={itemHref}
+            class="flex items-center gap-2 rounded px-2 py-1.5 text-sm text-card-foreground hover:bg-accent hover:text-accent-foreground no-underline! hover:no-underline! transition-colors"
+          >
+            <Icon name={icon} size={14} />
+            {name}
+          </a>
+        ))}
+      </div>
     </div>
   </div>
 );
@@ -78,9 +74,18 @@ const themeScript = `(function(){document.addEventListener('DOMContentLoaded',fu
 
 const ThemeToggle = () => (
   <>
-    <button id="theme-toggle" class="icon-btn" title="Toggle theme" type="button">
-      <span class="theme-sun"><Icon name="sun" size={16} /></span>
-      <span class="theme-moon"><Icon name="moon" size={16} /></span>
+    <button
+      id="theme-toggle"
+      class="icon-btn"
+      title="Toggle theme"
+      type="button"
+    >
+      <span class="theme-sun">
+        <Icon name="sun" size={16} />
+      </span>
+      <span class="theme-moon">
+        <Icon name="moon" size={16} />
+      </span>
     </button>
     <script dangerouslySetInnerHTML={{ __html: themeScript }} />
   </>
@@ -156,19 +161,34 @@ export const Header = ({ lang, path }: { lang: string; path: string }) => (
       id="mobile-menu"
       class="hidden sm:hidden border-t border-border bg-background px-4 py-3 space-y-1"
     >
-      <a href="/about/me" class={`px-2 py-1.5 rounded text-sm font-medium no-underline! hover:bg-accent transition-colors ${path.startsWith("/about/me") ? "text-foreground" : "text-muted-foreground"}`}>
+      <a
+        href="/about/me"
+        class={`px-2 py-1.5 rounded text-sm font-medium no-underline! hover:bg-accent transition-colors ${path.startsWith("/about/me") ? "text-foreground" : "text-muted-foreground"}`}
+      >
         {lang === "fr" ? "À propos" : "About me"}
       </a>
-      <a href="/about/you" class={`px-2 py-1.5 rounded text-sm font-medium no-underline! hover:bg-accent transition-colors ${path.startsWith("/about/you") ? "text-foreground" : "text-muted-foreground"}`}>
+      <a
+        href="/about/you"
+        class={`px-2 py-1.5 rounded text-sm font-medium no-underline! hover:bg-accent transition-colors ${path.startsWith("/about/you") ? "text-foreground" : "text-muted-foreground"}`}
+      >
         {lang === "fr" ? "De toi ?" : "About you"}
       </a>
-      <a href="/projects" class={`px-2 py-1.5 rounded text-sm font-medium no-underline! hover:bg-accent transition-colors ${path.startsWith("/projects") ? "text-foreground" : "text-muted-foreground"}`}>
+      <a
+        href="/projects"
+        class={`px-2 py-1.5 rounded text-sm font-medium no-underline! hover:bg-accent transition-colors ${path.startsWith("/projects") ? "text-foreground" : "text-muted-foreground"}`}
+      >
         {lang === "fr" ? "Projets" : "Projects"}
       </a>
-      <a href="/ctf" class={`px-2 py-1.5 rounded text-sm font-medium no-underline! hover:bg-accent transition-colors ${path.startsWith("/ctf") ? "text-foreground" : "text-muted-foreground"}`}>
+      <a
+        href="/ctf"
+        class={`px-2 py-1.5 rounded text-sm font-medium no-underline! hover:bg-accent transition-colors ${path.startsWith("/ctf") ? "text-foreground" : "text-muted-foreground"}`}
+      >
         CTF
       </a>
-      <a href="/contact" class={`px-2 py-1.5 rounded text-sm font-medium no-underline! hover:bg-accent transition-colors ${path.startsWith("/contact") ? "text-foreground" : "text-muted-foreground"}`}>
+      <a
+        href="/contact"
+        class={`px-2 py-1.5 rounded text-sm font-medium no-underline! hover:bg-accent transition-colors ${path.startsWith("/contact") ? "text-foreground" : "text-muted-foreground"}`}
+      >
         Contact
       </a>
     </div>

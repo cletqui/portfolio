@@ -83,14 +83,26 @@
 }
 
 /* Theme icon visibility */
-.theme-sun { display: none; }
-.theme-moon { display: inline-flex; }
-@media (prefers-color-scheme: dark) {
-  :root:not(.light) .theme-sun { display: inline-flex; }
-  :root:not(.light) .theme-moon { display: none; }
+.theme-sun {
+  display: none;
 }
-:root.dark .theme-sun { display: inline-flex; }
-:root.dark .theme-moon { display: none; }
+.theme-moon {
+  display: inline-flex;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not(.light) .theme-sun {
+    display: inline-flex;
+  }
+  :root:not(.light) .theme-moon {
+    display: none;
+  }
+}
+:root.dark .theme-sun {
+  display: inline-flex;
+}
+:root.dark .theme-moon {
+  display: none;
+}
 
 @layer base {
   html {
@@ -128,11 +140,27 @@
 
 /* Glitch animation for logo */
 @keyframes glitch {
-  0%, 100% { transform: none; filter: none; }
-  20% { transform: skewX(-8deg) translateX(2px); filter: drop-shadow(2px 0 #ff0055); }
-  40% { transform: skewX(5deg) translateX(-2px); filter: drop-shadow(-2px 0 #0088ff); }
-  60% { transform: none; filter: drop-shadow(1px 0 #00ff88); }
-  80% { transform: skewX(-2deg); filter: none; }
+  0%,
+  100% {
+    transform: none;
+    filter: none;
+  }
+  20% {
+    transform: skewX(-8deg) translateX(2px);
+    filter: drop-shadow(2px 0 #ff0055);
+  }
+  40% {
+    transform: skewX(5deg) translateX(-2px);
+    filter: drop-shadow(-2px 0 #0088ff);
+  }
+  60% {
+    transform: none;
+    filter: drop-shadow(1px 0 #00ff88);
+  }
+  80% {
+    transform: skewX(-2deg);
+    filter: none;
+  }
 }
 .logo-glitch:hover {
   animation: glitch 0.35s steps(1) forwards;
@@ -140,8 +168,14 @@
 
 /* Blinking cursor */
 @keyframes blink {
-  0%, 50% { opacity: 1; }
-  51%, 100% { opacity: 0; }
+  0%,
+  50% {
+    opacity: 1;
+  }
+  51%,
+  100% {
+    opacity: 0;
+  }
 }
 .cursor-blink {
   animation: blink 1s step-end infinite;
@@ -165,7 +199,9 @@
   }
   .btn:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--foreground);
+    box-shadow:
+      0 0 0 2px var(--background),
+      0 0 0 4px var(--foreground);
   }
   .btn:disabled {
     opacity: 0.5;
@@ -204,7 +240,9 @@
     border: 1px solid var(--border);
     border-radius: var(--radius-lg);
     padding: 1.25rem;
-    transition: box-shadow 0.2s, transform 0.2s;
+    transition:
+      box-shadow 0.2s,
+      transform 0.2s;
   }
   .card:hover {
     box-shadow: 0 4px 14px oklch(0 0 0 / 0.07);
@@ -249,7 +287,9 @@
   }
   .icon-btn:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--foreground);
+    box-shadow:
+      0 0 0 2px var(--background),
+      0 0 0 4px var(--foreground);
   }
 
   .nav-btn {
@@ -261,7 +301,9 @@
     background-color: transparent;
     color: var(--muted-foreground);
     cursor: pointer;
-    transition: background-color 0.15s, color 0.15s;
+    transition:
+      background-color 0.15s,
+      color 0.15s;
   }
   .nav-btn:hover {
     background-color: var(--accent);
@@ -269,6 +311,8 @@
   }
   .nav-btn:focus-visible {
     outline: none;
-    box-shadow: 0 0 0 2px var(--background), 0 0 0 4px var(--foreground);
+    box-shadow:
+      0 0 0 2px var(--background),
+      0 0 0 4px var(--foreground);
   }
 }

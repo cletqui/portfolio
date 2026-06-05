@@ -34,7 +34,8 @@ const CHALLENGES: {
     points: 50,
     difficulty: "easy",
     hint: "Some messages are only seen by those with the right tools open.",
-    hintFr: "Certains messages ne sont vus que par ceux qui ont les bons outils ouverts.",
+    hintFr:
+      "Certains messages ne sont vus que par ceux qui ont les bons outils ouverts.",
   },
   {
     id: "teapot",
@@ -74,7 +75,8 @@ const CHALLENGES: {
     points: 75,
     difficulty: "easy",
     hint: "The most predictable paths are often the most rewarding.",
-    hintFr: "Les chemins les plus prévisibles sont souvent les plus récompensés.",
+    hintFr:
+      "Les chemins les plus prévisibles sont souvent les plus récompensés.",
   },
   {
     id: "humans",
@@ -176,9 +178,9 @@ const CATEGORIES = [...new Set(CHALLENGES.map((c) => c.category))];
 const DIFFICULTIES: Difficulty[] = ["easy", "medium", "hard"];
 
 const DIFF_LABEL: Record<Difficulty, [string, string]> = {
-  easy:   ["easy",   "facile"],
+  easy: ["easy", "facile"],
   medium: ["medium", "moyen"],
-  hard:   ["hard",   "difficile"],
+  hard: ["hard", "difficile"],
 };
 
 const ChallengeCard = ({
@@ -192,7 +194,12 @@ const ChallengeCard = ({
   hintFr,
   lang,
 }: (typeof CHALLENGES)[0] & { lang: string }) => (
-  <div class="card flex flex-col gap-3" data-challenge={id} data-category={category} data-difficulty={difficulty}>
+  <div
+    class="card flex flex-col gap-3"
+    data-challenge={id}
+    data-category={category}
+    data-difficulty={difficulty}
+  >
     <div class="flex items-start justify-between gap-2">
       <div class="flex-1 min-w-0">
         <div class="flex items-center gap-2 mb-1 flex-wrap">
@@ -201,7 +208,9 @@ const ChallengeCard = ({
             {category}
           </span>
         </div>
-        <p class="text-xs text-muted-foreground leading-relaxed">{lang === "fr" ? hintFr : hint}</p>
+        <p class="text-xs text-muted-foreground leading-relaxed">
+          {lang === "fr" ? hintFr : hint}
+        </p>
       </div>
       <div class="shrink-0 text-right">
         <div class="text-lg font-bold font-mono tabular-nums">{points}</div>
@@ -488,8 +497,12 @@ app.get("/", (c: Context<{ Bindings: Bindings; Variables: Variables }>) => {
                 class="text-xs px-2 py-0.5 rounded font-mono cursor-pointer transition-colors border border-border bg-transparent text-muted-foreground hover:text-foreground hover:border-foreground/50"
               >
                 {s === "solved"
-                  ? lang === "fr" ? "résolu" : "solved"
-                  : lang === "fr" ? "non résolu" : "unsolved"}
+                  ? lang === "fr"
+                    ? "résolu"
+                    : "solved"
+                  : lang === "fr"
+                    ? "non résolu"
+                    : "unsolved"}
               </button>
             ))}
           </div>
@@ -502,7 +515,11 @@ app.get("/", (c: Context<{ Bindings: Bindings; Variables: Variables }>) => {
         ))}
       </div>
 
-      <script dangerouslySetInnerHTML={{ __html: `(function(){try{console.log('%c cybai{C0ns0l3C0wB0y} ','background:#22c55e;color:#000;font-weight:bold;padding:4px 8px;border-radius:4px;font-family:monospace;font-size:14px');console.log('%c\\u2514 you opened devtools on a ctf page, nice move','color:#6b7280;font-family:monospace;font-size:12px')}catch(e){}})();` }} />
+      <script
+        dangerouslySetInnerHTML={{
+          __html: `(function(){try{console.log('%c cybai{C0ns0l3C0wB0y} ','background:#22c55e;color:#000;font-weight:bold;padding:4px 8px;border-radius:4px;font-family:monospace;font-size:14px');console.log('%c\\u2514 you opened devtools on a ctf page, nice move','color:#6b7280;font-family:monospace;font-size:12px')}catch(e){}})();`,
+        }}
+      />
       <script dangerouslySetInnerHTML={{ __html: filterScript }} />
       <script dangerouslySetInnerHTML={{ __html: ctfScript(lang) }} />
     </div>,

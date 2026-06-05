@@ -17,7 +17,7 @@ export const Head = ({
     <title>{title}</title>
     <link rel="icon" type="image/x-icon" href="/static/favicon.ico" />
     <link rel="manifest" href="/.well-known/manifest.webmanifest" />
-<link rel="preconnect" href="https://rsms.me/" />
+    <link rel="preconnect" href="https://rsms.me/" />
     <link rel="stylesheet" href="https://rsms.me/inter/inter.css" />
     <link rel="stylesheet" href="/styles.css" />
     <script dangerouslySetInnerHTML={{ __html: themeInitScript }} />

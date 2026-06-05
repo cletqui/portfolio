@@ -94,7 +94,7 @@ app.get("", (c: Context) => {
           ? " donc pas besoin de faire des excès de diplomatie."
           : ", so there's no need to be overly diplomatic."}
       </p>
-    </div>
+    </div>,
   );
 });
 
