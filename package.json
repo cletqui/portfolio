@@ -38,7 +38,7 @@
     "@cloudflare/workers-types": "^4.20260605.1",
     "@hono/vite-build": "^1.11.1",
     "@hono/vite-cloudflare-pages": "^0.4.3",
-    "@hono/vite-dev-server": "^0.25.3",
+    "@hono/vite-dev-server": "^0.26.1",
     "@tailwindcss/cli": "^4.3.0",
     "lucide-static": "^1.17.0",
     "tailwindcss": "^4.3.0",
