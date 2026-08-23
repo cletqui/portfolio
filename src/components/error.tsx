@@ -1,4 +1,5 @@
 import { Button } from "./layout";
+import { useNonce } from "../utils/security";
 
 const errors = {
   400: "Bad Request",
@@ -79,6 +80,9 @@ export const Error = ({
         />
       </div>
     </div>
-    <script dangerouslySetInnerHTML={{ __html: errorScript }} />
+    <script
+      nonce={useNonce()}
+      dangerouslySetInnerHTML={{ __html: errorScript }}
+    />
   </div>
 );

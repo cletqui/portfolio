@@ -1,5 +1,7 @@
 import { Context, Hono } from "hono";
+import { Env } from "..";
 import { Button, Epochalypse, Title } from "../components/layout";
+import { Error } from "../components/error";
 import { Icon } from "../utils/icons";
 
 interface Project {
@@ -135,7 +137,7 @@ export const projects: Project[] = [
 ];
 
 /* APP */
-const app = new Hono<{}>();
+const app = new Hono<Env>();
 
 /* COMPONENTS */
 const ProjectCard = ({
@@ -172,7 +174,13 @@ const ProjectCard = ({
 
     {image && (
       <div class="overflow-hidden rounded-md border border-border">
-        <img src={image} alt={name} class="w-full object-cover" />
+        <img
+          src={image}
+          alt={name}
+          loading="lazy"
+          decoding="async"
+          class="w-full object-cover"
+        />
       </div>
     )}
 
@@ -244,55 +252,7 @@ const ProjectDetail = ({
 );
 
 /* ENDPOINTS */
-app.get("/petithub", (c: Context) => {
-  const { lang } = c.var;
-  const p = projects.find((p) => p.id === "petithub")!;
-  return c.render(<ProjectDetail lang={lang} {...p} />);
-});
-
-app.get("/portfolio", (c: Context) => {
-  const { lang } = c.var;
-  const p = projects.find((p) => p.id === "portfolio")!;
-  return c.render(<ProjectDetail lang={lang} {...p} />);
-});
-
-app.get("/api", (c: Context) => {
-  const { lang } = c.var;
-  const p = projects.find((p) => p.id === "api")!;
-  return c.render(<ProjectDetail lang={lang} {...p} />);
-});
-
-app.get("/app", (c: Context) => {
-  const { lang } = c.var;
-  const p = projects.find((p) => p.id === "app")!;
-  return c.render(<ProjectDetail lang={lang} {...p} />);
-});
-
-app.get("/mail", (c: Context) => {
-  const { lang } = c.var;
-  const p = projects.find((p) => p.id === "mail")!;
-  return c.render(<ProjectDetail lang={lang} {...p} />);
-});
-
-app.get("/tide", (c: Context) => {
-  const { lang } = c.var;
-  const p = projects.find((p) => p.id === "tide")!;
-  return c.render(<ProjectDetail lang={lang} {...p} />);
-});
-
-app.get("/callot", (c: Context) => {
-  const { lang } = c.var;
-  const p = projects.find((p) => p.id === "callot")!;
-  return c.render(<ProjectDetail lang={lang} {...p} />);
-});
-
-app.get("/apero", (c: Context) => {
-  const { lang } = c.var;
-  const p = projects.find((p) => p.id === "apero")!;
-  return c.render(<ProjectDetail lang={lang} {...p} />);
-});
-
-app.get("/epochalypse", (c: Context) => {
+app.get("/epochalypse", (c: Context<Env>) => {
   const { lang } = c.var;
   return c.render(
     <div class="mx-auto max-w-3xl px-4 py-12 flex flex-col items-center">
@@ -318,10 +278,31 @@ app.get("/epochalypse", (c: Context) => {
         />
       </div>
     </div>,
+    {
+      title: "Epochalypse",
+      description:
+        lang === "fr"
+          ? "Un compte à rebours jusqu'au problème de l'an 2038 Unix."
+          : "A countdown to the Unix Year 2038 problem.",
+    },
   );
 });
 
-app.get("", (c: Context) => {
+app.get("/:id", (c: Context<Env>) => {
+  const { lang } = c.var;
+  const p = projects.find((p) => p.id === c.req.param("id"));
+  if (!p) {
+    c.status(404);
+    return c.render(<Error lang={lang} error={404} />, { title: "404" });
+  }
+  return c.render(<ProjectDetail lang={lang} {...p} />, {
+    title: p.name,
+    description:
+      lang === "fr" && p.descriptionFr ? p.descriptionFr : p.description,
+  });
+});
+
+app.get("", (c: Context<Env>) => {
   const { lang } = c.var;
   return c.render(
     <div class="mx-auto max-w-5xl px-4 py-12">
@@ -356,6 +337,7 @@ app.get("", (c: Context) => {
         )}
       </div>
     </div>,
+    { title: lang === "fr" ? "Projets" : "Projects" },
   );
 });
 

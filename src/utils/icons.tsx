@@ -51,6 +51,8 @@ import moonSvg from "lucide-static/icons/moon.svg?raw";
 import menuSvg from "lucide-static/icons/menu.svg?raw";
 import flagSvg from "lucide-static/icons/flag.svg?raw";
 import layersSvg from "lucide-static/icons/layers.svg?raw";
+import scanSearchSvg from "lucide-static/icons/scan-search.svg?raw";
+import wifiOffSvg from "lucide-static/icons/wifi-off.svg?raw";
 
 const svgMap: Record<string, string> = {
   heart: heartSvg,
@@ -110,6 +112,8 @@ const svgMap: Record<string, string> = {
   menu: menuSvg,
   flag: flagSvg,
   layers: layersSvg,
+  "scan-search": scanSearchSvg,
+  "wifi-off": wifiOffSvg,
 };
 
 export const Icon = ({

@@ -1,7 +1,7 @@
 import { Context, Hono } from "hono";
-import { getConnInfo } from "hono/cloudflare-workers";
+import { getConnInfo } from "hono/cloudflare-pages";
 
-import { Bindings, Variables } from "..";
+import { Env } from "..";
 import { getIPInfo, IPInfo, getUserAgent, UserAgent } from "../utils/api";
 import { Avatar, Spinner, Title } from "../components/layout";
 import { Icon } from "../utils/icons";
@@ -133,8 +133,10 @@ const Review = ({
   <div class={variant === "danger" ? "card-danger" : "card"}>
     <div class="flex items-center gap-3 mb-3">
       <img
-        src={`https://api.dicebear.com/9.x/lorelei/svg?seed=${name}`}
+        src={`https://api.dicebear.com/9.x/lorelei/svg?seed=${encodeURIComponent(name)}`}
         alt={name}
+        loading="lazy"
+        decoding="async"
         class="h-8 w-8 rounded-full border border-border"
       />
       <div>
@@ -477,8 +479,10 @@ const UATable = ({ lang, ua }: { lang: string; ua: UserAgent }) => (
         version: undefined,
       },
     ]
-      .filter(Boolean)
-      .map((row: any) => (
+      .filter((row): row is Exclude<typeof row, "" | 0 | false | undefined> =>
+        Boolean(row),
+      )
+      .map((row) => (
         <div class="flex items-center gap-2 border-b border-border pb-2 last:border-0 last:pb-0">
           <Icon
             name={row.icon}
@@ -642,10 +646,10 @@ const getCFGeo = (
 };
 
 /* APP */
-const app = new Hono<{}>();
+const app = new Hono<Env>();
 
 /* ENDPOINTS */
-app.get("/me", (c: Context<{ Bindings: Bindings; Variables: Variables }>) => {
+app.get("/me", (c: Context<Env>) => {
   const { lang } = c.var;
   return c.render(
     <div class="mx-auto max-w-4xl px-4 py-12">
@@ -683,10 +687,11 @@ app.get("/me", (c: Context<{ Bindings: Bindings; Variables: Variables }>) => {
         </div>
       </div>
     </div>,
+    { title: lang === "fr" ? "À propos" : "About me" },
   );
 });
 
-app.get("/you", async (c: Context) => {
+app.get("/you", async (c: Context<Env>) => {
   const { lang } = c.var;
   const userAgent = c.req.header("user-agent") ?? "";
 
@@ -782,9 +787,16 @@ app.get("/you", async (c: Context) => {
         </div>
       )}
     </div>,
+    {
+      title: lang === "fr" ? "À propos de toi" : "About you",
+      description:
+        lang === "fr"
+          ? "Ce que votre navigateur révèle : IP, géolocalisation, appareil."
+          : "What your browser reveals: IP, geolocation, device.",
+    },
   );
 });
 
-app.get("", (c: Context) => c.redirect("/about/me"));
+app.get("", (c: Context<Env>) => c.redirect("/about/me"));
 
 export default app;

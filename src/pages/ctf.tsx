@@ -1,7 +1,8 @@
 import { Context, Hono } from "hono";
 import { Bindings, Variables } from "..";
 import { Title } from "../components/layout";
-import { Icon } from "../utils/icons";
+import { nonce } from "../utils/security";
+import { rateLimit } from "../utils/ratelimit";
 
 type Difficulty = "easy" | "medium" | "hard";
 
@@ -355,21 +356,31 @@ const filterScript = `(function(){
 const app = new Hono<{ Bindings: Bindings; Variables: Variables }>();
 
 /* ENDPOINTS */
+const FLAG_RE = /^cybai\{[\x20-\x7E]{1,128}\}$/;
+
+app.use("/submit", rateLimit({ limit: 20, windowMs: 60_000 }));
+
 app.post("/submit", async (c) => {
-  const { CTF_FLAGS } = c.env;
+  const CTF_FLAGS = c.env?.CTF_FLAGS;
   if (!CTF_FLAGS) return c.json({ error: "CTF not configured" }, 503);
 
-  const body = await c.req.json<{ flag?: string }>();
-  if (!body?.flag) return c.json({ valid: false });
+  const body = await c.req.json<{ flag?: string }>().catch(() => null);
+  const flag = body?.flag?.trim();
+  if (!flag || !FLAG_RE.test(flag)) return c.json({ valid: false });
 
-  const raw = await CTF_FLAGS.get(body.flag.trim());
+  const raw = await CTF_FLAGS.get(flag);
   if (!raw) return c.json({ valid: false });
 
-  return c.json({ valid: true, ...JSON.parse(raw) });
+  try {
+    return c.json({ valid: true, ...JSON.parse(raw) });
+  } catch {
+    return c.json({ valid: false });
+  }
 });
 
 app.get("/", (c: Context<{ Bindings: Bindings; Variables: Variables }>) => {
   const { lang } = c.var;
+  const n = nonce(c);
   return c.render(
     <div class="mx-auto max-w-5xl px-4 py-12">
       <div class="flex flex-col items-center mb-8">
@@ -516,13 +527,21 @@ app.get("/", (c: Context<{ Bindings: Bindings; Variables: Variables }>) => {
       </div>
 
       <script
+        nonce={n}
         dangerouslySetInnerHTML={{
           __html: `(function(){try{console.log('%c cybai{C0ns0l3C0wB0y} ','background:#22c55e;color:#000;font-weight:bold;padding:4px 8px;border-radius:4px;font-family:monospace;font-size:14px');console.log('%c\\u2514 you opened devtools on a ctf page, nice move','color:#6b7280;font-family:monospace;font-size:12px')}catch(e){}})();`,
         }}
       />
-      <script dangerouslySetInnerHTML={{ __html: filterScript }} />
-      <script dangerouslySetInnerHTML={{ __html: ctfScript(lang) }} />
+      <script nonce={n} dangerouslySetInnerHTML={{ __html: filterScript }} />
+      <script nonce={n} dangerouslySetInnerHTML={{ __html: ctfScript(lang) }} />
     </div>,
+    {
+      title: lang === "fr" ? "Défis CTF" : "CTF Challenges",
+      description:
+        lang === "fr"
+          ? `${CHALLENGE_COUNT} défis cachés dans ce site, ${TOTAL_POINTS} points au total.`
+          : `${CHALLENGE_COUNT} challenges hidden across this site, ${TOTAL_POINTS} points total.`,
+    },
   );
 });
 

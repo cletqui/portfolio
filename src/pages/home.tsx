@@ -1,12 +1,14 @@
 import { Context, Hono } from "hono";
+import { Env } from "..";
 
 import ctf from "./ctf";
 import { Avatar } from "../components/layout";
 import { Error } from "../components/error";
 import { Icon } from "../utils/icons";
+import { useNonce } from "../utils/security";
 
 /* APP */
-const app = new Hono<{}>();
+const app = new Hono<Env>();
 
 const STACK = [
   ["Hono", "https://hono.dev/"],
@@ -153,7 +155,10 @@ const Welcome = () => (
       id="typewriter-responses"
       class="font-mono text-sm text-muted-foreground pl-10 space-y-0.5 min-h-[2.5rem]"
     />
-    <script dangerouslySetInnerHTML={{ __html: typewriterScript }} />
+    <script
+      nonce={useNonce()}
+      dangerouslySetInnerHTML={{ __html: typewriterScript }}
+    />
   </div>
 );
 
@@ -233,7 +238,7 @@ const StackFootnote = ({ lang }: { lang: string }) => (
 );
 
 /* ENDPOINTS */
-app.get("/", (c: Context) => {
+app.get("/", (c: Context<Env>) => {
   const { lang } = c.var;
   c.header("X-Flag", "cybai{X-S3cr3t-H3ad3r}");
   if ((c.req.header("user-agent") ?? "").startsWith("curl/")) {
@@ -263,58 +268,60 @@ app.get("/", (c: Context) => {
   );
 });
 
-app.get("/robots.txt", (c: Context) =>
+app.get("/robots.txt", (c: Context<Env>) =>
   c.redirect("/.well-known/robots.txt", 301),
 );
 
-app.get("/keybase.txt", (c: Context) =>
+app.get("/keybase.txt", (c: Context<Env>) =>
   c.redirect("/.well-known/keybase.txt", 301),
 );
 
 /* EASTER EGGS */
-app.get("/.well-known", (c: Context) =>
+app.get("/.well-known", (c: Context<Env>) =>
   c.redirect("https://www.rfc-editor.org/rfc/rfc8615"),
 );
 
 app
-  .get("/teapot", (c: Context) => {
+  .get("/teapot", (c: Context<Env>) => {
     c.header("X-Flag", "cybai{1mAT34p0t}");
     return c.text("I'm a teapot", 418);
   })
-  .post((c: Context) =>
+  .post((c: Context<Env>) =>
     c.redirect("https://www.rfc-editor.org/rfc/rfc2324#section-2.3.2"),
   );
 
-app.get("/rickroll", (c: Context) =>
+app.get("/rickroll", (c: Context<Env>) =>
   c.redirect("https://www.youtube.com/watch?v=dQw4w9WgXcQ&pp=ygUJcmljayByb2xs"),
 );
 
-app.get("/fl@g.txt", (c: Context) => c.text("cybai{D1dY0uR34dTh3M4n1f3St}"));
+app.get("/fl@g.txt", (c: Context<Env>) =>
+  c.text("cybai{D1dY0uR34dTh3M4n1f3St}"),
+);
 
-app.get("/ctf.txt", (c: Context) =>
+app.get("/ctf.txt", (c: Context<Env>) =>
   c.text("cybai{D1dY0uF1ndWh3r3T05ubm1tM3?}"),
 );
 
-app.options("/", (c: Context) => {
+app.options("/", (c: Context<Env>) => {
   c.header("Allow", "GET, HEAD, OPTIONS");
   c.header("X-Flag", "cybai{0pT10nSm4tt3r}");
   return c.body(null, 204);
 });
 
-app.get("/humans.txt", (c: Context) =>
+app.get("/humans.txt", (c: Context<Env>) =>
   c.text(
-    "/* TEAM */\nDeveloper: Antoine Q\nSite: https://cybai.re\n\n/* THANKS */\nHono · Tailwind CSS · Cloudflare Pages\n\n/* SITE */\nLast update: 2025\nLanguage: English / French\n\n# cybai{H3ll0Hum4ns}",
+    `/* TEAM */\nDeveloper: Antoine Q\nSite: https://cybai.re\n\n/* THANKS */\nHono · Tailwind CSS · Cloudflare Pages\n\n/* SITE */\nLast update: ${new Date().getFullYear()}\nLanguage: English / French\n\n# cybai{H3ll0Hum4ns}`,
   ),
 );
 
 app.route("/ctf", ctf);
 
 /* DEFAULT */
-app.get("*", (c: Context) => {
+app.get("*", (c: Context<Env>) => {
   const { lang } = c.var;
   const error = 404;
   c.status(error);
-  return c.render(<Error lang={lang} error={error} />);
+  return c.render(<Error lang={lang} error={error} />, { title: "404" });
 });
 
 export default app;
