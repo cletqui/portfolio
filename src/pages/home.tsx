@@ -166,7 +166,7 @@ const AvatarWithStatus = ({ size }: { size: number }) => (
   <div class="relative inline-block">
     <Avatar size={size} />
     <a
-      href="https://admin.cybai.re/teapot"
+      href="/teapot"
       class="absolute bottom-5 right-5 h-8 w-8 rounded-full border-2 border-foreground/25 bg-card flex items-center justify-center text-base hover:scale-110 transition-transform no-underline!"
       title="418 I'm a teapot"
       aria-label="418 I'm a teapot"
