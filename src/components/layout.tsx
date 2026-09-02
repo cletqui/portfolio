@@ -1,5 +1,6 @@
 import { Child } from "hono/jsx";
 import { Icon } from "../utils/icons";
+import { useNonce } from "../utils/security";
 
 export const Title = ({ children }: { children: Child }) => (
   <h1 class="text-3xl font-bold tracking-tight border-b border-border pb-3 mb-6">
@@ -43,7 +44,7 @@ export const Avatar = ({ size }: { size: number }) => (
     src="/static/avatar.png"
     width={size}
     height={size}
-    alt="avatar"
+    alt="Antoine Q"
   />
 );
 
@@ -54,6 +55,13 @@ export const Spinner = () => (
     aria-label="Loading"
   />
 );
+
+const UNIT_LABELS = {
+  days: ["Days", "Jours"],
+  hours: ["Hours", "Heures"],
+  minutes: ["Minutes", "Minutes"],
+  seconds: ["Seconds", "Secondes"],
+} as const;
 
 export const Epochalypse = ({ lang }: { lang: string }) => {
   const target = 2148609247000; // 2038-01-19T03:14:07Z
@@ -72,21 +80,14 @@ export const Epochalypse = ({ lang }: { lang: string }) => {
                 --
               </div>
               <div class="text-xs text-muted-foreground mt-1 uppercase tracking-wide">
-                {lang === "fr"
-                  ? unit === "days"
-                    ? "Jours"
-                    : unit === "hours"
-                      ? "Heures"
-                      : unit === "minutes"
-                        ? "Minutes"
-                        : "Secondes"
-                  : unit.charAt(0).toUpperCase() + unit.slice(1)}
+                {UNIT_LABELS[unit][lang === "fr" ? 1 : 0]}
               </div>
             </div>
           </>
         ))}
       </div>
       <script
+        nonce={useNonce()}
         dangerouslySetInnerHTML={{
           __html: `(function(){var t=${target};function p(n){return String(n).padStart(2,'0')}function u(){var d=Math.max(0,t-Date.now());document.getElementById('epoch-days').textContent=Math.floor(d/86400000);document.getElementById('epoch-hours').textContent=p(Math.floor(d%86400000/3600000));document.getElementById('epoch-minutes').textContent=p(Math.floor(d%3600000/60000));document.getElementById('epoch-seconds').textContent=p(Math.floor(d%60000/1000))}u();setInterval(u,1000)})();`,
         }}

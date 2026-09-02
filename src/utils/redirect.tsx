@@ -6,7 +6,8 @@ export const handleRedirect = createMiddleware(
     const url = new URL(c.req.url);
     if (url.hostname === "cybai.re") {
       url.hostname = "www." + url.hostname;
-      return c.redirect(url.toString());
+      url.protocol = "https:";
+      return c.redirect(url.toString(), 301);
     }
     await next();
   },

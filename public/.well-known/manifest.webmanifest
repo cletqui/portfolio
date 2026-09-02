@@ -1,50 +1,56 @@
 {
-  "short_name": "Portfolio",
-  "name": "cybai.re - Portfolio",
+  "short_name": "cybai.re",
+  "name": "cybai.re — Portfolio",
   "icons": [
     {
-      "src": "favicon.ico",
-      "sizes": "98x96",
-      "type": "image/x.icon"
+      "src": "/static/favicon.ico",
+      "sizes": "16x16 32x32",
+      "type": "image/x-icon"
+    },
+    {
+      "src": "/static/avatar.png",
+      "sizes": "512x512",
+      "type": "image/png",
+      "purpose": "any maskable"
     }
   ],
-  "id": ".",
-  "start_url": ".",
-  "background_color": "#fff",
+  "id": "/",
+  "start_url": "/",
+  "background_color": "#ffffff",
   "display": "standalone",
   "scope": "/",
-  "theme_color": "#fff",
+  "theme_color": "#ffffff",
   "shortcuts": [
     {
       "name": "About me",
-      "short-name": "Me",
+      "short_name": "Me",
       "description": "About me page",
       "url": "/about/me"
     },
     {
       "name": "About you",
-      "short-name": "You",
+      "short_name": "You",
       "description": "About you page",
       "url": "/about/you"
     },
     {
       "name": "Projects",
-      "short-name": "Projects",
+      "short_name": "Projects",
       "description": "Projects page",
       "url": "/projects"
     },
     {
       "name": "Contact",
-      "short-name": "Contact",
+      "short_name": "Contact",
       "description": "Contact page",
       "url": "/contact"
     },
     {
       "name": "Fl@g",
-      "short-name": "Fl@g",
+      "short_name": "Fl@g",
       "description": "Who even read this?",
       "url": "/fl@g.txt"
     }
   ],
-  "description": "Personal portfolio."
+  "description": "Personal portfolio and playground of a cybersecurity engineer & full-stack developer."
 }
