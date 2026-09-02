@@ -1,4 +1,5 @@
 import { Context, Hono } from "hono";
+import { Env } from "..";
 
 import { Title, Button } from "../components/layout";
 
@@ -55,9 +56,9 @@ export const contacts = [
 ];
 
 /* APP */
-const app = new Hono<{}>();
+const app = new Hono<Env>();
 
-app.get("", (c: Context) => {
+app.get("", (c: Context<Env>) => {
   const { lang } = c.var;
   return c.render(
     <div class="mx-auto max-w-3xl px-4 py-12 flex flex-col items-center">
@@ -95,6 +96,13 @@ app.get("", (c: Context) => {
           : ", so there's no need to be overly diplomatic."}
       </p>
     </div>,
+    {
+      title: "Contact",
+      description:
+        lang === "fr"
+          ? "Me contacter — BlueSky, GitHub, GitLab, Keybase, e-mail, GPG."
+          : "Get in touch — BlueSky, GitHub, GitLab, Keybase, email, GPG.",
+    },
   );
 });
 

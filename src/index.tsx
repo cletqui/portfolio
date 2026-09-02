@@ -1,7 +1,7 @@
-import { Context, Hono } from "hono";
+import { Hono } from "hono";
 import { logger } from "hono/logger";
-import { poweredBy } from "hono/powered-by";
 
+import { securityHeaders } from "./utils/security";
 import { handleRedirect } from "./utils/redirect";
 import { handleLanguage } from "./utils/language";
 import { renderer } from "./utils/renderer";
@@ -20,12 +20,14 @@ export type Variables = {
   lang: string;
 };
 
+export type Env = { Bindings: Bindings; Variables: Variables };
+
 /* APP */
-const app = new Hono<{ Bindings: Bindings; Variables: Variables }>();
+const app = new Hono<Env>();
 
 /* MIDDLEWARES */
 app.use(logger());
-app.use(poweredBy());
+app.use(securityHeaders);
 app.use(handleRedirect);
 app.use(handleLanguage);
 app.use(renderer);

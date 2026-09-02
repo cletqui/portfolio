@@ -1,4 +1,5 @@
 import { toggleLanguage } from "../utils/language";
+import { useNonce } from "../utils/security";
 import { Icon } from "../utils/icons";
 import { projects } from "../pages/projects";
 import { contacts } from "../pages/contact";
@@ -52,7 +53,7 @@ const DropdownNav = ({
     >
       {label}
     </a>
-    <div class="absolute top-full left-0 pt-1 z-50 opacity-0 group-hover:opacity-100 pointer-events-none group-hover:pointer-events-auto transition-opacity duration-150">
+    <div class="absolute top-full left-0 pt-1 z-50 opacity-0 group-hover:opacity-100 group-focus-within:opacity-100 pointer-events-none group-hover:pointer-events-auto group-focus-within:pointer-events-auto transition-opacity duration-150">
       <div class="flex flex-col gap-0.5 min-w-36 rounded-md border border-border bg-card p-1 shadow-md">
         {items.map(({ name, href: itemHref, icon }) => (
           <a
@@ -87,7 +88,10 @@ const ThemeToggle = () => (
         <Icon name="moon" size={16} />
       </span>
     </button>
-    <script dangerouslySetInnerHTML={{ __html: themeScript }} />
+    <script
+      nonce={useNonce()}
+      dangerouslySetInnerHTML={{ __html: themeScript }}
+    />
   </>
 );
 
@@ -193,6 +197,9 @@ export const Header = ({ lang, path }: { lang: string; path: string }) => (
       </a>
     </div>
 
-    <script dangerouslySetInnerHTML={{ __html: mobileMenuScript }} />
+    <script
+      nonce={useNonce()}
+      dangerouslySetInnerHTML={{ __html: mobileMenuScript }}
+    />
   </header>
 );
