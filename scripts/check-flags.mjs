@@ -4,7 +4,8 @@ import { inflateSync } from "node:zlib";
 import { FLAGS } from "../src/utils/flags.ts";
 
 const BASE = (process.argv[2] ?? "http://localhost:8799").replace(/\/$/, "");
-const IP = { "cf-connecting-ip": "81.2.69.142" };
+const LOCAL = /localhost|127\.0\.0\.1/.test(BASE);
+const IP = LOCAL ? { "cf-connecting-ip": "81.2.69.142" } : {};
 
 const get = (path, init = {}) =>
   fetch(BASE + path, { redirect: "manual", ...init, headers: { ...IP, ...init.headers } });
@@ -98,12 +99,24 @@ const checks = {
 };
 
 const submit = async (flag) => {
-  const res = await get("/ctf/submit", {
-    method: "POST",
-    headers: { "content-type": "application/json", "cf-connecting-ip": `198.51.100.${Math.floor(Math.random() * 250) + 1}` },
-    body: JSON.stringify({ flag }),
-  });
-  return (await res.json()).valid === true;
+  for (let attempt = 0; attempt < 3; attempt++) {
+    const res = await get("/ctf/submit", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        ...(LOCAL ? { "cf-connecting-ip": `198.51.100.${Math.floor(Math.random() * 250) + 1}` } : {}),
+      },
+      body: JSON.stringify({ flag }),
+    });
+    if (res.status === 429) {
+      const wait = Number(res.headers.get("retry-after") ?? 60) + 1;
+      console.log(`  rate limited, waiting ${wait}s`);
+      await new Promise((r) => setTimeout(r, wait * 1000));
+      continue;
+    }
+    return (await res.json()).valid === true;
+  }
+  return false;
 };
 
 let bad = 0;
