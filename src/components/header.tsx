@@ -3,6 +3,7 @@ import { useNonce } from "../utils/security";
 import { Icon } from "../utils/icons";
 import { projects } from "../pages/projects";
 import { contacts } from "../pages/contact";
+import { paletteItems } from "../utils/palette";
 
 const Logo = ({ lang }: { lang: string }) => (
   <a
@@ -107,7 +108,7 @@ const Translate = ({ lang, path }: { lang: string; path: string }) => (
 
 export const Header = ({ lang, path }: { lang: string; path: string }) => (
   <header class="sticky top-0 z-50 border-b border-border bg-background/80 backdrop-blur-md">
-    <nav class="mx-auto flex h-12 max-w-5xl items-center gap-6 px-4">
+    <nav class="mx-auto flex h-12 max-w-6xl items-center gap-6 px-4">
       <Logo lang={lang} />
 
       {/* Desktop nav */}
@@ -125,7 +126,7 @@ export const Header = ({ lang, path }: { lang: string; path: string }) => (
           href="/projects"
           active={path.startsWith("/projects")}
           items={projects
-            .filter((p) => p.internal)
+            .filter((p) => p.internal && p.featured)
             .map((p) => ({ name: p.name, href: p.internal, icon: p.icon }))}
         />
 
@@ -139,11 +140,24 @@ export const Header = ({ lang, path }: { lang: string; path: string }) => (
           active={path.startsWith("/contact")}
           items={contacts
             .filter((c) => c.href)
-            .map((c) => ({ name: c.name, href: c.href, icon: c.icon }))}
+            .map((c) => ({
+              name: lang === "fr" && c.nameFr ? c.nameFr : c.name,
+              href: c.href,
+              icon: c.icon,
+            }))}
         />
       </div>
 
       <div class="ml-auto flex items-center gap-2">
+        <button
+          id="palette-open"
+          class="icon-btn"
+          type="button"
+          title={lang === "fr" ? "Palette de commandes (Ctrl+K)" : "Command palette (Ctrl+K)"}
+          aria-label={lang === "fr" ? "Palette de commandes" : "Command palette"}
+        >
+          <Icon name="search" size={16} />
+        </button>
         <ThemeToggle />
         <Translate lang={lang} path={path} />
         {/* Hamburger — mobile only */}
@@ -200,6 +214,16 @@ export const Header = ({ lang, path }: { lang: string; path: string }) => (
     <script
       nonce={useNonce()}
       dangerouslySetInnerHTML={{ __html: mobileMenuScript }}
+    />
+    <script
+      type="application/json"
+      id="palette-data"
+      dangerouslySetInnerHTML={{
+        __html: JSON.stringify({ lang, items: paletteItems(lang) }).replace(
+          /</g,
+          "\\u003c",
+        ),
+      }}
     />
   </header>
 );

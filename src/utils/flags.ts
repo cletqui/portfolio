@@ -1,0 +1,33 @@
+export const FLAGS: Record<string, string> = {
+  source: "cybai{4lw4y5Ch3ck50urc3C0d3}",
+  console: "cybai{C0ns0l3C0wB0y}",
+  teapot: "cybai{1mAT34p0t}",
+  hacker: "cybai{h@ck3rm@n69420}",
+  manifest: "cybai{D1dY0uR34dTh3M4n1f3St}",
+  "ctf-txt": "cybai{D1dY0uF1ndWh3r3T05ubm1tM3?}",
+  humans: "cybai{H3ll0Hum4ns}",
+  readme: "cybai{H1dd3nInPl41n51gh7}",
+  "security-txt": "cybai{RFC9116W4sH3r3}",
+  private: "cybai{ISh0uldN0tUs3W377Kn0wnF0rS3ns1t1ve1nf0}",
+  options: "cybai{0pT10nSm4tt3r}",
+  dns: "cybai{D1g_TXT_4_Fl4g}",
+  french: "cybai{C0c0r1c0}",
+  curl: "cybai{T3rm1n4lPuR1st}",
+  header: "cybai{X-S3cr3t-H3ad3r}",
+  "konami": "cybai{Up_Up_D0wn_D0wn_L3ft_R1ght}",
+  "jsobj": "cybai{GlobalScopeLeak}",
+  "cookie": "cybai{C00k13M0n5t3r}",
+  "css": "cybai{St1ll_Sty13_Sh33t}",
+  "sudo": "cybai{Sud0M4k3M3AS4ndw1ch}",
+  "negotiation": "cybai{4cc3pt_M3_1f_Y0u_C4n}",
+  "hidden-file": "cybai{ls_-a_FTW}",
+  "env": "cybai{N3v3rC0mm17Th3D0t3nv}",
+  "stego": "cybai{Pl41nP1x3l5}",
+  "crypto": "cybai{0n10n5H4v3L4y3r5}",
+  "gate": "cybai{7h3G4t3K33p3r}",
+  "jwt": "cybai{F0rg3dTh3Cl41m5}",
+  "git": "cybai{G1t_N3v3r_F0rg3ts}",
+};
+
+export const findFlag = (flag: string): string | undefined =>
+  Object.keys(FLAGS).find((id) => FLAGS[id] === flag);

@@ -1,5 +1,6 @@
 @import "tailwindcss";
 @source "./**/*.tsx";
+@source "../public/static/*.js";
 
 /* Inter */
 @font-face {
@@ -129,6 +130,9 @@
 }
 
 @layer base {
+  :root {
+    --ctf-flag: "cybai{St1ll_Sty13_Sh33t}";
+  }
   html {
     scroll-behavior: smooth;
   }
@@ -162,6 +166,34 @@
   }
   #main {
     scroll-margin-top: 4rem;
+  }
+}
+
+@view-transition {
+  navigation: auto;
+}
+header {
+  view-transition-name: site-header;
+}
+#main {
+  view-transition-name: page;
+}
+::view-transition-old(page) {
+  animation: 120ms ease-out both vt-out;
+}
+::view-transition-new(page) {
+  animation: 200ms ease-out both vt-in;
+}
+@keyframes vt-out {
+  to {
+    opacity: 0;
+    transform: translateY(-4px);
+  }
+}
+@keyframes vt-in {
+  from {
+    opacity: 0;
+    transform: translateY(6px);
   }
 }
 
@@ -371,3 +403,4 @@
       0 0 0 4px var(--foreground);
   }
 }
+

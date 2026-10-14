@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "include": ["/*"],
+  "exclude": [
+    "/_headers",
+    "/pgp.asc",
+    "/styles.css",
+    "/static/*",
+    "/.well-known/atproto-did",
+    "/.well-known/keybase.txt",
+    "/.well-known/manifest.webmanifest",
+    "/.well-known/openpgpkey/*",
+    "/.well-known/private.txt",
+    "/.well-known/robots.txt"
+  ]
+}

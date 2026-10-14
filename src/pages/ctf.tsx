@@ -1,5 +1,8 @@
 import { Context, Hono } from "hono";
 import { Bindings, Variables } from "..";
+import { FLAGS, findFlag } from "../utils/flags";
+import { Icon } from "../utils/icons";
+import { setCookie } from "hono/cookie";
 import { Title } from "../components/layout";
 import { nonce } from "../utils/security";
 import { rateLimit } from "../utils/ratelimit";
@@ -171,10 +174,163 @@ const CHALLENGES: {
     hint: "Read between the lines — or above them.",
     hintFr: "Lisez entre les lignes — ou au-dessus d'elles.",
   },
+  {
+    id: "konami",
+    name: "Old School",
+    nameFr: "Vieille École",
+    category: "Web",
+    points: 50,
+    difficulty: "easy",
+    hint: "Some codes are older than the web itself.",
+    hintFr:
+      "Certains codes sont plus vieux que le web lui-même.",
+  },
+  {
+    id: "jsobj",
+    name: "Global Variable",
+    nameFr: "Variable Globale",
+    category: "Web",
+    points: 50,
+    difficulty: "easy",
+    hint: "Have you tried asking the page who it is?",
+    hintFr:
+      "As-tu essayé de demander à la page qui elle est ?",
+  },
+  {
+    id: "cookie",
+    name: "Cookie Monster",
+    nameFr: "Cookie Monster",
+    category: "Web",
+    points: 75,
+    difficulty: "easy",
+    hint: "Not every cookie is meant to be eaten. Some are meant to be decoded.",
+    hintFr:
+      "Tous les cookies ne sont pas faits pour être mangés. Certains sont faits pour être décodés.",
+  },
+  {
+    id: "css",
+    name: "Style Detective",
+    nameFr: "Détective du Style",
+    category: "Web",
+    points: 75,
+    difficulty: "easy",
+    hint: "Style sheets hold more than style.",
+    hintFr:
+      "Les feuilles de style contiennent plus que du style.",
+  },
+  {
+    id: "sudo",
+    name: "Make Me a Sandwich",
+    nameFr: "Fais-moi un sandwich",
+    category: "Misc",
+    points: 75,
+    difficulty: "easy",
+    hint: "The terminal knows its XKCD.",
+    hintFr:
+      "Le terminal connaît son XKCD.",
+  },
+  {
+    id: "negotiation",
+    name: "Content Negotiation",
+    nameFr: "Négociation de Contenu",
+    category: "Web",
+    points: 100,
+    difficulty: "easy",
+    hint: "Ask for what you want, not for what you are given.",
+    hintFr:
+      "Demande ce que tu veux, pas ce qu'on te donne.",
+  },
+  {
+    id: "hidden-file",
+    name: "Hidden File",
+    nameFr: "Fichier Caché",
+    category: "Misc",
+    points: 100,
+    difficulty: "easy",
+    hint: "ls shows less than it knows.",
+    hintFr:
+      "ls montre moins qu'il n'en sait.",
+  },
+  {
+    id: "env",
+    name: "Leaky Config",
+    nameFr: "Config qui Fuit",
+    category: "Recon",
+    points: 125,
+    difficulty: "medium",
+    hint: "Some developers commit what they should hide.",
+    hintFr:
+      "Certains développeurs commitent ce qu'ils devraient cacher.",
+  },
+  {
+    id: "stego",
+    name: "Hidden in Plain Pixels",
+    nameFr: "Caché dans les Pixels",
+    category: "Forensics",
+    points: 125,
+    difficulty: "medium",
+    hint: "A picture is worth more than a thousand pixels.",
+    hintFr:
+      "Une image vaut plus que mille pixels.",
+  },
+  {
+    id: "crypto",
+    name: "Onion Layers",
+    nameFr: "Couches d'Oignon",
+    category: "Crypto",
+    points: 125,
+    difficulty: "medium",
+    hint: "Peel it one layer at a time. Cry later.",
+    hintFr:
+      "Épluche-le couche par couche. Pleure après.",
+  },
+  {
+    id: "gate",
+    name: "The Gatekeeper",
+    nameFr: "Le Gardien",
+    category: "Web",
+    points: 200,
+    difficulty: "medium",
+    hint: "Tell it who you are. Convincingly. Several times.",
+    hintFr:
+      "Dis-lui qui tu es. De façon convaincante. Plusieurs fois.",
+  },
+  {
+    id: "jwt",
+    name: "Forged Identity",
+    nameFr: "Identité Forgée",
+    category: "Web",
+    points: 250,
+    difficulty: "medium",
+    hint: "A token is only as strong as its secret. Who are you, really?",
+    hintFr:
+      "Un jeton n'est aussi solide que son secret. Qui es-tu vraiment ?",
+  },
+  {
+    id: "git",
+    name: "Git Happens",
+    nameFr: "Git Happens",
+    category: "Recon",
+    points: 250,
+    difficulty: "hard",
+    hint: "A repository remembers more than its latest commit.",
+    hintFr: "Un dépôt se souvient de plus que son dernier commit.",
+  },
 ];
 
-const TOTAL_POINTS = CHALLENGES.reduce((s, c) => s + c.points, 0);
-const CHALLENGE_COUNT = CHALLENGES.length;
+const DIFFICULTY_ORDER: Record<Difficulty, number> = {
+  easy: 0,
+  medium: 1,
+  hard: 2,
+};
+CHALLENGES.sort(
+  (a, b) =>
+    DIFFICULTY_ORDER[a.difficulty] - DIFFICULTY_ORDER[b.difficulty] ||
+    a.points - b.points,
+);
+
+export const TOTAL_POINTS = CHALLENGES.reduce((s, c) => s + c.points, 0);
+export const CHALLENGE_COUNT = CHALLENGES.length;
 const CATEGORIES = [...new Set(CHALLENGES.map((c) => c.category))];
 const DIFFICULTIES: Difficulty[] = ["easy", "medium", "hard"];
 
@@ -319,19 +475,27 @@ const ctfScript = (lang: string) => `(function(){
 
 const filterScript = `(function(){
   var cat='',diff='',status='';
-  var BASE='text-xs px-2 py-0.5 rounded font-mono cursor-pointer transition-colors border ';
+  var BASE='text-xs px-2.5 py-1 rounded-md font-mono cursor-pointer transition-colors border ';
   var ON=BASE+'border-foreground bg-foreground text-background';
-  var OFF=BASE+'border-border bg-transparent text-muted-foreground hover:text-foreground hover:border-foreground/50';
+  var OFF=BASE+'border-border bg-background text-muted-foreground hover:text-foreground hover:border-foreground/50';
   function getSolved(){try{return JSON.parse(localStorage.getItem('ctf_found')||'{}')}catch(e){return{}}}
   function applyFilter(){
     var found=status?getSolved():null;
+    var shown=0,all=0;
     document.querySelectorAll('[data-challenge]').forEach(function(c){
+      all++;
       var showCat=!cat||c.dataset.category===cat;
       var showDiff=!diff||c.dataset.difficulty===diff;
       var solved=found?!!found[c.dataset.challenge]:false;
       var showStatus=!status||(status==='solved'?solved:!solved);
-      c.style.display=(showCat&&showDiff&&showStatus)?'':'none';
+      var vis=showCat&&showDiff&&showStatus;
+      if(vis)shown++;
+      c.style.display=vis?'':'none';
     });
+    var count=document.getElementById('ctf-filter-count');
+    if(count)count.textContent=shown+' / '+all;
+    var clear=document.getElementById('ctf-clear');
+    if(clear)clear.classList.toggle('hidden',!(cat||diff||status));
   }
   function refresh(){
     document.querySelectorAll('[data-filter="category"]').forEach(function(b){b.className=b.dataset.value===cat?ON:OFF});
@@ -347,6 +511,8 @@ const filterScript = `(function(){
         applyFilter();refresh();
       });
     });
+    var clearBtn=document.getElementById('ctf-clear');
+    if(clearBtn)clearBtn.addEventListener('click',function(){cat='';diff='';status='';applyFilter();refresh()});
     refresh();
   });
   document.addEventListener('ctf:render',function(){applyFilter();refresh()});
@@ -361,28 +527,123 @@ const FLAG_RE = /^cybai\{[\x20-\x7E]{1,128}\}$/;
 app.use("/submit", rateLimit({ limit: 20, windowMs: 60_000 }));
 
 app.post("/submit", async (c) => {
-  const CTF_FLAGS = c.env?.CTF_FLAGS;
-  if (!CTF_FLAGS) return c.json({ error: "CTF not configured" }, 503);
-
   const body = await c.req.json<{ flag?: string }>().catch(() => null);
   const flag = body?.flag?.trim();
   if (!flag || !FLAG_RE.test(flag)) return c.json({ valid: false });
 
-  const raw = await CTF_FLAGS.get(flag);
-  if (!raw) return c.json({ valid: false });
+  const id = findFlag(flag);
+  const challenge = CHALLENGES.find((ch) => ch.id === id);
+  if (!challenge) return c.json({ valid: false });
 
+  const { name, points } = challenge;
+  return c.json({ valid: true, id: challenge.id, name, points });
+});
+
+/* GATE */
+app.get("/gate", (c) => {
+  const forwarded = (c.req.header("x-forwarded-for") ?? "")
+    .split(",")[0]
+    .trim();
+  const step = (n: number, status: 403 | 406, message: string) => {
+    c.header("X-Gate-Step", String(n));
+    return c.json({ step: n, error: "access denied", message }, status);
+  };
+  if (!["127.0.0.1", "::1", "localhost"].includes(forwarded))
+    return step(
+      1,
+      403,
+      "This door only opens from the inside. Where do you claim to come from?",
+    );
+  if (!/lynx/i.test(c.req.header("user-agent") ?? ""))
+    return step(
+      2,
+      406,
+      "Inside, we only use text-mode browsers. Ever met a certain big cat?",
+    );
+  if (!/^tlh\b/i.test(c.req.header("accept-language") ?? ""))
+    return step(
+      3,
+      406,
+      "I do not speak your language. Try the one spoken on Qo'noS.",
+    );
+  c.header("X-Gate-Step", "done");
+  return c.json({ step: "done", flag: FLAGS.gate });
+});
+
+/* JWT */
+const JWT_SECRET = "letmein";
+const encoder = new TextEncoder();
+
+const b64url = (data: ArrayBuffer | string) => {
+  const bytes =
+    typeof data === "string" ? encoder.encode(data) : new Uint8Array(data);
+  let bin = "";
+  bytes.forEach((b) => (bin += String.fromCharCode(b)));
+  return btoa(bin).replace(/\+/g, "-").replace(/\//g, "_").replace(/=+$/, "");
+};
+
+const hmac = async (input: string) =>
+  b64url(
+    await crypto.subtle.sign(
+      "HMAC",
+      await crypto.subtle.importKey(
+        "raw",
+        encoder.encode(JWT_SECRET),
+        { name: "HMAC", hash: "SHA-256" },
+        false,
+        ["sign"],
+      ),
+      encoder.encode(input),
+    ),
+  );
+
+const signJwt = async (payload: Record<string, unknown>) => {
+  const body = `${b64url(JSON.stringify({ alg: "HS256", typ: "JWT" }))}.${b64url(JSON.stringify(payload))}`;
+  return `${body}.${await hmac(body)}`;
+};
+
+const verifyJwt = async (token: string) => {
+  const [h, p, sig] = token.split(".");
+  if (!h || !p || !sig) return null;
   try {
-    return c.json({ valid: true, ...JSON.parse(raw) });
+    const header = JSON.parse(atob(h.replace(/-/g, "+").replace(/_/g, "/")));
+    if (header.alg !== "HS256") return null;
+    if ((await hmac(`${h}.${p}`)) !== sig) return null;
+    return JSON.parse(atob(p.replace(/-/g, "+").replace(/_/g, "/")));
   } catch {
-    return c.json({ valid: false });
+    return null;
   }
+};
+
+app.get("/whoami", async (c) =>
+  c.json({
+    user: "guest",
+    role: "guest",
+    token: await signJwt({ sub: "guest", role: "guest" }),
+    hint: "Admins live at /ctf/admin. Send your token as 'Authorization: Bearer <token>'.",
+  }),
+);
+
+app.get("/admin", async (c) => {
+  const token = (c.req.header("authorization") ?? "").replace(/^Bearer /i, "");
+  const claims = token ? await verifyJwt(token) : null;
+  if (!claims) return c.json({ error: "missing or invalid token" }, 401);
+  if (claims.role !== "admin")
+    return c.json({ error: "guests are not welcome here", role: claims.role }, 403);
+  return c.json({ welcome: "admin", flag: FLAGS.jwt });
 });
 
 app.get("/", (c: Context<{ Bindings: Bindings; Variables: Variables }>) => {
   const { lang } = c.var;
+  setCookie(c, "ctf_token", btoa(FLAGS.cookie), {
+    path: "/ctf",
+    secure: true,
+    sameSite: "Strict",
+    maxAge: 86400,
+  });
   const n = nonce(c);
   return c.render(
-    <div class="mx-auto max-w-5xl px-4 py-12">
+    <div class="mx-auto max-w-6xl px-4 py-12">
       <div class="flex flex-col items-center mb-8">
         <Title>{lang === "fr" ? "Défis CTF" : "CTF Challenges"}</Title>
         <p class="text-muted-foreground text-center max-w-xl">
@@ -440,7 +701,11 @@ app.get("/", (c: Context<{ Bindings: Bindings; Variables: Variables }>) => {
             id="ctf-input"
             type="text"
             placeholder="cybai{...}"
+            name="flag"
             autocomplete="off"
+            data-bwignore="true"
+            data-lpignore="true"
+            data-1p-ignore="true"
             spellcheck={false}
             class="flex-1 px-3 py-2 text-sm rounded-md border border-border bg-background font-mono focus:outline-none focus:ring-1 focus:ring-foreground"
           />
@@ -460,9 +725,28 @@ app.get("/", (c: Context<{ Bindings: Bindings; Variables: Variables }>) => {
         </div>
       </div>
 
-      <div class="flex flex-col gap-2 mb-4">
+      <div class="card mb-6 space-y-3 p-4">
+        <div class="flex items-center gap-2">
+          <Icon name="list-filter" size={14} class="text-muted-foreground" />
+          <h2 class="text-sm font-semibold">
+            {lang === "fr" ? "Filtrer les défis" : "Filter challenges"}
+          </h2>
+          <span
+            id="ctf-filter-count"
+            class="font-mono text-xs text-muted-foreground"
+          >
+            {`${CHALLENGE_COUNT} / ${CHALLENGE_COUNT}`}
+          </span>
+          <button
+            id="ctf-clear"
+            type="button"
+            class="ml-auto hidden text-xs text-muted-foreground underline underline-offset-4 hover:text-foreground"
+          >
+            {lang === "fr" ? "effacer les filtres" : "clear filters"}
+          </button>
+        </div>
         <div class="flex flex-wrap items-center gap-2">
-          <span class="text-xs font-mono text-muted-foreground w-20 shrink-0">
+          <span class="text-xs font-mono uppercase tracking-wider text-muted-foreground w-24 shrink-0">
             {lang === "fr" ? "type :" : "type:"}
           </span>
           <div class="flex flex-wrap gap-1.5">
@@ -471,7 +755,7 @@ app.get("/", (c: Context<{ Bindings: Bindings; Variables: Variables }>) => {
                 data-filter="category"
                 data-value={c}
                 type="button"
-                class="text-xs px-2 py-0.5 rounded font-mono cursor-pointer transition-colors border border-border bg-transparent text-muted-foreground hover:text-foreground hover:border-foreground/50"
+                class="text-xs px-2.5 py-1 rounded-md font-mono cursor-pointer transition-colors border border-border bg-background text-muted-foreground hover:text-foreground hover:border-foreground/50"
               >
                 {c.toLowerCase()}
               </button>
@@ -479,7 +763,7 @@ app.get("/", (c: Context<{ Bindings: Bindings; Variables: Variables }>) => {
           </div>
         </div>
         <div class="flex flex-wrap items-center gap-2">
-          <span class="text-xs font-mono text-muted-foreground w-20 shrink-0">
+          <span class="text-xs font-mono uppercase tracking-wider text-muted-foreground w-24 shrink-0">
             {lang === "fr" ? "difficulté :" : "difficulty:"}
           </span>
           <div class="flex flex-wrap gap-1.5">
@@ -488,7 +772,7 @@ app.get("/", (c: Context<{ Bindings: Bindings; Variables: Variables }>) => {
                 data-filter="difficulty"
                 data-value={d}
                 type="button"
-                class="text-xs px-2 py-0.5 rounded font-mono cursor-pointer transition-colors border border-border bg-transparent text-muted-foreground hover:text-foreground hover:border-foreground/50"
+                class="text-xs px-2.5 py-1 rounded-md font-mono cursor-pointer transition-colors border border-border bg-background text-muted-foreground hover:text-foreground hover:border-foreground/50"
               >
                 {DIFF_LABEL[d][lang === "fr" ? 1 : 0]}
               </button>
@@ -496,7 +780,7 @@ app.get("/", (c: Context<{ Bindings: Bindings; Variables: Variables }>) => {
           </div>
         </div>
         <div class="flex flex-wrap items-center gap-2">
-          <span class="text-xs font-mono text-muted-foreground w-20 shrink-0">
+          <span class="text-xs font-mono uppercase tracking-wider text-muted-foreground w-24 shrink-0">
             {lang === "fr" ? "statut :" : "status:"}
           </span>
           <div class="flex flex-wrap gap-1.5">
@@ -505,7 +789,7 @@ app.get("/", (c: Context<{ Bindings: Bindings; Variables: Variables }>) => {
                 data-filter="status"
                 data-value={s}
                 type="button"
-                class="text-xs px-2 py-0.5 rounded font-mono cursor-pointer transition-colors border border-border bg-transparent text-muted-foreground hover:text-foreground hover:border-foreground/50"
+                class="text-xs px-2.5 py-1 rounded-md font-mono cursor-pointer transition-colors border border-border bg-background text-muted-foreground hover:text-foreground hover:border-foreground/50"
               >
                 {s === "solved"
                   ? lang === "fr"

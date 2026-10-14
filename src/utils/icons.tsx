@@ -53,8 +53,34 @@ import flagSvg from "lucide-static/icons/flag.svg?raw";
 import layersSvg from "lucide-static/icons/layers.svg?raw";
 import scanSearchSvg from "lucide-static/icons/scan-search.svg?raw";
 import wifiOffSvg from "lucide-static/icons/wifi-off.svg?raw";
+import rssSvg from "lucide-static/icons/rss.svg?raw";
+import FootprintsSvg from "lucide-static/icons/footprints.svg?raw";
+import BikeSvg from "lucide-static/icons/bike.svg?raw";
+import MountainSvg from "lucide-static/icons/mountain.svg?raw";
+import MusicSvg from "lucide-static/icons/music.svg?raw";
+import WatchSvg from "lucide-static/icons/watch.svg?raw";
+import ShieldSvg from "lucide-static/icons/shield.svg?raw";
+import CookieSvg from "lucide-static/icons/cookie.svg?raw";
+import listFilterSvg from "lucide-static/icons/list-filter.svg?raw";
+import usersSvg from "lucide-static/icons/users.svg?raw";
+import searchSvg from "lucide-static/icons/search.svg?raw";
+import terminalSvg from "lucide-static/icons/terminal.svg?raw";
+import shieldCheckSvg from "lucide-static/icons/shield-check.svg?raw";
 
 const svgMap: Record<string, string> = {
+  "shield-check": shieldCheckSvg,
+  search: searchSvg,
+  users: usersSvg,
+  "list-filter": listFilterSvg,
+  "footprints": FootprintsSvg,
+  "bike": BikeSvg,
+  "mountain": MountainSvg,
+  "music": MusicSvg,
+  "watch": WatchSvg,
+  "shield": ShieldSvg,
+  "cookie": CookieSvg,
+  rss: rssSvg,
+  terminal: terminalSvg,
   heart: heartSvg,
   coffee: coffeeSvg,
   mail: mailSvg,

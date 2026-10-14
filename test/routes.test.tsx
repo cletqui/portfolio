@@ -1,20 +1,6 @@
 import { describe, it, expect } from "vitest";
 import app from "../src/index";
 
-const kvMock = () => {
-  const store = new Map<string, string>([
-    [
-      "cybai{t3stFl4g}",
-      JSON.stringify({ id: "test", name: "Test", points: 10 }),
-    ],
-  ]);
-  return {
-    CTF_FLAGS: {
-      get: async (k: string) => store.get(k) ?? null,
-    },
-  } as unknown as Parameters<typeof app.request>[2];
-};
-
 describe("pages", () => {
   it("home renders with title, security + CTF headers", async () => {
     const res = await app.request("/");
@@ -104,15 +90,6 @@ describe("CTF easter eggs", () => {
 });
 
 describe("/ctf/submit", () => {
-  it("503s without the KV binding", async () => {
-    const res = await app.request("/ctf/submit", {
-      method: "POST",
-      headers: { "content-type": "application/json" },
-      body: JSON.stringify({ flag: "cybai{whatever}" }),
-    });
-    expect(res.status).toBe(503);
-  });
-
   it("rejects malformed bodies and non-flag input", async () => {
     for (const body of ["garbage", JSON.stringify({ flag: "not-a-flag" })]) {
       const res = await app.request(
@@ -122,7 +99,6 @@ describe("/ctf/submit", () => {
           headers: { "content-type": "application/json" },
           body,
         },
-        kvMock(),
       );
       expect(await res.json()).toEqual({ valid: false });
     }
@@ -134,15 +110,14 @@ describe("/ctf/submit", () => {
       {
         method: "POST",
         headers: { "content-type": "application/json" },
-        body: JSON.stringify({ flag: "cybai{t3stFl4g}" }),
+        body: JSON.stringify({ flag: "cybai{1mAT34p0t}" }),
       },
-      kvMock(),
     );
     expect(await res.json()).toEqual({
       valid: true,
-      id: "test",
-      name: "Test",
-      points: 10,
+      id: "teapot",
+      name: "RFC 2324",
+      points: 100,
     });
   });
 
@@ -158,11 +133,162 @@ describe("/ctf/submit", () => {
           },
           body: JSON.stringify({ flag: "cybai{nope}" }),
         },
-        kvMock(),
       );
     const codes: number[] = [];
     for (let i = 0; i < 25; i++) codes.push((await hit()).status);
     expect(codes.filter((c) => c === 200)).toHaveLength(20);
     expect(codes.filter((c) => c === 429)).toHaveLength(5);
+  });
+});
+
+describe("ctf challenges", () => {
+  let n = 0;
+  const post = (flag: string) =>
+    app.request("/ctf/submit", {
+      method: "POST",
+      headers: {
+        "content-type": "application/json",
+        "cf-connecting-ip": `198.51.100.${++n}`,
+      },
+      body: JSON.stringify({ flag }),
+    });
+
+  it("validates every new flag", async () => {
+    const { FLAGS } = await import("../src/utils/flags");
+    for (const [id, flag] of Object.entries(FLAGS)) {
+      const body = (await (await post(flag)).json()) as { id?: string };
+      expect(body.id).toBe(id);
+    }
+  });
+
+  it("gate walks through its three steps", async () => {
+    const gate = (headers: Record<string, string>) =>
+      app.request("/ctf/gate", { headers });
+    expect((await gate({})).status).toBe(403);
+    const lan = { "x-forwarded-for": "127.0.0.1" };
+    expect((await gate(lan)).headers.get("x-gate-step")).toBe("2");
+    const lynx = { ...lan, "user-agent": "Lynx/2.9" };
+    expect((await gate(lynx)).headers.get("x-gate-step")).toBe("3");
+    const res = await gate({ ...lynx, "accept-language": "tlh" });
+    expect(await res.json()).toEqual({
+      step: "done",
+      flag: "cybai{7h3G4t3K33p3r}",
+    });
+  });
+
+  it("jwt: guest token is refused, admin forged with the weak secret works", async () => {
+    const who = (await (await app.request("/ctf/whoami")).json()) as {
+      token: string;
+    };
+    const asGuest = await app.request("/ctf/admin", {
+      headers: { authorization: `Bearer ${who.token}` },
+    });
+    expect(asGuest.status).toBe(403);
+    const enc = new TextEncoder();
+    const b64 = (data: string | ArrayBuffer) => {
+      const bytes =
+        typeof data === "string" ? enc.encode(data) : new Uint8Array(data);
+      return btoa(String.fromCharCode(...bytes))
+        .replace(/\+/g, "-")
+        .replace(/\//g, "_")
+        .replace(/=+$/, "");
+    };
+    const body = `${b64(JSON.stringify({ alg: "HS256", typ: "JWT" }))}.${b64(JSON.stringify({ role: "admin" }))}`;
+    const key = await crypto.subtle.importKey(
+      "raw",
+      enc.encode("letmein"),
+      { name: "HMAC", hash: "SHA-256" },
+      false,
+      ["sign"],
+    );
+    const sig = b64(await crypto.subtle.sign("HMAC", key, enc.encode(body)));
+    const forged = await app.request("/ctf/admin", {
+      headers: { authorization: `Bearer ${body}.${sig}` },
+    });
+    expect((await forged.json()) as object).toMatchObject({
+      flag: "cybai{F0rg3dTh3Cl41m5}",
+    });
+    const none = await app.request("/ctf/admin", {
+      headers: {
+        authorization: `Bearer ${b64(JSON.stringify({ alg: "none" }))}.${b64(JSON.stringify({ role: "admin" }))}.`,
+      },
+    });
+    expect(none.status).toBe(401);
+  });
+
+  it("serves the .env leak, the JSON card and the terminal card", async () => {
+    expect(await (await app.request("/.env")).text()).toContain(
+      "cybai{N3v3rC0mm17Th3D0t3nv}",
+    );
+    const json = await app.request("/", {
+      headers: { accept: "application/json" },
+    });
+    expect(((await json.json()) as { flag: string }).flag).toBe(
+      "cybai{4cc3pt_M3_1f_Y0u_C4n}",
+    );
+    const card = await app.request("/", {
+      headers: { "user-agent": "curl/8.7.1" },
+    });
+    expect(await card.text()).toContain("cybai.re");
+  });
+
+  it("exposes a fake git repository", async () => {
+    const head = await app.request("/.git/HEAD");
+    expect(await head.text()).toBe("ref: refs/heads/main\n");
+    expect((await app.request("/.git/refs/heads/main")).status).toBe(200);
+    expect((await app.request("/.git/hooks/pre-commit")).status).toBe(404);
+  });
+
+  it("/ctf drops a decodable cookie", async () => {
+    const res = await app.request("/ctf");
+    const cookie = res.headers.get("set-cookie") ?? "";
+    const token = /ctf_token=([^;]+)/.exec(cookie)?.[1] ?? "";
+    expect(atob(decodeURIComponent(token))).toBe("cybai{C00k13M0n5t3r}");
+  });
+});
+
+describe("/about/you", () => {
+  it("renders the deep-scan shell with server signals", async () => {
+    const res = await app.request("/about/you", {
+      headers: { "cf-connecting-ip": "81.2.69.142" },
+    });
+    const html = await res.text();
+    if (html.includes('id="scan"')) {
+      expect(html).toContain("server-signals");
+      expect(html).toContain("/static/scan.js");
+    }
+  });
+});
+
+describe("security.txt", () => {
+  it("is generated with a fresh Expires and the flag", async () => {
+    const res = await app.request("/.well-known/security.txt");
+    const body = await res.text();
+    const expires = /^Expires: (.+)$/m.exec(body)?.[1] ?? "";
+    expect(new Date(expires).getTime()).toBeGreaterThan(Date.now());
+    expect(body).toContain("cybai{RFC9116W4sH3r3}");
+    expect((await app.request("/security.txt")).status).toBe(301);
+  });
+});
+
+describe("contact and pgp", () => {
+  it("shows the fingerprint and serves the vCard", async () => {
+    const { PGP } = await import("../src/utils/pgp");
+    const html = await (await app.request("/contact")).text();
+    expect(html).toContain(PGP.fingerprint.slice(0, 4));
+    expect(html).toContain(`gpg --locate-keys ${PGP.email}`);
+    const vcf = await app.request("/contact/contact.vcf");
+    expect(vcf.headers.get("content-type")).toContain("vcard");
+  });
+
+  it("security.txt points at the self-hosted key", async () => {
+    const body = await (await app.request("/.well-known/security.txt")).text();
+    expect(body).toMatch(/^Encryption: .+\/pgp\.asc$/m);
+  });
+});
+
+describe("now", () => {
+  it("/now renders", async () => {
+    expect((await app.request("/now")).status).toBe(200);
   });
 });

@@ -9,8 +9,20 @@
 /static/fonts/*
   Cache-Control: public, max-age=31536000, immutable
 
-/static/projects/*
+/static/og/*
   Cache-Control: public, max-age=604800
 
 /static/avatar.png
   Cache-Control: public, max-age=604800
+
+/static/*.js
+  Cache-Control: public, max-age=3600, must-revalidate
+
+/pgp.asc
+  Content-Type: application/pgp-keys
+  Access-Control-Allow-Origin: *
+  Cache-Control: public, max-age=3600
+
+/.well-known/openpgpkey/*
+  Content-Type: application/octet-stream
+  Access-Control-Allow-Origin: *
