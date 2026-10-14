@@ -124,5 +124,24 @@ for (const [id, flag] of Object.entries(FLAGS)) {
   if (!ok) bad++;
   console.log(`${ok ? "✓" : "✗"} ${id.padEnd(13)} found=${found ? "yes" : "NO "} accepted=${accepted ? "yes" : "NO"} ${note}`);
 }
-console.log(bad ? `\n${bad} flag(s) need attention` : "\nall flags reachable and accepted");
+const staticFiles = [
+  "/.well-known/robots.txt",
+  "/.well-known/keybase.txt",
+  "/.well-known/atproto-did",
+  "/.well-known/manifest.webmanifest",
+  "/.well-known/openpgpkey/policy",
+  "/pgp.asc",
+  "/styles.css",
+  "/static/avatar.png",
+  "/static/favicon.ico",
+];
+for (const path of staticFiles) {
+  const res = await get(path);
+  const type = res.headers.get("content-type") ?? "";
+  const ok = res.status === 200 && !type.includes("text/html");
+  if (!ok) bad++;
+  console.log(`${ok ? "✓" : "✗"} static ${path} ${res.status} ${type}`);
+}
+
+console.log(bad ? `\n${bad} item(s) need attention` : "\nall flags reachable and accepted, static files served");
 process.exit(bad ? 1 : 0);

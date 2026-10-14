@@ -3,6 +3,7 @@ import { Env } from "..";
 
 import { Title } from "../components/layout";
 import { Icon } from "../utils/icons";
+import { PGP } from "../utils/pgp";
 
 /* GLOBAL CONSTANTS */
 type ContactGroup = "reach" | "code" | "secure";
@@ -68,10 +69,10 @@ export const contacts: {
   {
     name: "GPG key",
     nameFr: "Clé GPG",
-    href: "https://keybase.io/clet/pgp_keys.asc",
+    href: "/pgp.asc",
     icon: "key",
     style: "secondary",
-    handle: "pgp_keys.asc",
+    handle: `0x${PGP.keyId}`,
     group: "secure",
   },
   {
@@ -242,6 +243,55 @@ app.get("", (c: Context<Env>) => {
             )}
           </div>
         ))}
+      </div>
+
+      <div class="card mt-4 space-y-4">
+        <h3 class="flex items-center gap-2 text-sm font-semibold">
+          <Icon name="key" size={14} class="text-muted-foreground" />
+          {fr ? "Chiffrer ton message" : "Encrypt your message"}
+        </h3>
+        <div class="space-y-1">
+          <div class="font-mono text-[11px] uppercase tracking-wider text-muted-foreground">
+            {fr ? "Empreinte PGP" : "PGP fingerprint"}
+          </div>
+          <div class="flex flex-wrap items-center gap-3">
+            <code class="break-all font-mono text-sm tracking-wide">
+              {PGP.fingerprint.replace(/(.{4})/g, "$1 ").trim()}
+            </code>
+            <button
+              type="button"
+              class="btn btn-secondary"
+              data-copy={PGP.fingerprint}
+              data-copied={fr ? "Copié !" : "Copied!"}
+            >
+              <Icon name="link" size={14} />
+              <span>{fr ? "Copier" : "Copy"}</span>
+            </button>
+          </div>
+        </div>
+        <div class="flex flex-wrap gap-2">
+          <a href="/pgp.asc" class="btn btn-secondary" download>
+            <Icon name="key" size={14} />
+            <span>{fr ? "Télécharger la clé" : "Download the key"}</span>
+          </a>
+          <a
+            href={PGP.keybase.replace("/pgp_keys.asc", "")}
+            target="_blank"
+            rel="noopener noreferrer"
+            class="btn btn-secondary"
+          >
+            <Icon name="file-key" size={14} />
+            <span>Keybase</span>
+          </a>
+        </div>
+        <p class="text-xs text-muted-foreground">
+          {fr
+            ? "Ou laisse GnuPG la trouver (WKD) : "
+            : "Or let GnuPG find it (WKD): "}
+          <code class="font-mono text-foreground">
+            {`gpg --locate-keys ${PGP.email}`}
+          </code>
+        </p>
       </div>
 
       <p class="mt-8 text-center text-sm text-muted-foreground">

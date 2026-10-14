@@ -128,9 +128,9 @@
     else if (item.action === "lang") {
       var path = location.pathname.replace(/\/$/, "");
       location.href = path + "/" + (FR ? "en" : "fr");
-    } else if (item.action === "copy-mail") {
-      if (navigator.clipboard) navigator.clipboard.writeText("admin@cybai.re");
-      toast(FR ? "E-mail copié" : "Email copied", "admin@cybai.re", 3000);
+    } else if (item.copy) {
+      if (navigator.clipboard) navigator.clipboard.writeText(item.copy);
+      toast(FR ? "Copié" : "Copied", item.copy, 3000);
     }
   }
 

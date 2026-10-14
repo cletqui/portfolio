@@ -1,12 +1,14 @@
 import { projects } from "../pages/projects";
 import { contacts } from "../pages/contact";
+import { PGP } from "./pgp";
 
 export type PaletteItem = {
   label: string;
   group: string;
   hint?: string;
   href?: string;
-  action?: "theme" | "lang" | "copy-mail";
+  action?: "theme" | "lang";
+  copy?: string;
   external?: boolean;
 };
 
@@ -55,8 +57,14 @@ export const paletteItems = (lang: string): PaletteItem[] => {
     {
       label: fr ? "Copier mon e-mail" : "Copy my email",
       group: "Actions",
-      action: "copy-mail" as const,
+      copy: "admin@cybai.re",
       hint: "admin@cybai.re",
+    },
+    {
+      label: fr ? "Copier l'empreinte PGP" : "Copy my PGP fingerprint",
+      group: "Actions",
+      copy: PGP.fingerprint,
+      hint: `0x${PGP.keyId}`,
     },
     {
       label: fr ? "Changer de thème" : "Toggle theme",

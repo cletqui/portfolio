@@ -271,6 +271,22 @@ describe("security.txt", () => {
   });
 });
 
+describe("contact and pgp", () => {
+  it("shows the fingerprint and serves the vCard", async () => {
+    const { PGP } = await import("../src/utils/pgp");
+    const html = await (await app.request("/contact")).text();
+    expect(html).toContain(PGP.fingerprint.slice(0, 4));
+    expect(html).toContain(`gpg --locate-keys ${PGP.email}`);
+    const vcf = await app.request("/contact/contact.vcf");
+    expect(vcf.headers.get("content-type")).toContain("vcard");
+  });
+
+  it("security.txt points at the self-hosted key", async () => {
+    const body = await (await app.request("/.well-known/security.txt")).text();
+    expect(body).toMatch(/^Encryption: .+\/pgp\.asc$/m);
+  });
+});
+
 describe("now", () => {
   it("/now renders", async () => {
     expect((await app.request("/now")).status).toBe(200);

@@ -59,7 +59,7 @@
     .map(function (c) {
       return (c.name + ":").padEnd(10) + c.href;
     })
-    .join("\n");
+    .join("\n") + "\n" + "PGP:".padEnd(10) + data.pgp;
 
   var CIPHER = "NjM3OTYyNjE2OTdvMzA2cjMxMzA2cjM1NDgzNDc2MzM0cDM0NzkzMzcyMzU3cQ==";
   var SECRET = "cybai{ls_-a_FTW}";
@@ -260,6 +260,12 @@
       var next = args[0] === "en" || args[0] === "fr" ? args[0] : FR ? "en" : "fr";
       print("lang: " + next, "text-muted-foreground");
       go("/" + next);
+    },
+    gpg: function () {
+      print("pub   ed25519 0x" + data.pgpId + " [SC]");
+      print("      " + data.pgp.replace(/(.{4})/g, "$1 ").trim());
+      print("uid   <admin@cybai.re>");
+      print(t("key: https://www.cybai.re/pgp.asc  ·  gpg --locate-keys admin@cybai.re", "clé : https://www.cybai.re/pgp.asc  ·  gpg --locate-keys admin@cybai.re"), "text-muted-foreground");
     },
     fortune: function () {
       print(QUOTES[Math.floor(Math.random() * QUOTES.length)]);

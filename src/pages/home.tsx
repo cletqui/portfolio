@@ -10,6 +10,7 @@ import { Icon } from "../utils/icons";
 import { useNonce } from "../utils/security";
 import { FLAGS } from "../utils/flags";
 import { FAKE_GIT } from "../utils/fake-git";
+import { PGP } from "../utils/pgp";
 import { jsonCard, plainCard, terminalCard } from "../utils/card";
 
 /* APP */
@@ -58,6 +59,8 @@ const Welcome = ({ lang }: { lang: string }) => {
       name: lang === "fr" && c.nameFr ? c.nameFr : c.name,
       href: c.href,
     })),
+    pgp: PGP.fingerprint,
+    pgpId: PGP.keyId,
     challenges: CHALLENGE_COUNT,
     points: TOTAL_POINTS,
     card: plainCard(lang),
@@ -284,7 +287,7 @@ app.get("/.well-known/security.txt", (c: Context<Env>) => {
   const origin = new URL(c.req.url).origin;
   const expires = new Date(Date.now() + 300 * 86_400_000).toISOString();
   return c.text(
-    `Contact: ${origin}/contact\nContact: mailto:admin@cybai.re\nExpires: ${expires}\nEncryption: https://keybase.io/clet/pgp_keys.asc\nPreferred-Languages: en, fr\nCanonical: ${origin}/.well-known/security.txt\n\n# found something? submit it at ${origin}/ctf\n# ${FLAGS["security-txt"]}\n`,
+    `Contact: ${origin}/contact\nContact: mailto:admin@cybai.re\nExpires: ${expires}\nEncryption: ${origin}/pgp.asc\nPreferred-Languages: en, fr\nCanonical: ${origin}/.well-known/security.txt\n\n# found something? submit it at ${origin}/ctf\n# ${FLAGS["security-txt"]}\n`,
   );
 });
 
@@ -321,7 +324,7 @@ app.options("/", (c: Context<Env>) => {
 
 app.get("/humans.txt", (c: Context<Env>) =>
   c.text(
-    `/* TEAM */\nDeveloper: cybai.re\nSite: https://cybai.re\n\n/* THANKS */\nHono · Tailwind CSS · Cloudflare Pages\n\n/* SITE */\nLast update: ${new Date().getFullYear()}\nLanguage: English / French\n\n# cybai{H3ll0Hum4ns}`,
+    `/* TEAM */\nDeveloper: cybai.re\nSite: https://cybai.re\n\n/* THANKS */\nHono · Tailwind CSS · Cloudflare Pages\n\n/* CONTACT */\nEmail: admin@cybai.re\nPGP: ${PGP.fingerprint}\n\n/* SITE */\nLast update: ${new Date().getFullYear()}\nLanguage: English / French\n\n# cybai{H3ll0Hum4ns}`,
   ),
 );
 

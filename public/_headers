@@ -17,3 +17,12 @@
 
 /static/*.js
   Cache-Control: public, max-age=3600, must-revalidate
+
+/pgp.asc
+  Content-Type: application/pgp-keys
+  Access-Control-Allow-Origin: *
+  Cache-Control: public, max-age=3600
+
+/.well-known/openpgpkey/*
+  Content-Type: application/octet-stream
+  Access-Control-Allow-Origin: *

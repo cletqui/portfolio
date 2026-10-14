@@ -23,7 +23,7 @@
     "dev": "node_modules/.bin/tailwindcss -i src/styles.css -o public/styles.css && vite",
     "watch:css": "node_modules/.bin/tailwindcss -i src/styles.css -o public/styles.css --watch",
     "build:css": "node_modules/.bin/tailwindcss -i src/styles.css -o public/styles.css --minify",
-    "build": "$npm_execpath run build:css && vite build --mode bundle && vite build",
+    "build": "rm -rf dist && $npm_execpath run build:css && vite build --mode bundle && vite build",
     "typecheck": "tsc --noEmit",
     "test": "vitest run",
     "test:watch": "vitest",
