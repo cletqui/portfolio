@@ -22,7 +22,7 @@ const FooterLink = ({
 
 export const Footer = ({ lang }: { lang: string }) => (
   <footer class="border-t border-border">
-    <div class="mx-auto flex h-10 max-w-5xl items-center justify-center gap-1.5 px-4 text-sm text-muted-foreground">
+    <div class="mx-auto flex h-10 max-w-6xl items-center justify-center gap-1.5 px-4 text-sm text-muted-foreground">
       {lang === "fr" ? "Fait avec" : "Made with"}
       <FooterLink
         icon="heart"

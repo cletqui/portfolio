@@ -3,6 +3,7 @@ import { jsxRenderer, useRequestContext } from "hono/jsx-renderer";
 import { Head } from "../components/head";
 import { Header } from "../components/header";
 import { Footer } from "../components/footer";
+import { ogImage } from "./og";
 
 declare module "hono" {
   interface ContextRenderer {
@@ -29,7 +30,7 @@ export const renderer = jsxRenderer(
     const pageTitle = title ? `${title} · ${SITE}` : SITE;
     const desc = description ?? DEFAULT_DESC[lang === "fr" ? "fr" : "en"];
     const canonical = `${url.origin}${url.pathname}`;
-    const image = `${url.origin}/static/avatar.png`;
+    const image = `${url.origin}${ogImage(url.pathname)}`;
 
     return (
       <html lang={lang}>

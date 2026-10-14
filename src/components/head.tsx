@@ -3,6 +3,28 @@ import { useNonce } from "../utils/security";
 
 const themeInitScript = `(function(){var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.documentElement.className=t})();`;
 
+const speculationRules = JSON.stringify({
+  prefetch: [
+    {
+      where: {
+        and: [
+          { href_matches: "/*" },
+          {
+            not: {
+              or: [
+                { href_matches: ["/en", "/fr", "/*/en", "/*/fr"] },
+                { href_matches: ["/teapot", "/rickroll", "/*.txt", "/*.vcf", "/ctf/submit"] },
+                { selector_matches: "[rel~=nofollow]" },
+              ],
+            },
+          },
+        ],
+      },
+      eagerness: "moderate",
+    },
+  ],
+});
+
 export const Head = ({
   title,
   description,
@@ -33,7 +55,9 @@ export const Head = ({
       <meta property="og:description" content={description} />
       <meta property="og:url" content={canonical} />
       <meta property="og:image" content={image} />
-      <meta name="twitter:card" content="summary" />
+      <meta property="og:image:width" content="1200" />
+      <meta property="og:image:height" content="630" />
+      <meta name="twitter:card" content="summary_large_image" />
       <meta name="twitter:title" content={title} />
       <meta name="twitter:description" content={description} />
       <meta name="twitter:image" content={image} />
@@ -63,6 +87,12 @@ export const Head = ({
       <script
         nonce={nonce}
         dangerouslySetInnerHTML={{ __html: themeInitScript }}
+      />
+      <script src="/static/site.js" defer nonce={nonce} />
+      <script
+        type="speculationrules"
+        nonce={nonce}
+        dangerouslySetInnerHTML={{ __html: speculationRules }}
       />
     </head>
   );

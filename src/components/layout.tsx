@@ -44,7 +44,7 @@ export const Avatar = ({ size }: { size: number }) => (
     src="/static/avatar.png"
     width={size}
     height={size}
-    alt="Antoine Q"
+    alt="cybai.re"
   />
 );
 

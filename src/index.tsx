@@ -10,11 +10,10 @@ import home from "./pages/home";
 import projects from "./pages/projects";
 import about from "./pages/about";
 import contact from "./pages/contact";
+import now from "./pages/now";
 
 /* TYPES */
-export type Bindings = {
-  CTF_FLAGS: KVNamespace;
-};
+export type Bindings = {};
 
 export type Variables = {
   lang: string;
@@ -36,6 +35,7 @@ app.use(renderer);
 app.route("/about", about);
 app.route("/projects", projects);
 app.route("/contact", contact);
+app.route("/now", now);
 app.route("/", home);
 
 export default app;
