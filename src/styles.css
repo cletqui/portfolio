@@ -1,6 +1,7 @@
 @import "tailwindcss";
 @source "./**/*.tsx";
 @source "../public/static/*.js";
+@source "./client/**/*.ts";
 
 /* Inter */
 @font-face {

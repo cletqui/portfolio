@@ -1,5 +1,4 @@
 import { Button } from "./layout";
-import { useNonce } from "../utils/security";
 
 const errors = {
   400: "Bad Request",
@@ -22,8 +21,6 @@ const errors = {
   417: "Expectation Failed",
   418: "I'm a teapot",
 };
-
-const errorScript = `(function(){var path=window.location.pathname;['error-path','error-path-2'].forEach(function(id){var el=document.getElementById(id);if(el)el.textContent=path})})();`;
 
 export const Error = ({
   lang,
@@ -80,9 +77,5 @@ export const Error = ({
         />
       </div>
     </div>
-    <script
-      nonce={useNonce()}
-      dangerouslySetInnerHTML={{ __html: errorScript }}
-    />
   </div>
 );

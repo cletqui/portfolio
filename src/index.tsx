@@ -10,6 +10,10 @@ import home from "./pages/home";
 import projects from "./pages/projects";
 import about from "./pages/about";
 import contact from "./pages/contact";
+import ctf from "./pages/ctf";
+import eggs from "./pages/eggs";
+import wellKnown from "./pages/well-known";
+import { Error } from "./components/error";
 import now from "./pages/now";
 
 /* TYPES */
@@ -36,6 +40,14 @@ app.route("/about", about);
 app.route("/projects", projects);
 app.route("/contact", contact);
 app.route("/now", now);
+app.route("/ctf", ctf);
+app.route("/", wellKnown);
+app.route("/", eggs);
 app.route("/", home);
+
+app.notFound((c) => {
+  c.status(404);
+  return c.render(<Error lang={c.var.lang} error={404} />, { title: "404" });
+});
 
 export default app;

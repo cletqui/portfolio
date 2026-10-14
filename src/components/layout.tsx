@@ -1,6 +1,6 @@
 import { Child } from "hono/jsx";
 import { Icon } from "../utils/icons";
-import { useNonce } from "../utils/security";
+import { EPOCH_TARGET_MS } from "../utils/epoch";
 
 export const Title = ({ children }: { children: Child }) => (
   <h1 class="text-3xl font-bold tracking-tight border-b border-border pb-3 mb-6">
@@ -64,10 +64,13 @@ const UNIT_LABELS = {
 } as const;
 
 export const Epochalypse = ({ lang }: { lang: string }) => {
-  const target = 2147483647000; // 2038-01-19T03:14:07Z, 2^31 - 1 seconds
   return (
     <div>
-      <div class="flex items-end gap-3 font-mono text-center">
+      <div
+        id="epoch-countdown"
+        data-target={EPOCH_TARGET_MS}
+        class="flex items-end gap-3 font-mono text-center"
+      >
         {(["days", "hours", "minutes", "seconds"] as const).map((unit, idx) => (
           <>
             {idx > 0 && (
@@ -86,12 +89,6 @@ export const Epochalypse = ({ lang }: { lang: string }) => {
           </>
         ))}
       </div>
-      <script
-        nonce={useNonce()}
-        dangerouslySetInnerHTML={{
-          __html: `(function(){var t=${target};function p(n){return String(n).padStart(2,'0')}function u(){var d=Math.max(0,t-Date.now());document.getElementById('epoch-days').textContent=Math.floor(d/86400000);document.getElementById('epoch-hours').textContent=p(Math.floor(d%86400000/3600000));document.getElementById('epoch-minutes').textContent=p(Math.floor(d%3600000/60000));document.getElementById('epoch-seconds').textContent=p(Math.floor(d%60000/1000))}u();setInterval(u,1000)})();`,
-        }}
-      />
     </div>
   );
 };

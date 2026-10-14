@@ -19,7 +19,7 @@ const architecture = (ua: string) =>
         : undefined;
 
 export const parseUserAgent = (ua: string): UserAgent => {
-  const r = Bowser.parse(ua);
+  const r = Bowser.parse(ua || " ");
   const type = r.platform.type;
   return {
     ua,

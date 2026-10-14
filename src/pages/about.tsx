@@ -2,9 +2,9 @@ import { Context, Hono } from "hono";
 import { getConnInfo } from "hono/cloudflare-pages";
 
 import { Env } from "..";
-import { getIPInfo, IPInfo } from "../utils/api";
+import { getIPInfo, IPInfo } from "../utils/ip";
 import { UserAgent, parseUserAgent } from "../utils/ua";
-import { Avatar, Spinner, Title } from "../components/layout";
+import { Avatar, Title } from "../components/layout";
 import { Icon } from "../utils/icons";
 import { deleteCookie } from "hono/cookie";
 import { collectSignals, guessConnection } from "../utils/signals";
@@ -421,7 +421,7 @@ app.get("/you", async (c: Context<Env>) => {
   let ipInfo: IPInfo | null = getCFGeo(c, address, lang);
   if (!ipInfo) {
     try {
-      ipInfo = await getIPInfo(c, address ?? "");
+      ipInfo = await getIPInfo(address ?? "");
     } catch (e) {
       console.error("[/about/you] IP lookup failed:", e);
     }

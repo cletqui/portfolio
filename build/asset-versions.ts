@@ -1,7 +1,7 @@
 import { createHash } from "node:crypto";
 import { existsSync, readFileSync } from "node:fs";
 
-const FILES = ["/styles.css", "/static/site.js", "/static/scan.js", "/static/shell.js"];
+const FILES = ["/styles.css", "/static/site.js", "/static/scan.js", "/static/shell.js", "/static/shell-games.js", "/static/ctf.js"];
 
 export const assetVersions = (root = process.cwd()) =>
   Object.fromEntries(

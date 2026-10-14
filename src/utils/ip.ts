@@ -1,5 +1,3 @@
-import { Context } from "hono";
-
 /* TYPES */
 export interface IPInfo {
   address?: string;
@@ -40,10 +38,7 @@ const queryIPInfo = async (address: string): Promise<IPInfo> => {
   return data;
 };
 
-export const getIPInfo = async (
-  c: Context,
-  address: string,
-): Promise<IPInfo> => {
+export const getIPInfo = async (address: string): Promise<IPInfo> => {
   const info = await queryIPInfo(address);
   return { address, ...info };
 };

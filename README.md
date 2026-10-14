@@ -28,6 +28,6 @@ bun run deploy     # Build + deploy to Cloudflare Pages
 
 ## CTF
 
-Flags are hidden throughout the site, its HTTP headers, DNS records, and this repository. Visit [/ctf](https://www.cybai.re/ctf) to track progress — 28 challenges, 3425 pts total.
+Flags are hidden throughout the site, its HTTP headers, DNS records, and this repository. Visit [/ctf](https://www.cybai.re/ctf) to track progress — 35 challenges, 4275 pts total.
 
 <!-- cybai{H1dd3nInPl41n51gh7} -->

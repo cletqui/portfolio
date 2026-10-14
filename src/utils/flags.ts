@@ -27,6 +27,13 @@ export const FLAGS: Record<string, string> = {
   "gate": "cybai{7h3G4t3K33p3r}",
   "jwt": "cybai{F0rg3dTh3Cl41m5}",
   "git": "cybai{G1t_N3v3r_F0rg3ts}",
+  root: "cybai{R00t_V14_B4sh_H1st0ry}",
+  xyzzy: "cybai{A_H0ll0w_V01c3_S4ys_Plugh}",
+  wipe: "cybai{Ju5t_K1dd1ng_N0th1ng_W45_D3l3t3d}",
+  forkbomb: "cybai{F0rk_B0mb_D3f4ng3d}",
+  adventure: "cybai{3sc4p3_Th3_D4t4c3nt3r}",
+  snake: "cybai{Sn4k3_Ch4rm3r_1337}",
+  wordle: "cybai{Gr33n_Gr33n_Gr33n_Gr33n_Gr33n}",
 };
 
 export const findFlag = (flag: string): string | undefined =>

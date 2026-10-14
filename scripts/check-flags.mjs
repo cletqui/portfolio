@@ -70,7 +70,7 @@ const checks = {
   },
   crypto: async () => {
     const js = await text("/static/shell.js");
-    const blob = /var CIPHER = "([^"]+)"/.exec(js)?.[1] ?? "";
+    const blob = /(Nj[A-Za-z0-9+\/]{40,}={0,2})/.exec(js)?.[1] ?? "";
     const rot13 = (s) => s.replace(/[a-z]/gi, (c) => String.fromCharCode(((c.charCodeAt(0) - (c < "a" ? 65 : 97) + 13) % 26) + (c < "a" ? 65 : 97)));
     return Buffer.from(rot13(b64(blob).toString()), "hex").toString();
   },
@@ -119,8 +119,14 @@ const submit = async (flag) => {
   return false;
 };
 
+const TERMINAL_ONLY = new Set(["root", "xyzzy", "wipe", "forkbomb", "adventure", "snake", "wordle"]);
+
 let bad = 0;
 for (const [id, flag] of Object.entries(FLAGS)) {
+  if (TERMINAL_ONLY.has(id)) {
+    console.log(`- ${id.padEnd(14)} earned in the terminal (covered by check:shell)`);
+    continue;
+  }
   const check = checks[id];
   let found = false;
   let note = "";

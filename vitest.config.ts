@@ -1,6 +1,6 @@
 import { defineConfig } from "vitest/config";
 
-import { assetVersions } from "./build/asset-versions";
+import { assetVersions } from "./build/asset-versions.ts";
 
 export default defineConfig({
   define: {

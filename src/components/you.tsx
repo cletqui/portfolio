@@ -1,10 +1,9 @@
 import type { Child } from "hono/jsx";
 
-import { IPInfo } from "../utils/api";
+import { IPInfo } from "../utils/ip";
 import { UserAgent } from "../utils/ua";
 import { ServerSignals } from "../utils/signals";
 import { Icon } from "../utils/icons";
-import { useNonce } from "../utils/security";
 import { asset } from "../utils/assets";
 
 const languageName = (tag: string, lang: string) => {
@@ -282,7 +281,7 @@ export const Narrative = ({
           : "Maybe our paths have crossed before. Did you know there's a French version of this website?"}
       </Section>
 
-      <Section label={fr ? "quoi" : "what"}>
+      <Section label={fr ? "comment" : "how"}>
         {mobile &&
           (fr
             ? "Tu explores mon site en déplacement. Globe-trotter, multitâche, ou simplement connecté en permanence via ton "
@@ -314,6 +313,8 @@ export const Narrative = ({
             : "As a Linux user you clearly value freedom and control. Respect!")}
       </Section>
 
+      <div id="scan-infer" class="hidden space-y-1.5" />
+
       <p class="border-t border-border pt-3 text-xs text-muted-foreground">
         {fr
           ? "Ce n'est pas de la magie : ton IP et ton User-Agent t'ont trahi. N'hésite pas à valider ou compléter cette description en me contactant !"
@@ -331,7 +332,6 @@ export const DeepScan = ({
   lang: string;
   signals: ServerSignals;
 }) => {
-  const nonce = useNonce();
   const json = JSON.stringify(signals).replace(/</g, "\\u003c");
   return (
     <section id="scan" data-lang={lang} class="space-y-6">
@@ -359,7 +359,7 @@ export const DeepScan = ({
         id="server-signals"
         dangerouslySetInnerHTML={{ __html: json }}
       />
-      <script src={asset("/static/scan.js")} defer nonce={nonce} />
+      <script src={asset("/static/scan.js")} defer />
     </section>
   );
 };
