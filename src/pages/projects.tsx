@@ -3,6 +3,7 @@ import { Env } from "..";
 import { Button, Epochalypse, Title } from "../components/layout";
 import { Error } from "../components/error";
 import { Icon } from "../utils/icons";
+import { epochalypseCalendar } from "../utils/ical";
 
 type Category = "security" | "web" | "tinkering";
 
@@ -334,8 +335,18 @@ const ProjectDetail = ({ lang, p }: { lang: string; p: Project }) => (
 );
 
 /* ENDPOINTS */
+app.get("/epochalypse.ics", (c: Context<Env>) => {
+  const lang = c.req.query("lang") === "fr" ? "fr" : c.var.lang;
+  return c.body(epochalypseCalendar(lang), 200, {
+    "Content-Type": "text/calendar; charset=utf-8",
+    "Cache-Control": "public, max-age=3600",
+  });
+});
+
 app.get("/epochalypse", (c: Context<Env>) => {
   const { lang } = c.var;
+  const feed = `/projects/epochalypse.ics${lang === "fr" ? "?lang=fr" : ""}`;
+  const webcal = `webcal://${new URL(c.req.url).host}${feed}`;
   return c.render(
     <div class="mx-auto max-w-3xl px-4 py-12 flex flex-col items-center">
       <Title>Epochalypse</Title>
@@ -344,7 +355,12 @@ app.get("/epochalypse", (c: Context<Env>) => {
         <Epochalypse lang={lang} />
       </div>
 
-      <div class="flex gap-3">
+      <div class="flex flex-wrap justify-center gap-3">
+        <Button
+          text={lang === "fr" ? "Ajouter à mon agenda" : "Add to my calendar"}
+          icon="calendar-plus"
+          href={webcal}
+        />
         <Button
           text={lang === "fr" ? "Explication" : "Explanation"}
           icon="book-a"
@@ -359,6 +375,16 @@ app.get("/epochalypse", (c: Context<Env>) => {
           external
         />
       </div>
+
+      <p class="mt-4 text-center text-xs text-muted-foreground">
+        {lang === "fr"
+          ? "Le bouton ouvre ton application d'agenda (webcal). Sinon, "
+          : "The button opens your calendar app (webcal). Otherwise, "}
+        <a href={feed} download class="underline underline-offset-4">
+          {lang === "fr" ? "télécharge le fichier .ics" : "download the .ics file"}
+        </a>
+        .
+      </p>
     </div>,
     {
       title: "Epochalypse",

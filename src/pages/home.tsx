@@ -11,6 +11,7 @@ import { useNonce } from "../utils/security";
 import { FLAGS } from "../utils/flags";
 import { FAKE_GIT } from "../utils/fake-git";
 import { PGP } from "../utils/pgp";
+import { asset } from "../utils/assets";
 import { jsonCard, plainCard, terminalCard } from "../utils/card";
 
 /* APP */
@@ -117,7 +118,7 @@ const Welcome = ({ lang }: { lang: string }) => {
         id="shell-data"
         dangerouslySetInnerHTML={{ __html: data }}
       />
-      <script src="/static/shell.js" defer nonce={useNonce()} />
+      <script src={asset("/static/shell.js")} defer nonce={useNonce()} />
     </div>
   );
 };
@@ -131,7 +132,7 @@ const AvatarWithStatus = ({ size }: { size: number }) => (
       title="418 I'm a teapot"
       aria-label="418 I'm a teapot"
     >
-      🫖
+      <span class="block -translate-y-0.5 leading-none">🫖</span>
     </a>
   </div>
 );

@@ -5,6 +5,7 @@ import { UserAgent } from "../utils/ua";
 import { ServerSignals } from "../utils/signals";
 import { Icon } from "../utils/icons";
 import { useNonce } from "../utils/security";
+import { asset } from "../utils/assets";
 
 const languageName = (tag: string, lang: string) => {
   try {
@@ -358,7 +359,7 @@ export const DeepScan = ({
         id="server-signals"
         dangerouslySetInnerHTML={{ __html: json }}
       />
-      <script src="/static/scan.js" defer nonce={nonce} />
+      <script src={asset("/static/scan.js")} defer nonce={nonce} />
     </section>
   );
 };
