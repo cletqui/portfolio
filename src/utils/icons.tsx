@@ -62,6 +62,7 @@ import WatchSvg from "lucide-static/icons/watch.svg?raw";
 import ShieldSvg from "lucide-static/icons/shield.svg?raw";
 import CookieSvg from "lucide-static/icons/cookie.svg?raw";
 import listFilterSvg from "lucide-static/icons/list-filter.svg?raw";
+import calendarPlusSvg from "lucide-static/icons/calendar-plus.svg?raw";
 import usersSvg from "lucide-static/icons/users.svg?raw";
 import searchSvg from "lucide-static/icons/search.svg?raw";
 import terminalSvg from "lucide-static/icons/terminal.svg?raw";
@@ -71,6 +72,7 @@ const svgMap: Record<string, string> = {
   "shield-check": shieldCheckSvg,
   search: searchSvg,
   users: usersSvg,
+  "calendar-plus": calendarPlusSvg,
   "list-filter": listFilterSvg,
   "footprints": FootprintsSvg,
   "bike": BikeSvg,

@@ -287,6 +287,38 @@ describe("contact and pgp", () => {
   });
 });
 
+describe("epochalypse calendar", () => {
+  it("serves a valid, folded iCalendar for the real overflow moment", async () => {
+    const res = await app.request("/projects/epochalypse.ics");
+    expect(res.headers.get("content-type")).toContain("text/calendar");
+    const body = await res.text();
+    expect(body.startsWith("BEGIN:VCALENDAR\r\n")).toBe(true);
+    expect(body.endsWith("END:VCALENDAR\r\n")).toBe(true);
+    expect(body).toContain("DTSTART:20380119T031407Z");
+    expect(body).toContain("UID:epochalypse-2038@cybai.re");
+    expect((body.match(/BEGIN:VALARM/g) ?? []).length).toBe(2);
+    for (const line of body.split("\r\n"))
+      expect(new TextEncoder().encode(line).length).toBeLessThanOrEqual(75);
+    const fr = await (await app.request("/projects/epochalypse.ics?lang=fr")).text();
+    expect(fr.replace(/\r\n /g, "")).toContain("Le temps Unix 32 bits arrive à terme".replace("Le", "le"));
+  });
+
+  it("2^31 - 1 seconds is the countdown target, and the page links the calendar", async () => {
+    expect(new Date(2147483647000).toISOString()).toBe("2038-01-19T03:14:07.000Z");
+    const html = await (await app.request("/projects/epochalypse")).text();
+    expect(html).toContain("var t=2147483647000");
+    expect(html).toMatch(/href="webcal:\/\/[^"]+\/projects\/epochalypse\.ics"/);
+  });
+});
+
+describe("asset versioning", () => {
+  it("script and stylesheet URLs carry a content hash", async () => {
+    const html = await (await app.request("/")).text();
+    expect(html).toMatch(/href="\/styles\.css\?v=[0-9a-f]{8}"/);
+    expect(html).toMatch(/src="\/static\/site\.js\?v=[0-9a-f]{8}"/);
+  });
+});
+
 describe("now", () => {
   it("/now renders", async () => {
     expect((await app.request("/now")).status).toBe(200);

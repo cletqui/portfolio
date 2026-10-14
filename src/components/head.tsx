@@ -1,5 +1,6 @@
 import { html } from "hono/html";
 import { useNonce } from "../utils/security";
+import { asset } from "../utils/assets";
 
 const themeInitScript = `(function(){var t=localStorage.getItem('theme');if(t==='dark'||t==='light')document.documentElement.className=t})();`;
 
@@ -13,7 +14,7 @@ const speculationRules = JSON.stringify({
             not: {
               or: [
                 { href_matches: ["/en", "/fr", "/*/en", "/*/fr"] },
-                { href_matches: ["/teapot", "/rickroll", "/*.txt", "/*.vcf", "/ctf/submit"] },
+                { href_matches: ["/teapot", "/rickroll", "/*.txt", "/*.vcf", "/*.ics", "/ctf/submit"] },
                 { selector_matches: "[rel~=nofollow]" },
               ],
             },
@@ -83,12 +84,12 @@ export const Head = ({
         href="/static/fonts/inter-latin-wght-normal.woff2"
         crossorigin="anonymous"
       />
-      <link rel="stylesheet" href="/styles.css" />
+      <link rel="stylesheet" href={asset("/styles.css")} />
       <script
         nonce={nonce}
         dangerouslySetInnerHTML={{ __html: themeInitScript }}
       />
-      <script src="/static/site.js" defer nonce={nonce} />
+      <script src={asset("/static/site.js")} defer nonce={nonce} />
       <script
         type="speculationrules"
         nonce={nonce}

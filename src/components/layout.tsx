@@ -64,7 +64,7 @@ const UNIT_LABELS = {
 } as const;
 
 export const Epochalypse = ({ lang }: { lang: string }) => {
-  const target = 2148609247000; // 2038-01-19T03:14:07Z
+  const target = 2147483647000; // 2038-01-19T03:14:07Z, 2^31 - 1 seconds
   return (
     <div>
       <div class="flex items-end gap-3 font-mono text-center">
