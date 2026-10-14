@@ -363,6 +363,37 @@ export const DeepScan = ({
   );
 };
 
+/* GO FURTHER */
+export const GoFurther = ({ lang }: { lang: string }) => {
+  const fr = lang === "fr";
+  return (
+    <div class="card flex flex-wrap items-center gap-4">
+      <Icon name="users" size={18} class="text-muted-foreground" />
+      <div class="min-w-0 flex-1 space-y-1">
+        <h3 class="text-sm font-semibold">
+          {fr
+            ? "Aller plus loin : te comparer à de vraies données"
+            : "Go further: compare yourself to real data"}
+        </h3>
+        <p class="text-xs leading-relaxed text-muted-foreground">
+          {fr
+            ? "Cette page montre quels attributs t'identifient, pas à quel point tes valeurs sont rares. AmIUnique, un projet de recherche indépendant, compare ton empreinte à sa propre base. Il lance son propre scan sur son propre site : lis sa politique de confidentialité avant."
+            : "This page shows which attributes identify you, not how rare your values are. AmIUnique, an independent research project, compares your fingerprint with its own dataset. It runs its own scan on its own site, so read its privacy policy first."}
+        </p>
+      </div>
+      <a
+        href="https://amiunique.org/fingerprint"
+        target="_blank"
+        rel="noopener noreferrer"
+        class="btn btn-secondary"
+      >
+        <Icon name="external-link" size={14} />
+        <span>{fr ? "Ouvrir AmIUnique" : "Open AmIUnique"}</span>
+      </a>
+    </div>
+  );
+};
+
 /* EXTRAS */
 export const MapCard = ({
   lang,

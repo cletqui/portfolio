@@ -624,6 +624,149 @@
     });
   }
 
+
+  /* DEEPER COLLECTORS */
+  function collectNavigatorDeep() {
+    var n = navigator;
+    var own = Object.getOwnPropertyNames(n);
+    var proto = Object.getOwnPropertyNames(Object.getPrototypeOf(n));
+    return sha(own.join(",") + "|" + proto.join(",")).then(function (h) {
+      add("browser", "navprops", t("Navigator properties", "Propriétés du navigator"), proto.length + " · " + h.slice(0, 12), 5);
+      add("browser", "product", "product / productSub / vendorSub", [n.product, n.productSub, n.vendorSub || "-"].join(" / "), 1.5);
+      if (n.buildID) add("browser", "buildid", "buildID", n.buildID, 3);
+      add("browser", "java", "javaEnabled", typeof n.javaEnabled === "function" ? String(n.javaEnabled()) : "n/a", 0.2);
+    });
+  }
+
+  function collectPlugins() {
+    var names = [].slice.call(navigator.plugins || []).map(function (p) {
+      return p.name;
+    });
+    var mimes = [].slice.call(navigator.mimeTypes || []).map(function (m) {
+      return m.type;
+    });
+    add("browser", "plugins", t("Plugins", "Plugins"), names.length + (names.length ? " · " + names.slice(0, 3).join(", ") + (names.length > 3 ? "…" : "") : ""), 2);
+    add("browser", "mimes", t("MIME types", "Types MIME"), mimes.length + " · " + fnv(mimes.join(",")), 2);
+  }
+
+  function collectEngineQuirks() {
+    var msgs = [];
+    var probes = [
+      function () { null.x; },
+      function () { undefined.y(); },
+      function () { new Array(-1); },
+      function () { (1).toFixed(101); },
+      function () { JSON.parse("{"); },
+      function () { decodeURIComponent("%"); },
+    ];
+    probes.forEach(function (f) {
+      try {
+        f();
+      } catch (e) {
+        msgs.push(String(e && e.message));
+      }
+    });
+    return sha(msgs.join("|")).then(function (h) {
+      add("browser", "errors", t("Error messages", "Messages d'erreur"), h.slice(0, 12), 2.5);
+      add("browser", "evalen", "eval.toString().length", String(eval.toString().length), 1.2);
+    });
+  }
+
+  var AUDIO_TYPES = ["audio/mpeg", 'audio/ogg; codecs="vorbis"', 'audio/ogg; codecs="opus"', 'audio/wav; codecs="1"', "audio/aac", "audio/flac", 'audio/webm; codecs="opus"', 'audio/mp4; codecs="mp4a.40.2"', "audio/x-m4a"];
+  var VIDEO_TYPES = ['video/mp4; codecs="avc1.42E01E"', 'video/mp4; codecs="avc1.64001F"', 'video/mp4; codecs="hev1.1.6.L93.B0"', 'video/mp4; codecs="av01.0.05M.08"', 'video/webm; codecs="vp8"', 'video/webm; codecs="vp9"', 'video/webm; codecs="av01.0.05M.08"', 'video/ogg; codecs="theora"', "video/x-matroska"];
+
+  function collectFormats() {
+    var a = document.createElement("audio");
+    var v = document.createElement("video");
+    var ar = AUDIO_TYPES.map(function (m) { return a.canPlayType(m) || "no"; });
+    var vr = VIDEO_TYPES.map(function (m) { return v.canPlayType(m) || "no"; });
+    var yes = function (arr) { return arr.filter(function (x) { return x !== "no"; }).length; };
+    add("caps", "audiofmt", t("Audio formats", "Formats audio"), yes(ar) + "/" + AUDIO_TYPES.length + " · " + fnv(ar.join("")), 3);
+    add("caps", "videofmt", t("Video formats", "Formats vidéo"), yes(vr) + "/" + VIDEO_TYPES.length + " · " + fnv(vr.join("")), 3.5);
+    if (window.MediaSource && MediaSource.isTypeSupported) {
+      var mse = VIDEO_TYPES.map(function (m) { return MediaSource.isTypeSupported(m) ? 1 : 0; });
+      add("caps", "mse", "MediaSource", mse.reduce(function (x, y) { return x + y; }, 0) + "/" + VIDEO_TYPES.length, 1);
+    }
+  }
+
+  function collectAudioContext() {
+    var C = window.AudioContext || window.webkitAudioContext;
+    if (!C) throw new Error(t("no AudioContext", "pas d'AudioContext"));
+    var ctx = new C();
+    var d = ctx.destination;
+    var info = [ctx.sampleRate, ctx.baseLatency, ctx.outputLatency, d.maxChannelCount, d.channelCount, d.channelCountMode].join(" / ");
+    if (ctx.close) ctx.close();
+    add("hardware", "audioctx", "AudioContext", info, 3);
+  }
+
+  function collectSensors() {
+    var names = ["Accelerometer", "Gyroscope", "Magnetometer", "AbsoluteOrientationSensor", "AmbientLightSensor", "DeviceMotionEvent", "DeviceOrientationEvent"];
+    var present = names.filter(function (k) { return k in window; });
+    add("caps", "sensors", t("Sensor APIs", "APIs de capteurs"), present.length ? present.join(", ") : t("none", "aucune"), 2);
+    var touchEvent = false;
+    try {
+      document.createEvent("TouchEvent");
+      touchEvent = true;
+    } catch (e) {}
+    add("browser", "touchapi", t("Touch support", "Support tactile"), navigator.maxTouchPoints + " pts · TouchEvent=" + touchEvent + " · ontouchstart=" + ("ontouchstart" in window), 1.5);
+  }
+
+  function collectWindowChrome() {
+    var bars = ["locationbar", "menubar", "personalbar", "statusbar", "toolbar", "scrollbars"].map(function (k) {
+      return window[k] && window[k].visible ? 1 : 0;
+    });
+    add("display", "bars", t("Window bars", "Barres de la fenêtre"), bars.join(""), 1);
+    add("display", "winpos", t("Window position", "Position de la fenêtre"), window.screenX + "," + window.screenY + " · " + t("avail", "dispo") + " " + (screen.availLeft || 0) + "," + (screen.availTop || 0), 0, false);
+  }
+
+  function collectWebGLDeep() {
+    var cv = document.createElement("canvas");
+    cv.width = 64;
+    cv.height = 64;
+    var gl = cv.getContext("webgl", { preserveDrawingBuffer: true });
+    if (!gl) throw new Error(t("WebGL unavailable", "WebGL indisponible"));
+    var keys = ["MAX_VERTEX_UNIFORM_VECTORS", "MAX_FRAGMENT_UNIFORM_VECTORS", "MAX_VARYING_VECTORS", "MAX_TEXTURE_IMAGE_UNITS", "MAX_COMBINED_TEXTURE_IMAGE_UNITS", "MAX_CUBE_MAP_TEXTURE_SIZE", "ALIASED_POINT_SIZE_RANGE", "SUBPIXEL_BITS", "MAX_VERTEX_TEXTURE_IMAGE_UNITS", "RED_BITS", "GREEN_BITS", "BLUE_BITS", "ALPHA_BITS", "DEPTH_BITS", "STENCIL_BITS"];
+    var vals = keys.map(function (k) {
+      var v = gl.getParameter(gl[k]);
+      return v && v.length !== undefined ? [].slice.call(v).join("-") : String(v);
+    });
+    var prec = [];
+    [gl.VERTEX_SHADER, gl.FRAGMENT_SHADER].forEach(function (sh) {
+      [gl.LOW_FLOAT, gl.MEDIUM_FLOAT, gl.HIGH_FLOAT].forEach(function (pt) {
+        var f = gl.getShaderPrecisionFormat(sh, pt);
+        prec.push(f ? f.rangeMin + "." + f.rangeMax + "." + f.precision : "x");
+      });
+    });
+    function shader(type, src) {
+      var s2 = gl.createShader(type);
+      gl.shaderSource(s2, src);
+      gl.compileShader(s2);
+      return s2;
+    }
+    var prog = gl.createProgram();
+    gl.attachShader(prog, shader(gl.VERTEX_SHADER, "attribute vec2 p;varying vec2 v;void main(){v=p;gl_Position=vec4(p,0.0,1.0);}"));
+    gl.attachShader(prog, shader(gl.FRAGMENT_SHADER, "precision mediump float;varying vec2 v;void main(){gl_FragColor=vec4(sin(v.x*12.9898)*0.5+0.5,cos(v.y*78.233)*0.5+0.5,v.x*v.y,1.0);}"));
+    gl.linkProgram(prog);
+    gl.useProgram(prog);
+    var buf = gl.createBuffer();
+    gl.bindBuffer(gl.ARRAY_BUFFER, buf);
+    gl.bufferData(gl.ARRAY_BUFFER, new Float32Array([-0.9, -0.9, 0.9, -0.7, 0.0, 0.9]), gl.STATIC_DRAW);
+    var loc = gl.getAttribLocation(prog, "p");
+    gl.enableVertexAttribArray(loc);
+    gl.vertexAttribPointer(loc, 2, gl.FLOAT, false, 0, 0);
+    gl.clearColor(0, 0, 0, 1);
+    gl.clear(gl.COLOR_BUFFER_BIT);
+    gl.drawArrays(gl.TRIANGLES, 0, 3);
+    var px = new Uint8Array(64 * 64 * 4);
+    gl.readPixels(0, 0, 64, 64, gl.RGBA, gl.UNSIGNED_BYTE, px);
+    var sum = "";
+    for (var i = 0; i < px.length; i += 61) sum += px[i] + ",";
+    return Promise.all([sha(vals.join("|") + "#" + prec.join("|")), sha(sum)]).then(function (h) {
+      add("hardware", "gl-deep", t("WebGL limits (full)", "Limites WebGL (complètes)"), h[0].slice(0, 12), 3);
+      add("hardware", "gl-render", t("WebGL render", "Rendu WebGL"), h[1].slice(0, 12), 5);
+    });
+  }
+
   /* CHECKS */
   function uaOs(ua) {
     if (/Windows/.test(ua)) return "Windows";
@@ -728,6 +871,21 @@
 
     var headless = /HeadlessChrome/.test(ua) || (/Chrome/.test(ua) && !window.chrome);
     lie("headless", headless ? "bad" : "ok", t("No headless-browser traces", "Aucune trace de navigateur headless"), headless ? t("The UA or missing window.chrome suggests headless mode.", "Le UA ou l'absence de window.chrome suggère le mode headless.") : "OK");
+
+    var AUTO = ["callPhantom", "_phantom", "phantom", "__nightmare", "domAutomation", "domAutomationController", "_selenium", "__selenium_unwrapped", "__webdriver_evaluate", "__driver_evaluate", "__webdriver_script_fn", "__fxdriver_unwrapped", "_Selenium_IDE_Recorder", "calledSelenium", "__playwright", "__pw_manual", "__PW_inspect"];
+    var autoHits = AUTO.filter(function (k) { return k in window; });
+    Object.keys(document).forEach(function (k) {
+      if (k.indexOf("$cdc_") === 0 || k.indexOf("$chrome_asyncScriptInfo") === 0) autoHits.push(k);
+    });
+    lie(
+      "automation-globals",
+      autoHits.length ? "bad" : "ok",
+      t("No automation-tool traces", "Aucune trace d'outil d'automatisation"),
+      autoHits.length ? t("Found: " + autoHits.join(", "), "Trouvé : " + autoHits.join(", ")) : t("Selenium / Playwright / Phantom / Nightmare probes are clean.", "Les sondes Selenium / Playwright / Phantom / Nightmare sont propres."),
+    );
+
+    if (navigator.buildID === "20181001000000")
+      lie("buildid", "info", t("Frozen Firefox buildID", "buildID Firefox figé"), t("buildID 20181001000000 is the fixed value of Firefox resistFingerprinting.", "Le buildID 20181001000000 est la valeur fixe de resistFingerprinting de Firefox."));
 
     var timer = ctx.timer;
     if (timer >= 50)
@@ -1164,6 +1322,14 @@
       task("content blocker", collectAdblock),
       task("web APIs", collectFeatures),
       task("JS engine", collectMath),
+      task("navigator internals", collectNavigatorDeep),
+      task("plugins & MIME types", collectPlugins),
+      task("engine quirks", collectEngineQuirks),
+      task("audio & video formats", collectFormats),
+      task("audio context", collectAudioContext),
+      task("sensors & touch", collectSensors),
+      task("window chrome", collectWindowChrome),
+      task("WebGL render", collectWebGLDeep),
     ];
 
     Promise.all(jobs).then(function () {
