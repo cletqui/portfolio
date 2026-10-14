@@ -1,3 +1,5 @@
+import { EPOCH_TARGET_MS, icsDate } from "./epoch";
+
 const encoder = new TextEncoder();
 
 const escapeText = (text: string) =>
@@ -71,8 +73,8 @@ export const epochalypseCalendar = (lang: string) => {
     "BEGIN:VEVENT",
     "UID:epochalypse-2038@cybai.re",
     "DTSTAMP:20261015T000000Z",
-    "DTSTART:20380119T031407Z",
-    "DTEND:20380119T031507Z",
+    `DTSTART:${icsDate(EPOCH_TARGET_MS)}`,
+    `DTEND:${icsDate(EPOCH_TARGET_MS + 60_000)}`,
     `SUMMARY;LANGUAGE=${language}:${escapeText(t.summary)}`,
     `DESCRIPTION;LANGUAGE=${language}:${escapeText(t.description)}`,
     `LOCATION;LANGUAGE=${language}:${escapeText(t.location)}`,

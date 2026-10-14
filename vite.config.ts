@@ -3,7 +3,7 @@ import devServer from "@hono/vite-dev-server";
 import adapter from "@hono/vite-dev-server/cloudflare";
 import { defineConfig } from "vite";
 
-import { assetVersions } from "./build/asset-versions";
+import { assetVersions } from "./build/asset-versions.ts";
 
 export default defineConfig({
   define: {

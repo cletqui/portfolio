@@ -1,402 +1,124 @@
-(function () {
-  "use strict";
+(function(){var e=(e,t=``,n)=>{let r=document.createElement(e);return t&&(r.className=t),n!==void 0&&(r.textContent=n),r},t=e=>document.getElementById(e),n=(e,t)=>{try{let n=document.getElementById(e);return n?{...t,...JSON.parse(n.textContent??`{}`)}:t}catch{return t}},r=()=>window.matchMedia(`(prefers-reduced-motion: reduce)`).matches,i=e=>(t,n)=>e===`fr`?n:t,a=e=>e===`fr`?`fr`:`en`;function o(e){"@babel/helpers - typeof";return o=typeof Symbol==`function`&&typeof Symbol.iterator==`symbol`?function(e){return typeof e}:function(e){return e&&typeof Symbol==`function`&&e.constructor===Symbol&&e!==Symbol.prototype?`symbol`:typeof e},o(e)}function s(e,t){if(o(e)!=`object`||!e)return e;var n=e[Symbol.toPrimitive];if(n!==void 0){var r=n.call(e,t||`default`);if(o(r)!=`object`)return r;throw TypeError(`@@toPrimitive must return a primitive value.`)}return(t===`string`?String:Number)(e)}function c(e){var t=s(e,`string`);return o(t)==`symbol`?t:t+``}function l(e,t,n){return(t=c(t))in e?Object.defineProperty(e,t,{value:n,enumerable:!0,configurable:!0,writable:!0}):e[t]=n,e}var u=`ctf_found`,d=class{constructor(e){l(this,`storage`,void 0),l(this,`memory`,null),this.storage=e}get(){if(this.memory)return this.memory;try{let e=JSON.parse(this.storage?.getItem(`ctf_found`)??`{}`);return e&&typeof e==`object`?e:{}}catch{return{}}}save(e){try{if(!this.storage)throw Error(`no storage`);this.storage.setItem(u,JSON.stringify(e)),this.memory=null}catch{this.memory=e}}add(e,t){let n={...this.get(),[e]:t};return this.save(n),n}has(e){return Object.values(this.get()).some(t=>t.flag===e)}reset(){this.memory=null;try{this.storage?.removeItem?this.storage.removeItem(u):this.storage?.setItem(u,`{}`)}catch{}}count(){return Object.keys(this.get()).length}points(){return Object.values(this.get()).reduce((e,t)=>e+(t.points||0),0)}},f=new TextEncoder,p=e=>{let t=new Uint8Array(e.length);for(let n=0;n<e.length;n++)t[n]=e.charCodeAt(n)&255;return t},m=e=>{let t=``;for(let n=0;n<e.length;n+=4096)t+=String.fromCharCode(...e.subarray(n,n+4096));return t},h=e=>p(atob(e)),g=e=>btoa(m(e)),_=e=>(e<16?`0`:``)+e.toString(16),v=e=>Array.from(e,_).join(``),ee=e=>{if(e.length%2||/[^0-9a-fA-F]/.test(e))return null;let t=new Uint8Array(e.length/2);for(let n=0;n<t.length;n++)t[n]=parseInt(e.slice(n*2,n*2+2),16);return t},y=e=>{try{return{text:new TextDecoder(`utf-8`,{fatal:!0}).decode(e),binary:!1}}catch{return{text:m(e),binary:!0}}},b=e=>{let t=e.replace(/-/g,`+`).replace(/_/g,`/`);for(;t.length%4;)t+=`=`;return y(h(t)).text},x=(e,t=[])=>{let n={},r=[];for(let i=0;i<e.length;i++){let a=e[i];if(a===`--`){r.push(...e.slice(i+1));break}if(a.length>1&&a.startsWith(`-`)&&!/^-\d+$/.test(a)){if(a.startsWith(`--`)){n[a.slice(2)]=!0;continue}for(let r=1;r<a.length;r++){let o=a.charAt(r);if(t.includes(o)){n[o]=r+1<a.length?a.slice(r+1):e[++i]??``;break}n[o]=!0}}else r.push(a)}return{flags:n,rest:r}},S=(e,t,n)=>{let r=e[t];return typeof r==`string`&&r!==``&&!Number.isNaN(Number(r))?Number(r):n},C=e=>{let t=e.split(`
+`);return t.length&&t[t.length-1]===``&&t.pop(),t},te=e=>e.stdin?e.stdin.bin?p(e.stdin.text):f.encode(e.stdin.text):null,w=e=>e.stdin?e.stdin.text:null,T=async(e,t,n)=>{if(!t.length){let e=te(n);return e?[{name:`-`,bytes:e}]:[]}let r=[];for(let i of t){let t=await e.vfs.read(i);t.ok?r.push({name:i,bytes:t.bytes}):n.err(`${i}: ${t.err}`)}return r},E=(e,t)=>{let n=y(e);n.binary&&t.bin(),t.write(n.text)},D=(e,t)=>e.map(e=>{let n=y(e.bytes);return n.binary&&t.bin(),n.text}).join(``),O=(e,t)=>(t.err(`usage: ${k[e]??e}`),2),k={ls:`ls [-a] [-l] [-1] [path...]`,cat:`cat [-n] [file...]  (reads stdin without args)`,cd:`cd [dir|-]`,grep:`grep [-i] [-v] [-n] [-c] [-r] pattern [file...]`,head:`head [-n N] [file...]`,tail:`tail [-n N] [file...]`,wc:`wc [-l|-w|-c] [file...]`,sort:`sort [-r] [-n] [-u] [file...]`,uniq:`uniq [-c] [file...]`,tr:`tr [-d] SET1 [SET2]   (stdin)`,cut:`cut -d DELIM -f LIST [file...]`,base64:`base64 [-d] [file]`,rot13:`rot13 [file]`,xxd:`xxd [-p] [-r] [-l LEN] [-s OFFSET] [file]`,strings:`strings [-n MIN] [file...]`,sha256sum:`sha256sum [file...]`,jwt:`jwt <token>`,find:`find [path] [-name PATTERN] [-type f|d]`,tree:`tree [-a] [path]`,file:`file <file...>`,ctf:`ctf [status|list [category|solved|unsolved]|hint <id>|submit <flag>]`,cowsay:`cowsay [text]`,figlet:`figlet [text]`,lolcat:`lolcat [text]  (or pipe into it)`,date:`date [-u] [-d @EPOCH] [+FORMAT]`,su:`su [root]`,echo:`echo [-n] [-e] text`,seq:`seq [first] last`,printf:`printf FORMAT [args...]`,urlencode:`urlencode <text>`,rm:`rm [-r] [-f] file...`,cp:`cp src dst`,mv:`mv src dst`,mkdir:`mkdir dir...`,touch:`touch file...`},ne=/^cybai\{[\x20-\x7E]{1,128}\}$/,re=e=>{let{t,data:n}=e,r=new d(e.deps.storage),i=async(i,a)=>{let o=i[0]??`status`,s=r.get();if(o===`status`){let e=n.ctf.reduce((e,t)=>e+t.points,0);return a.writeln(`${r.count()}/${n.ctf.length}${t(` flags found, `,` flags trouvés, `)}${r.points()}/${e} pts`),a.writeln(t(`ctf list · ctf hint <id> · ctf submit cybai{...}. Not every flag lives in a browser.`,`ctf list · ctf hint <id> · ctf submit cybai{...}. Tous les flags ne vivent pas dans un navigateur.`)),0}if(o===`list`){let e=i[1];for(let t of n.ctf)(!e||(e===`solved`?s[t.id]:e===`unsolved`?!s[t.id]:t.category.toLowerCase()===e.toLowerCase()||t.difficulty===e))&&a.writeln(`${s[t.id]?`✓`:`·`} ${t.id.padEnd(15)}${t.name.padEnd(26)}${t.category.padEnd(10)}${String(t.points).padStart(4)} ${t.difficulty}`);return 0}if(o===`hint`){let e=n.ctf.find(e=>e.id===i[1]);return e?(a.writeln(`${e.name} — ${e.hint}`),0):(a.err(t("unknown challenge id (see `ctf list`)","id de défi inconnu (voir `ctf list`)")),1)}if(o===`submit`){let o=i.slice(1).join(` `).trim();if(!ne.test(o))return a.err(t(`that does not look like a flag: cybai{...}`,`ça ne ressemble pas à un flag : cybai{...}`)),1;let c;try{c=await e.deps.fetch(`/ctf/submit`,{method:`POST`,headers:{"content-type":`application/json`},body:JSON.stringify({flag:o})})}catch{return a.err(t(`could not reach the server`,`serveur injoignable`)),1}if(c.status===429)return a.err(t(`too many attempts, slow down`,`trop d'essais, doucement`)),1;let l=await c.json();return!l.valid||!l.id?(a.writeln(`✗ ${t(`not a valid flag`,`flag invalide`)}`),1):s[l.id]?(a.writeln(`• ${t(`already solved: `,`déjà résolu : `)}${l.name}`),0):(r.add(l.id,{flag:o,points:l.points??0,name:l.name??l.id}),a.writeln(`✓ ${l.name} +${l.points} pts (${r.count()}/${n.ctf.length}, ${r.points()} pts)`),0)}return O(`ctf`,a)};return{ctf:i,flags:(e,t)=>i([`list`,...e],t)}},A={konami:`cybai{Up_Up_D0wn_D0wn_L3ft_R1ght}`,jsobj:`cybai{GlobalScopeLeak}`,sudo:`cybai{Sud0M4k3M3AS4ndw1ch}`,"hidden-file":`cybai{ls_-a_FTW}`,root:`cybai{R00t_V14_B4sh_H1st0ry}`,xyzzy:`cybai{A_H0ll0w_V01c3_S4ys_Plugh}`,wipe:`cybai{Ju5t_K1dd1ng_N0th1ng_W45_D3l3t3d}`,forkbomb:`cybai{F0rk_B0mb_D3f4ng3d}`,snake:`cybai{Sn4k3_Ch4rm3r_1337}`,wordle:`cybai{Gr33n_Gr33n_Gr33n_Gr33n_Gr33n}`,adventure:`cybai{3sc4p3_Th3_D4t4c3nt3r}`},ie=`NjM3OTYyNjE2OTdvMzA2cjMxMzA2cjM1NDgzNDc2MzM0cDM0NzkzMzcyMzU3cQ==`,j=e=>[`# cybai.re`,e(`cybersecurity engineer · full-stack developer`,`ingénieur cybersécurité · développeur full-stack`),``,e(`I build things you can see and secure things you can't.`,`Je construis des choses que vous voyez et je sécurise celles que vous ne voyez pas.`),e(`Background: threat intelligence platforms, SIEM, SOC.`,`Parcours : plateformes de threat intelligence, SIEM, SOC.`),e(`Stack: TypeScript, Python, Bash, and a homelab that rarely sleeps.`,`Stack : TypeScript, Python, Bash, et un homelab qui dort rarement.`)].join(`
+`),M=e=>[...e.contacts.map(e=>`${e.name}:`.padEnd(10)+(e.href??``)),`PGP:`.padEnd(10)+e.pgp].join(`
+`),ae=(e,t)=>{let n=Math.max(0,...e.projects.map(e=>e.name.length))+2;return[...e.projects.map(e=>e.name.padEnd(n)+e.url),t(`cat ~/projects/<name>.md for details, or open projects`,`cat ~/projects/<nom>.md pour les détails, ou open projects`)].join(`
+`)},N=e=>`# ${e.name}\n${e.desc}\n\n${e.url}${e.github?`
+`+e.github:``}\n`,oe=`#!/bin/sh
+# nightly backup of the admin credentials (base64, "for safety")
+tar czf /var/backups/site.tgz /var/www/html
+echo "$ROOT_PW" | base64 > /var/backups/.pw.bak
+`,se=[`Oct 14 03:11:09 cybai sshd[2190]: Failed password for invalid user admin from 203.0.113.9 port 51022 ssh2`,`Oct 14 03:11:12 cybai sshd[2190]: Connection closed by invalid user admin 203.0.113.9 port 51022 [preauth]`,`Oct 14 03:12:44 cybai su[2231]: pam_unix(su:auth): authentication failure; logname=visitor uid=1000 euid=0 tty=pts/0 ruser=visitor rhost= user=root`,`Oct 14 03:13:02 cybai sudo: visitor : command not allowed ; TTY=pts/0 ; PWD=/home/visitor ; USER=root ; COMMAND=/bin/su`,`Oct 14 03:14:07 cybai backup.sh[2250]: credentials archived to /var/backups/.pw.bak`,``].join(`
+`),ce=[`commit 8bfe412ec63df5a2536f9e47735561e334ba961e (HEAD -> main)`,`Author: dev <dev@cybai.re>`,`Date:   Sun Mar 2 10:42:00 2025 +0000`,``,`    remove hardcoded secrets`,``,`commit be252151d8441a2c99e5450c70cf3c4b41a6e507`,`Author: dev <dev@cybai.re>`,`Date:   Sun Mar 2 10:00:00 2025 +0000`,``,`    initial prototype`].join(`
+`),P=`Oct 14 12:00`,F=(e={},t=!1)=>({type:`dir`,mtime:P,children:e,...t?{rootOnly:t}:{}}),I=(e,t=!1)=>({type:`file`,mtime:P,content:e,...t?{rootOnly:t}:{}}),le=e=>({type:`file`,mtime:P,b64:e}),ue=(e,t)=>({type:`file`,mtime:P,remote:e,size:t}),de=(e,t)=>{let n={};for(let t of e.projects)n[`${t.id}.md`]=I(N(t));return F({bin:F({ls:I(`ELF… (builtin)
+`),cat:I(`ELF… (builtin)
+`),sh:I(`ELF… (builtin)
+`)}),etc:F({hostname:I(`cybai.re
+`),hosts:I(`127.0.0.1	localhost
+::1		localhost
+`),issue:I(`CybaiOS 1.2 \\n \\l
+`),motd:I(`Welcome to cybai.re (CybaiOS 1.2 edge).
+Unauthorised use will be mocked, affectionately.
+`),"os-release":I(`NAME="CybaiOS"
+VERSION="1.2 (edge)"
+ID=cybaios
+PRETTY_NAME="CybaiOS 1.2 (edge)"
+HOME_URL="https://www.cybai.re/"
+`),passwd:I(`root:x:0:0:root:/root:/bin/bash
+backup:x:34:34:backup:/var/backups:/usr/sbin/nologin
+www-data:x:33:33:www-data:/var/www:/usr/sbin/nologin
+visitor:x:1000:1000:curious human:/home/visitor:/bin/cybai-sh
+flag:x:1337:1337:nice try:/nonexistent:/usr/sbin/nologin
+`),shadow:I(`root:$6$cybai$Qm0Zk3b1FakeHashNotRealJustForShowAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA:19650:0:99999:7:::
+visitor:*:19650:0:99999:7:::
+`,!0),"cron.d":F({backup:I(`# nightly credential backup, what could go wrong
+0 3 * * * root /usr/local/bin/backup.sh
+`)}),ssh:F({sshd_config:I(`Port 2
+PermitRootLogin no
+PasswordAuthentication no
+`)})}),home:F({visitor:F({"about.md":I(j(t)+`
+`),"contact.txt":I(M(e)+`
+`),"cipher.txt":I(ie+`
+`),".secret":I(A[`hidden-file`]+`
+`),".bash_history":I(`cd /var/log
+cat auth.log | tail
+ls -la /var/backups
+cat /var/backups/.pw.bak
+su root
+ls /root
+exit
+`),".bashrc":I(`# ~/.bashrc
+export PS1='\\u@\\h:\\w\\$ '
+alias ll='ls -la'
+`),"todo.txt":I(`- finish the portfolio
+- rotate the root password (it is still in the backup, oops)
+- stop leaving shell history lying around
+`),"avatar.png":ue(`/static/avatar.png`,92915),projects:F(n)})}),opt:F({cybai:F({README:I(`Work in progress. Nothing to see here.
+`)})}),root:F({"flag.txt":I(A.root+`
+`),README:I(`You made it. Lesson: rotate your secrets, and clear your history.
+Other people kept theirs in git, see /var/www/html.
+`),".bash_history":I(`cd /var/www/html
+git log
+git show be25215 -- config.js
+history -c
+`),".profile":I(`# root profile
+umask 077
+`)},!0),tmp:F(),usr:F({local:F({bin:F({"backup.sh":I(oe)})})}),var:F({backups:F({"passwd.bak":I(`root:x:0:0:root:/root:/bin/bash
+visitor:x:1000:1000::/home/visitor:/bin/cybai-sh
+`),"site.tgz":le(`H4sIAAAAAAAAA+3BMQEAAADCoPVPbQwfoAAAAAAAAAAAAAAAAAAAAIC3AYbSVKsAQAAA`),".pw.bak":I(`Y3liYWktcm9vdC0yMDM4
+`)}),log:F({"auth.log":I(se),syslog:I(`Oct 14 03:00:01 cybai CRON[2105]: (root) CMD (/usr/local/bin/backup.sh)
+Oct 14 03:14:07 cybai kernel: time_t is 32 bits wide. Fine for now.
+`)}),www:F({html:F({"index.html":I(`<h1>cybai.re</h1>
+<p>Under construction since forever.</p>
+`),".env":I(`NODE_ENV=production
+CTF_FLAG=nice-try-this-is-not-the-one
+`),".git":F({HEAD:I(`ref: refs/heads/main
+`),config:I(`[core]
+	repositoryformatversion = 0
+[remote "origin"]
+	url = git@github.com:cybai/internal-dashboard.git
+`)})})})})})},L=e=>{let t=e.lastIndexOf(`/`);return t<=0?`/`:e.slice(0,t)},R=e=>e.slice(e.lastIndexOf(`/`)+1),z=(e,t)=>e===`/`?`/${t}`:`${e}/${t}`,B=e=>RegExp(`^`+e.replace(/[.+^${}()|[\]\\]/g,`\\$&`).replace(/\*/g,`.*`).replace(/\?/g,`.`)+`$`),V=class{constructor(e,t,n){l(this,`root`,void 0),l(this,`session`,void 0),l(this,`fetcher`,void 0),this.root=e,this.session=t,this.fetcher=n}norm(e){let t=e||this.session.cwd;(t===`~`||t.startsWith(`~/`))&&(t=this.session.home+t.slice(1)),t.startsWith(`/`)||(t=`${this.session.cwd}/${t}`);let n=[];for(let e of t.split(`/`))e&&e!==`.`&&(e===`..`?n.pop():n.push(e));return`/`+n.join(`/`)}find(e){let t=this.root,n=!1;if(e===`/`)return{node:t,denied:n};for(let r of e.slice(1).split(`/`)){if(t.type!==`dir`)return{node:null,denied:n};t.rootOnly&&this.session.user!==`root`&&(n=!0);let e=t.children[r];if(!e)return{node:null,denied:n};t=e}return t.rootOnly&&this.session.user!==`root`&&(n=!0),{node:t,denied:n}}list(e){let{node:t,denied:n}=this.find(e);return!t||t.type!==`dir`||n?null:Object.keys(t.children).sort()}writable(e){if(this.session.user===`root`)return!0;let{home:t}=this.session;return e===`/tmp`||e.startsWith(`/tmp/`)||e===t||e.startsWith(t+`/`)}async read(e){let t=this.norm(e),{node:n,denied:r}=this.find(t);if(!n)return{ok:!1,err:`No such file or directory`,abs:t};if(r)return{ok:!1,err:`Permission denied`,abs:t};if(n.type===`dir`)return{ok:!1,err:`Is a directory`,abs:t};if(n.remote)try{let e=await this.fetcher(n.remote);return{ok:!0,bytes:new Uint8Array(await e.arrayBuffer()),abs:t}}catch{return{ok:!1,err:`Input/output error`,abs:t}}return n.b64?{ok:!0,bytes:h(n.b64),abs:t}:{ok:!0,bytes:f.encode(n.content??``),abs:t}}write(e,t,n=!1){let r=this.norm(e),i=this.find(L(r));if(!i.node||i.node.type!==`dir`)return`No such file or directory`;if(!this.writable(r))return`Permission denied`;let a=R(r),o=i.node.children[a];return o?.type===`dir`?`Is a directory`:(o?.type===`file`&&o.content!==void 0&&n?o.content+=t:i.node.children[a]=I(t),null)}mkdir(e){let t=this.norm(e),n=this.find(L(t));return!n.node||n.node.type!==`dir`?`No such file or directory`:this.writable(t)?n.node.children[R(t)]?`File exists`:(n.node.children[R(t)]=F(),null):`Permission denied`}remove(e){let t=this.find(L(e)).node;t?.type===`dir`&&delete t.children[R(e)]}glob(e){let t=e.lastIndexOf(`/`),n=t>=0?e.slice(0,t+1):``,r=t>=0?e.slice(t+1):e,i=this.list(this.norm(n||`.`));if(!i)return[e];let a=B(r),o=i.filter(e=>a.test(e)&&(!e.startsWith(`.`)||r.startsWith(`.`)));return o.length?o.map(e=>n+e):[e]}walk(e,t){let{node:n,denied:r}=this.find(e);if(n&&!r&&(t(e,n),n.type===`dir`))for(let r of Object.keys(n.children).sort())this.walk(z(e,r),t)}},H=e=>e.type===`dir`?4096:e.size===void 0?e.b64?Math.floor(e.b64.length*3/4):f.encode(e.content??``).length:e.size,fe=async e=>{let{t,term:n,deps:r}=e;e.busy=!0;let i=[],a=(e,t)=>{for(let n of Object.keys(e).sort()){let r=z(t,n);i.push(r);let o=e[n];o.type===`dir`&&a(o.children,r)}};a(e.vfs.root.children,`/`);for(let[t,n]of i.entries())e.print(`removed '${n}'`,`text-muted-foreground`),t%3==0&&await r.sleep(25);return await r.sleep(400),n.clear(),e.errLine(`Kernel panic - not syncing: Attempted to kill init!`),e.errLine(`---[ end Kernel panic - not syncing ]---`),await r.sleep(1300),n.clear(),e.print(`…`,`text-muted-foreground`),await r.sleep(500),e.print(t(`Just kidding. This is a browser tab and nothing was deleted.`,`Je plaisante. C'est un onglet de navigateur, rien n'a été supprimé.`)),e.award(A.wipe),e.busy=!1,0},pe=async e=>{let{t,deps:n}=e;e.busy=!0;for(let t=0;t<8;t++)e.errLine(`bash: fork: retry: Resource temporarily unavailable`),await n.sleep(110);await n.sleep(500),e.errLine(`bash: fork: Cannot allocate memory`),e.print(t(`…the load average climbs, the fans spin up, and then ulimit -u steps in.`,`…la charge grimpe, les ventilateurs s'emballent, puis ulimit -u intervient.`),`text-muted-foreground`),e.award(A.forkbomb),e.busy=!1},me=e=>({xyzzy:(t,n)=>{e.heardPlugh=!0,n.writeln(`A hollow voice says "Plugh."`)},plugh:(t,n)=>{if(!e.heardPlugh)return void n.writeln(`Nothing happens.`);n.writeln(`A hidden passage opens in the wall of the scrollback. Something shines inside.`),e.award(A.xyzzy)}}),he=async(e,t)=>v(new Uint8Array(await crypto.subtle.digest(e,t))),ge=e=>e.replace(/[a-z]/gi,e=>{let t=e<=`Z`?65:97;return String.fromCharCode((e.charCodeAt(0)-t+13)%26+t)}),_e=(e,t,n)=>{let r=[];for(let i=0;i<e.length;i+=n){let a=e.subarray(i,i+n),o=``,s=``;for(let e=0;e<n;e++)e<a.length?(o+=_(a[e]),s+=a[e]>=32&&a[e]<127?String.fromCharCode(a[e]):`.`):o+=`  `,e%2==1&&(o+=` `);r.push(`${(t+i).toString(16).padStart(8,`0`)}: ${o} ${s}`)}return r},ve=(e,t)=>ee(t?e.replace(/\s+/g,``):e.split(`
+`).map(e=>/^[0-9a-fA-F]+:\s*((?:[0-9a-fA-F]{2,4} ?)+)/.exec(e)?.[1]?.replace(/\s+/g,``)??``).join(``)),ye=(e,t)=>{let n=[],r=``,i=()=>{r.length>=t&&n.push(r),r=``};for(let t of e)t>=32&&t<127||t===9?r+=String.fromCharCode(t):i();return i(),n},U=(e,t)=>async(n,r)=>{for(let i of await T(e,n,r))r.writeln(`${await he(t,i.bytes)}  ${i.name}`)},be=e=>({base64:async(t,n)=>{let r=x(t,[`w`]),i=await T(e,r.rest,n);if(!i.length)return 1;let a=i[0].bytes;if(r.flags.d||r.flags.decode){try{E(h(m(a).replace(/\s+/g,``)),n)}catch{return n.err(`base64: invalid input`),1}return 0}let o=S(r.flags,`w`,76),s=g(a);return n.writeln(o>0?s.replace(RegExp(`(.{${o}})`,`g`),`$1
+`).replace(/\n$/,``):s),0},rot13:async(t,n)=>void n.write(ge(D(await T(e,t,n),n))),urlencode:(e,t)=>void t.writeln(encodeURIComponent((e.length?e.join(` `):w(t)??``).replace(/\n$/,``))),urldecode:(e,t)=>{try{return t.writeln(decodeURIComponent((e.length?e.join(` `):w(t)??``).trim())),0}catch{return t.err(`urldecode: malformed input`),1}},xxd:async(t,n)=>{let r=x(t,[`l`,`s`,`c`]),i=await T(e,r.rest,n);if(!i.length)return 1;let a=i[0].bytes;if(r.flags.r){let e=ve(y(a).text,!!r.flags.p);return e?(E(e,n),0):(n.err(`xxd: invalid hex input`),1)}let o=S(r.flags,`s`,0),s=r.flags.l?o+S(r.flags,`l`,a.length):a.length,c=a.subarray(o,Math.min(s,a.length));return r.flags.p?n.writeln(v(c).replace(/(.{60})/g,`$1
+`).replace(/\n$/,``)):_e(c,o,S(r.flags,`c`,16)).forEach(e=>n.writeln(e)),0},strings:async(t,n)=>{let r=x(t,[`n`]);for(let t of await T(e,r.rest,n))ye(t.bytes,S(r.flags,`n`,4)).forEach(e=>n.writeln(e))},sha256sum:U(e,`SHA-256`),sha1sum:U(e,`SHA-1`),sha512sum:U(e,`SHA-512`),jwt:(e,t)=>{let n=(e[0]??w(t)??``).trim().split(`.`);if(n.length<2)return O(`jwt`,t);try{return t.writeln(`header:    `+JSON.stringify(JSON.parse(b(n[0])))),t.writeln(`payload:   `+JSON.stringify(JSON.parse(b(n[1])))),t.writeln(`signature: `+(n[2]||`(none)`)),0}catch{return t.err(`jwt: not a valid token`),1}}}),xe=e=>(e.type===`dir`?`d`:`-`)+(e.rootOnly?`rwx------`:e.type===`dir`?`rwxr-xr-x`:`rw-r--r--`),Se=e=>{let{vfs:t}=e,n=(e,n)=>{let r=x(e),i=r.rest.length?r.rest:[`.`],a=0;return i.forEach((e,o)=>{let s=t.norm(e),c=t.find(s);if(!c.node){n.err(`ls: cannot access '${e}': No such file or directory`),a=2;return}if(c.denied){n.err(`ls: cannot open directory '${e}': Permission denied`),a=2;return}i.length>1&&n.writeln((o?`
+`:``)+e+`:`);let l=c.node,u;l.type===`dir`?(u=Object.keys(l.children).sort(),u=r.flags.a?[`.`,`..`,...u]:u.filter(e=>!e.startsWith(`.`))):u=[R(s)];let d=e=>l.type!==`dir`||e===`.`?l:e===`..`?t.find(L(s)).node:l.children[e]??null,f=e=>e+(d(e)?.type===`dir`&&e!==`.`&&e!==`..`?`/`:``);if(r.flags.l){n.writeln(`total ${u.length*4}`);for(let e of u){let t=d(e);t&&n.writeln(`${xe(t)} ${t.type===`dir`?2:1} ${t.rootOnly?`root root`:`visitor visitor`} ${String(H(t)).padStart(6)} ${t.mtime} ${f(e)}`)}}else r.flags[1]?u.forEach(e=>n.writeln(f(e))):n.writeln(u.map(f).join(`  `))}),a};return{ls:n,ll:(e,t)=>n([`-la`,...e],t),dir:n,pwd:(t,n)=>void n.writeln(e.cwd),cd:(n,r)=>{let i=n[0]===`-`?e.oldpwd:n[0]??e.home,a=t.norm(i),o=t.find(a),s=n[0]??i;return o.node?o.denied?(r.err(`cd: ${s}: Permission denied`),1):o.node.type===`dir`?(e.oldpwd=e.cwd,e.cwd=a,e.refreshPrompt(),0):(r.err(`cd: ${s}: Not a directory`),1):(r.err(`cd: ${s}: No such file or directory`),1)},cat:async(t,n)=>{let r=x(t),i=await T(e,r.rest,n),a=D(i,n);return r.flags.n&&(a=C(a).map((e,t)=>`${String(t+1).padStart(6)}\t${e}`).join(`
+`)+`
+`),n.write(a),i.length||!r.rest.length?0:1},file:async(n,r)=>{for(let t of await T(e,n,r)){let e=t.bytes,n;if(!e.length)n=`empty`;else if(e[0]===137&&e[1]===80&&e[2]===78&&e[3]===71){let t=new DataView(e.buffer,e.byteOffset,e.byteLength);n=`PNG image data, ${t.getUint32(16)} x ${t.getUint32(20)}`}else if(e[0]===31&&e[1]===139)n=`gzip compressed data`;else if(e[0]===127&&e[1]===69)n=`ELF executable`;else{let t=e.subarray(0,512);n=!t.some(e=>e===0||e<9||e>13&&e<32)&&!y(t).binary?`ASCII text`:`data`}r.writeln(`${t.name}: ${n}`)}for(let e of n){let n=t.find(t.norm(e));n.node?.type===`dir`&&!n.denied&&r.writeln(`${e}: directory`)}},find:(e,n)=>{let r=null,i=null,a;for(let t=0;t<e.length;t++){let n=e[t];n===`-name`?i=B(e[++t]??`*`):n===`-type`?a=e[++t]:!n.startsWith(`-`)&&r===null&&(r=n)}let o=r??`.`,s=t.norm(o),c=e=>o.startsWith(`/`)?e:e===s?o:`.`+e.slice(s.length);return t.walk(s,(e,t)=>{(a!==`f`||t.type===`file`)&&(a!==`d`||t.type===`dir`)&&(!i||i.test(R(e)))&&n.writeln(c(e))}),0},tree:(n,r)=>{let i=x(n),a=i.rest[0]??`.`,o=t.find(t.norm(a));if(!o.node||o.node.type!==`dir`)return r.err(`tree: ${a}: not a directory`),1;if(o.denied)return r.err(`tree: ${a}: Permission denied`),1;let s=0,c=0;r.writeln(a);let l=(t,n,a)=>{let o=Object.keys(t).sort().filter(e=>i.flags.a||!e.startsWith(`.`));o.forEach((i,u)=>{let d=t[i],f=u===o.length-1;r.writeln(n+(f?`└── `:`├── `)+i),d.type===`dir`?(s++,a<4&&!(d.rootOnly&&e.user!==`root`)&&l(d.children,n+(f?`    `:`│   `),a+1)):c++})};return l(o.node.children,``,1),r.writeln(`\n${s} directories, ${c} files`),0},touch:(e,n)=>{let r=0;for(let i of e){if(t.find(t.norm(i)).node)continue;let e=t.write(i,``);e&&(n.err(`touch: cannot touch '${i}': ${e}`),r=1)}return r},mkdir:(e,n)=>{let r=0;for(let i of x(e).rest){let e=t.mkdir(i);e&&(n.err(`mkdir: cannot create directory '${i}': ${e}`),r=1)}return r},rm:(e,n)=>{let r=x(e),i=0;for(let e of r.rest){let a=t.norm(e);if(a===`/`||a===`/*`){n.err(`rm: it is dangerous to operate recursively on '/'
+rm: use --no-preserve-root to override this failsafe. Nice try.`),i=1;continue}let o=t.find(a);o.node?!t.writable(a)||o.denied?(n.err(`rm: cannot remove '${e}': ${o.denied?`Permission denied`:`Read-only file system`}`),i=1):o.node.type===`dir`&&!(r.flags.r||r.flags.R)?(n.err(`rm: cannot remove '${e}': Is a directory`),i=1):t.remove(a):r.flags.f||(n.err(`rm: cannot remove '${e}': No such file or directory`),i=1)}return i},cp:(t,n)=>W(e,t,n,!1),mv:(t,n)=>W(e,t,n,!0)}},W=async(e,t,n,r)=>{let i=r?`mv`:`cp`,a=x(t).rest;if(a.length<2)return O(i,n);let o=await e.vfs.read(a[0]);if(!o.ok)return n.err(`${i}: cannot stat '${a[0]}': ${o.err}`),1;let s=a[1];e.vfs.find(e.vfs.norm(s)).node?.type===`dir`&&(s=z(e.vfs.norm(s),R(o.abs)));let c=e.vfs.write(s,y(o.bytes).text);return c?(n.err(`${i}: cannot create '${a[1]}': ${c}`),1):(r&&e.vfs.writable(o.abs)&&e.vfs.remove(o.abs),0)},Ce=e=>{let t=null,n=()=>(t??(t=e.deps.loadGames(e.data.games).catch(e=>{throw t=null,e})),t),r=t=>async(r,i)=>{try{let r=await n();return e.cancelled=!1,await r[t](e.gameApi())}catch{return i.err(e.t(`could not load the game pack`,`impossible de charger les jeux`)),1}},i=r(`adventure`),a=r(`wordle`),o=r(`cmatrix`);return{snake:r(`snake`),wordle:a,phishle:a,adventure:i,colossal:i,sl:r(`sl`),cmatrix:o,matrix:o}},G=[`There is no patch for human stupidity. — everyone, eventually`,`Security is a process, not a product. — Bruce Schneier`,`The S in IoT stands for security.`,`It's not DNS. There's no way it's DNS. It was DNS.`,`Trust, but verify. Then verify the verifier.`,`Weeks of coding can save you hours of planning.`,`Passwords are like underwear: don't share them, change them often.`,`There are 10 kinds of people: those who understand binary and those who don't.`,`To err is human. To really mess up, you need root.`],we={about:`/about/me`,me:`/about/me`,you:`/about/you`,projects:`/projects`,contact:`/contact`,ctf:`/ctf`,home:`/`,now:`/now`,epochalypse:`/projects/epochalypse`},K=[`   ▄▄▄▄▄▄   `,`  █      █  `,` █  ▄▄▄▄  █ `,` █ █    █ █ `,` █  ▀▀▀▀  █ `,`  █      █  `,`   ▀▀▀▀▀▀   `],Te=e=>{let{t,data:n}=e,r=(t,n,r)=>{t.writeln(r),e.go(n)},i=e=>(t,n)=>void n.writeln(e);return{about:(e,n)=>void n.writeln(j(t)),contact:(e,t)=>void t.writeln(M(n)),projects:(e,r)=>void r.writeln(ae(n,t)),now:(e,n)=>void n.writeln(t("See /now — `open now`.","Voir /now — `open now`.")),open:(e,t)=>{let n=we[e[0]??``];return n?(r(t,n,`opening ${n} …`),0):(t.err(`usage: open about|you|projects|contact|ctf|now|epochalypse`),1)},curl:(e,t)=>{let r=e.find(e=>!e.startsWith(`-`))??``;return/^(https?:\/\/)?(www\.)?cybai\.re\/?$/.test(r)?(t.writeln(n.card),0):r?(t.err(`curl: (6) Could not resolve host: ${r.replace(/^https?:\/\//,``).split(`/`)[0]}`),6):(t.err(`curl: try 'curl --help' or 'curl --manual' for more information`),2)},gpg:(e,r)=>{r.writeln(`pub   ed25519 0x${n.pgpId} [SC]`),r.writeln(`      `+n.pgp.replace(/(.{4})/g,`$1 `).trim()),r.writeln(`uid   <admin@cybai.re>`),r.writeln(t(`key: https://www.cybai.re/pgp.asc  ·  gpg --locate-keys admin@cybai.re`,`clé : https://www.cybai.re/pgp.asc  ·  gpg --locate-keys admin@cybai.re`))},neofetch:(t,n)=>{let r=/(Firefox|Edg|Chrome|Safari)\/[\d.]+/.exec(e.deps.userAgent)?.[0]??`unknown`,i=[`${e.user}@cybai.re`,`----------------`,`OS: CybaiOS 1.2`,`Host: Cloudflare Pages`,`Shell: cybai-sh`,`Stack: Hono · Tailwind · TypeScript`,`Browser: ${r}`,`Resolution: ${e.deps.screenSize}`],a=[];for(let e=0;e<Math.max(K.length,i.length);e++)a.push([{t:K[e]??` `.repeat(12),c:`#22c55e`},{t:`  `+(i[e]??``)}]);n.rich(a)},theme:(t,n)=>{let r=t[0]===`dark`||t[0]===`light`?t[0]:void 0;n.writeln(`theme: ${e.deps.setTheme(r)}`)},lang:(t,n)=>{let i=t[0]===`en`||t[0]===`fr`?t[0]:e.term.lang===`fr`?`en`:`fr`;r(n,`/`+i,`lang: ${i}`)},fortune:(t,n)=>void n.writeln(G[Math.floor(e.deps.random()*G.length)]),ping:(e,t)=>{let n=e[0]??`cybai.re`;t.writeln(`PING ${n} 56(84) bytes of data.`),t.writeln(`64 bytes from ${n}: icmp_seq=1 ttl=118 time=1.337 ms`),t.writeln(`64 bytes from ${n}: icmp_seq=2 ttl=118 time=1.337 ms`)},nmap:i(`Starting Nmap 7.99 ( https://nmap.org )
+PORT     STATE SERVICE  VERSION
+80/tcp   open  http     Cloudflare http proxy
+443/tcp  open  ssl/http Cloudflare http proxy
+No, I will not tell you what is behind it.`),ssh:(e,t)=>void r(t,`/contact`,`Connecting to cybai.re … opening /contact`),vim:i(`You are now trapped. Good luck. (:q! does nothing here.)`),nvim:i(`You are now trapped. Good luck. (:q! does nothing here.)`),vi:i(`You are now trapped. Good luck. (:q! does nothing here.)`),nano:i(`nano: this editor is too sensible for this place. Try vim.`),hack:i(`[#####               ] 25% bypassing firewall
+[##########          ] 50% reticulating splines
+[###############     ] 75% sweet-talking the kernel
+[####################] 100% just kidding. Try \`help\`.`),telnet:(e,t)=>(e[0]??``).includes(`blinkenlights`)?(t.writeln(`Trying 213.136.8.188...
+Connected to towel.blinkenlights.nl.
+`),t.writeln(`      A long time ago in a galaxy far, far away....
 
-  var root = document.getElementById("shell");
-  if (!root) return;
+    It is a period of civil war. Rebel spaceships,
+    striking from a hidden base, have won their first
+    victory against the evil Galactic Empire.
 
-  var data = { lang: "en", projects: [], contacts: [], challenges: 0, points: 0, card: "" };
-  try {
-    data = JSON.parse(document.getElementById("shell-data").textContent);
-  } catch (e) {}
-  var FR = data.lang === "fr";
-  function t(en, fr) {
-    return FR ? fr : en;
-  }
-
-  var screen = document.getElementById("shell-screen");
-  var form = document.getElementById("shell-form");
-  var input = document.getElementById("shell-input");
-  var promptEl = document.getElementById("shell-prompt");
-
-  var cwd = "~";
-  var history = [];
-  var hpos = 0;
-
-  /* OUTPUT */
-  function print(text, cls) {
-    var lines = String(text).split("\n");
-    lines.forEach(function (line) {
-      var d = document.createElement("div");
-      d.className = "whitespace-pre-wrap break-words " + (cls || "");
-      d.textContent = line === "" ? " " : line;
-      screen.appendChild(d);
-    });
-    screen.scrollTop = screen.scrollHeight;
-  }
-
-  function promptText() {
-    return "visitor@cybai.re:" + cwd + "$";
-  }
-
-  function setPrompt() {
-    promptEl.textContent = promptText();
-  }
-
-  /* FILESYSTEM */
-  var ABOUT = [
-    "# cybai.re",
-    t("cybersecurity engineer · full-stack developer", "ingénieur cybersécurité · développeur full-stack"),
-    "",
-    t(
-      "I build things you can see and secure things you can't.",
-      "Je construis des choses que vous voyez et je sécurise celles que vous ne voyez pas.",
-    ),
-    t("Background: threat intelligence platforms, SIEM, SOC.", "Parcours : plateformes de threat intelligence, SIEM, SOC."),
-    t("Stack: TypeScript, Python, Bash, and a homelab that rarely sleeps.", "Stack : TypeScript, Python, Bash, et un homelab qui dort rarement."),
-  ].join("\n");
-
-  var CONTACT = data.contacts
-    .map(function (c) {
-      return (c.name + ":").padEnd(10) + c.href;
-    })
-    .join("\n") + "\n" + "PGP:".padEnd(10) + data.pgp;
-
-  var CIPHER = "NjM3OTYyNjE2OTdvMzA2cjMxMzA2cjM1NDgzNDc2MzM0cDM0NzkzMzcyMzU3cQ==";
-  var SECRET = "cybai{ls_-a_FTW}";
-
-  var files = {
-    "~/about.md": ABOUT,
-    "~/contact.txt": CONTACT,
-    "~/cipher.txt": CIPHER,
-    "~/.secret": SECRET,
-  };
-  data.projects.forEach(function (p) {
-    files["~/projects/" + p.id + ".md"] =
-      "# " + p.name + "\n" + p.desc + "\n\n" + p.url + (p.github ? "\n" + p.github : "");
-  });
-
-  var dirs = {
-    "~": ["about.md", "contact.txt", "projects/", "cipher.txt", ".secret"],
-    "~/projects": data.projects.map(function (p) {
-      return p.id + ".md";
-    }),
-  };
-
-  function resolve(path) {
-    if (!path || path === "~") return "~";
-    var base = path.charAt(0) === "~" || path.charAt(0) === "/" ? "~" : cwd;
-    var rest = path.replace(/^~\/?/, "").replace(/^\/+/, "");
-    var parts = (base === "~" ? [] : base.replace(/^~\//, "").split("/")).concat(rest.split("/"));
-    var out = [];
-    parts.forEach(function (p) {
-      if (!p || p === ".") return;
-      if (p === "..") out.pop();
-      else out.push(p);
-    });
-    return out.length ? "~/" + out.join("/") : "~";
-  }
-
-  /* COMMANDS */
-  var HELP = [
-    ["help", t("this list", "cette liste")],
-    ["ls [-a]", t("list files", "lister les fichiers")],
-    ["cat <file>", t("read a file", "lire un fichier")],
-    ["cd <dir>", t("change directory", "changer de dossier")],
-    ["about", t("who am I", "qui je suis")],
-    ["projects", t("things I built", "ce que j'ai construit")],
-    ["contact", t("how to reach me", "me contacter")],
-    ["ctf", t("flags hidden on this site", "flags cachés sur ce site")],
-    ["open <page>", "about · you · projects · contact · ctf"],
-    ["curl cybai.re", t("my business card", "ma carte de visite")],
-    ["neofetch", t("system info", "infos système")],
-    ["theme [dark|light]", t("switch theme", "changer de thème")],
-    ["lang [en|fr]", t("switch language", "changer de langue")],
-    ["clear", t("clear the screen", "effacer l'écran")],
-  ];
-
-  var QUOTES = [
-    "There is no patch for human stupidity. — everyone, eventually",
-    "Security is a process, not a product. — Bruce Schneier",
-    "The S in IoT stands for security.",
-    "It's not DNS. There's no way it's DNS. It was DNS.",
-    "Trust, but verify. Then verify the verifier.",
-    "Weeks of coding can save you hours of planning.",
-  ];
-
-  function go(url) {
-    setTimeout(function () {
-      location.href = url;
-    }, 350);
-  }
-
-  var cmds = {
-    help: function () {
-      var w = 22;
-      print(t("Available commands:", "Commandes disponibles :"));
-      HELP.forEach(function (h) {
-        print("  " + h[0].padEnd(w) + h[1], "text-muted-foreground");
-      });
-      print(t("Tab completes, ↑/↓ browses history. Some things aren't listed.", "Tab complète, ↑/↓ parcourt l'historique. Certaines choses ne sont pas listées."), "text-muted-foreground");
-    },
-    ls: function (args) {
-      var all = false;
-      var target = cwd;
-      args.forEach(function (a) {
-        if (a.charAt(0) === "-") all = all || a.indexOf("a") !== -1;
-        else target = resolve(a);
-      });
-      var list = dirs[target];
-      if (!list) {
-        if (files[target]) return print(target.replace(/^~\//, ""));
-        return print("ls: cannot access '" + args.join(" ") + "': No such file or directory", "text-destructive");
-      }
-      var shown = list.slice();
-      if (target === "~" && !all) shown = shown.filter(function (f) { return f.charAt(0) !== "."; });
-      if (all) shown = [".", ".."].concat(shown);
-      print(shown.join("  "));
-    },
-    cat: function (args) {
-      if (!args.length) return print("cat: missing file operand", "text-destructive");
-      args.forEach(function (a) {
-        if (a === "/etc/passwd")
-          return print("root:x:0:0:root:/root:/bin/bash\nvisitor:x:1000:1000:curious human:/home/visitor:/bin/cybai-sh\nflag:x:1337:1337:nice try:/nonexistent:/usr/sbin/nologin");
-        var p = resolve(a);
-        if (dirs[p]) return print("cat: " + a + ": Is a directory", "text-destructive");
-        if (files[p] === undefined) return print("cat: " + a + ": No such file or directory", "text-destructive");
-        print(files[p], p === "~/.secret" ? "text-green-500" : "");
-      });
-    },
-    cd: function (args) {
-      var p = resolve(args[0] || "~");
-      if (!dirs[p]) return print("cd: " + args[0] + (files[p] ? ": Not a directory" : ": No such file or directory"), "text-destructive");
-      cwd = p;
-      setPrompt();
-    },
-    pwd: function () {
-      print(cwd === "~" ? "/home/visitor" : "/home/visitor/" + cwd.replace(/^~\//, ""));
-    },
-    clear: function () {
-      screen.textContent = "";
-    },
-    echo: function (args) {
-      print(args.join(" "));
-    },
-    whoami: function () {
-      print("visitor");
-      print(t("(guest session — your token: curl https://www.cybai.re/ctf/whoami)", "(session invité — ton jeton : curl https://www.cybai.re/ctf/whoami)"), "text-muted-foreground");
-    },
-    id: function () {
-      print("uid=1000(visitor) gid=1000(visitor) groups=1000(visitor),1337(curious)");
-    },
-    hostname: function () {
-      print("cybai.re");
-    },
-    uname: function () {
-      print("CybaiOS 1.2 cloudflare-edge #1 SMP " + new Date().getFullYear() + " x86_64 Hono/Workers");
-    },
-    date: function () {
-      print(new Date().toString());
-    },
-    history: function () {
-      history.forEach(function (h, i) {
-        print(String(i + 1).padStart(4) + "  " + h);
-      });
-    },
-    about: function () {
-      print(ABOUT);
-    },
-    contact: function () {
-      print(CONTACT);
-    },
-    projects: function () {
-      var width = data.projects.reduce(function (m, p) {
-        return Math.max(m, p.name.length);
-      }, 0) + 2;
-      data.projects.forEach(function (p) {
-        print(p.name.padEnd(width) + p.url, "");
-      });
-      print(t("cat projects/<name>.md for details, or open projects", "cat projects/<nom>.md pour les détails, ou open projects"), "text-muted-foreground");
-    },
-    ctf: function () {
-      print(data.challenges + t(" challenges, ", " défis, ") + data.points + t(" points. Flags look like cybai{...}.", " points. Les flags ressemblent à cybai{...}."));
-      print(t("Start with `open ctf`. Not every flag lives in a browser.", "Commence par `open ctf`. Tous les flags ne vivent pas dans un navigateur."), "text-muted-foreground");
-    },
-    open: function (args) {
-      var map = { about: "/about/me", me: "/about/me", you: "/about/you", projects: "/projects", contact: "/contact", ctf: "/ctf", home: "/" };
-      var dest = map[args[0]];
-      if (!dest) return print("usage: open about|you|projects|contact|ctf", "text-destructive");
-      print("opening " + dest + " …", "text-muted-foreground");
-      go(dest);
-    },
-    curl: function (args) {
-      var url = args.filter(function (a) { return a.charAt(0) !== "-"; })[0] || "";
-      if (/^(https?:\/\/)?(www\.)?cybai\.re\/?$/.test(url)) return print(data.card);
-      if (!url) return print("curl: try 'curl --help' or 'curl --manual' for more information", "text-destructive");
-      print("curl: (6) Could not resolve host: " + url.replace(/^https?:\/\//, "").split("/")[0], "text-destructive");
-    },
-    neofetch: function () {
-      var art = ["   ▄▄▄▄▄▄   ", "  █      █  ", " █  ▄▄▄▄  █ ", " █ █    █ █ ", " █  ▀▀▀▀  █ ", "  █      █  ", "   ▀▀▀▀▀▀   "];
-      var info = [
-        "visitor@cybai.re",
-        "----------------",
-        "OS: CybaiOS 1.2",
-        "Host: Cloudflare Pages",
-        "Shell: cybai-sh",
-        "Stack: Hono · Tailwind · TypeScript",
-        "Browser: " + (navigator.userAgent.match(/(Firefox|Edg|Chrome|Safari)\/[\d.]+/) || ["unknown"])[0],
-        "Resolution: " + screen.width + "x" + screen.height,
-      ];
-      for (var i = 0; i < Math.max(art.length, info.length); i++) print((art[i] || "".padEnd(12)) + "  " + (info[i] || ""), "text-green-500");
-    },
-    theme: function (args) {
-      var h = document.documentElement;
-      var dark = h.classList.contains("dark") || (!h.classList.contains("light") && window.matchMedia("(prefers-color-scheme: dark)").matches);
-      var next = args[0] === "dark" || args[0] === "light" ? args[0] : dark ? "light" : "dark";
-      h.className = next;
-      try { localStorage.setItem("theme", next); } catch (e) {}
-      print("theme: " + next, "text-muted-foreground");
-    },
-    lang: function (args) {
-      var next = args[0] === "en" || args[0] === "fr" ? args[0] : FR ? "en" : "fr";
-      print("lang: " + next, "text-muted-foreground");
-      go("/" + next);
-    },
-    gpg: function () {
-      print("pub   ed25519 0x" + data.pgpId + " [SC]");
-      print("      " + data.pgp.replace(/(.{4})/g, "$1 ").trim());
-      print("uid   <admin@cybai.re>");
-      print(t("key: https://www.cybai.re/pgp.asc  ·  gpg --locate-keys admin@cybai.re", "clé : https://www.cybai.re/pgp.asc  ·  gpg --locate-keys admin@cybai.re"), "text-muted-foreground");
-    },
-    fortune: function () {
-      print(QUOTES[Math.floor(Math.random() * QUOTES.length)]);
-    },
-    ping: function (args) {
-      var host = args[0] || "cybai.re";
-      print("PING " + host + " 56(84) bytes of data.");
-      print("64 bytes from " + host + ": icmp_seq=1 ttl=118 time=1.337 ms");
-      print("64 bytes from " + host + ": icmp_seq=2 ttl=118 time=1.337 ms");
-    },
-    nmap: function () {
-      print("Starting Nmap 7.99 ( https://nmap.org )\nPORT     STATE SERVICE  VERSION\n80/tcp   open  http     Cloudflare http proxy\n443/tcp  open  ssl/http Cloudflare http proxy\nNo, I will not tell you what is behind it.");
-    },
-    ssh: function () {
-      print("Connecting to cybai.re … opening /contact");
-      go("/contact");
-    },
-    sudo: function (args) {
-      if (args.join(" ").replace(/\s+/g, " ").toLowerCase() === "make me a sandwich") {
-        print("Okay.");
-        print("cybai{Sud0M4k3M3AS4ndw1ch}", "text-green-500");
-        return;
-      }
-      print("visitor is not in the sudoers file. This incident will be reported.", "text-destructive");
-    },
-    rm: function (args) {
-      if (args.join(" ").indexOf("/") !== -1) print("rm: it is dangerous to operate recursively on '/'\nrm: use --no-preserve-root to override this failsafe. Nice try.", "text-destructive");
-      else print("rm: cannot remove: Read-only file system", "text-destructive");
-    },
-    exit: function () {
-      print(t("logout\nThere is nowhere to go. This is the web.", "logout\nIl n'y a nulle part où aller. C'est le web."));
-    },
-    man: function (args) {
-      print(args[0] ? "No manual entry for " + args[0] : "What manual page do you want?");
-    },
-    vim: function () {
-      print("You are now trapped. Good luck. (:q! does nothing here.)");
-    },
-  };
-  cmds.nvim = cmds.vim;
-  cmds.vi = cmds.vim;
-  cmds.dir = cmds.ls;
-  cmds.ll = function (a) {
-    cmds.ls(["-a"].concat(a));
-  };
-  cmds.hack = function () {
-    print("[#####               ] 25% bypassing firewall\n[##########          ] 50% reticulating splines\n[###############     ] 75% sweet-talking the kernel\n[####################] 100% just kidding. Try `help`.");
-  };
-
-  function tokenize(line) {
-    var tokens = [];
-    var re = /"([^"]*)"|'([^']*)'|(\S+)/g;
-    var m;
-    while ((m = re.exec(line))) tokens.push(m[1] !== undefined ? m[1] : m[2] !== undefined ? m[2] : m[3]);
-    return tokens;
-  }
-
-  function execute(line) {
-    var tokens = tokenize(line.trim());
-    if (!tokens.length) return;
-    var name = tokens.shift();
-    var fn = Object.prototype.hasOwnProperty.call(cmds, name) ? cmds[name] : null;
-    if (!fn) return print(name + t(": command not found. Try `help`.", " : commande introuvable. Essaie `help`."), "text-destructive");
-    fn(tokens);
-  }
-
-  /* INPUT */
-  form.addEventListener("submit", function (e) {
-    e.preventDefault();
-    var line = input.value;
-    print(promptText() + " " + line, "text-muted-foreground");
-    if (line.trim()) {
-      history.push(line);
-      hpos = history.length;
-    }
-    input.value = "";
-    execute(line);
-  });
-
-  function complete() {
-    var value = input.value;
-    var parts = value.split(/\s+/);
-    var last = parts[parts.length - 1];
-    var pool;
-    if (parts.length === 1) pool = Object.keys(cmds);
-    else {
-      var slash = last.lastIndexOf("/");
-      var dir = slash === -1 ? cwd : resolve(last.slice(0, slash + 1));
-      pool = (dirs[dir] || []).map(function (f) {
-        return (slash === -1 ? "" : last.slice(0, slash + 1)) + f;
-      });
-    }
-    var hits = pool.filter(function (p) {
-      return p.indexOf(last) === 0 && (last !== "" || p.charAt(0) !== ".");
-    });
-    if (hits.length === 1) {
-      parts[parts.length - 1] = hits[0];
-      input.value = parts.join(" ") + (hits[0].slice(-1) === "/" ? "" : " ");
-    } else if (hits.length > 1) {
-      print(promptText() + " " + value, "text-muted-foreground");
-      print(hits.join("  "));
-    }
-  }
-
-  input.addEventListener("keydown", function (e) {
-    if (e.key === "Tab") {
-      e.preventDefault();
-      complete();
-    } else if (e.key === "ArrowUp") {
-      e.preventDefault();
-      if (hpos > 0) input.value = history[--hpos];
-    } else if (e.key === "ArrowDown") {
-      e.preventDefault();
-      hpos = Math.min(hpos + 1, history.length);
-      input.value = history[hpos] || "";
-    } else if (e.ctrlKey && e.key === "l") {
-      e.preventDefault();
-      cmds.clear();
-    } else if (e.ctrlKey && e.key === "c") {
-      e.preventDefault();
-      print(promptText() + " " + input.value + "^C", "text-muted-foreground");
-      input.value = "";
-    }
-  });
-
-  root.addEventListener("click", function () {
-    if (!window.getSelection || window.getSelection().toString() === "") input.focus({ preventScroll: true });
-  });
-
-  /* BOOT */
-  setPrompt();
-  print(t("Type 'help' to list the available commands.", "Tape 'help' pour lister les commandes disponibles."), "text-muted-foreground");
-  print("");
-})();
+    (the rest of the film is rate-limited by your patience)`),0):(t.err(`telnet: could not resolve ${e[0]??``}: Name or service not known`),1),git:(t,n)=>{if(!e.cwd.startsWith(`/var/www`))return n.err(`fatal: not a git repository (or any of the parent directories): .git`),128;switch(t[0]){case`log`:return n.writeln(ce),0;case`status`:return n.writeln(`On branch main
+nothing to commit, working tree clean`),0;case`show`:return n.writeln(`fatal: bad object ${t[1]??`HEAD`}\n(the real history is not stored here, and you know it)`),128;default:return n.err(`git: '${t[0]??``}' is not a git command here.`),1}}}},Ee=/^rm( -[a-z]+)* --no-preserve-root( -[a-z]+)* \/\*?$/,q=e=>String(e).padStart(2,`0`),J=(e,t,n)=>{let r=t?e.getUTCFullYear():e.getFullYear(),i=(t?e.getUTCMonth():e.getMonth())+1,a=t?e.getUTCDate():e.getDate(),o=t?e.getUTCHours():e.getHours(),s=t?e.getUTCMinutes():e.getMinutes(),c=t?e.getUTCSeconds():e.getSeconds();return n?n.replace(/%([sFTYmdHMSZ%])/g,(n,l)=>{switch(l){case`s`:return String(Math.floor(e.getTime()/1e3));case`F`:return`${r}-${q(i)}-${q(a)}`;case`T`:return`${q(o)}:${q(s)}:${q(c)}`;case`Y`:return String(r);case`m`:return q(i);case`d`:return q(a);case`H`:return q(o);case`M`:return q(s);case`S`:return q(c);case`Z`:return t?`UTC`:``;default:return`%`}}):t?e.toUTCString().replace(`GMT`,`UTC`):e.toString()},De=e=>{let{t}=e,n=()=>{e.user=`root`,e.env.USER=`root`,e.env.HOME=`/root`,e.oldpwd=e.cwd,e.cwd=`/root`,e.refreshPrompt()},r=()=>{e.user=`visitor`,e.env.USER=`visitor`,e.env.HOME=`/home/visitor`,e.cwd=e.env.HOME,e.refreshPrompt()},i=(n,i)=>{e.user===`root`?(r(),i.writeln(`logout`)):i.writeln(t(`logout
+There is nowhere to go. This is the web.`,`logout
+Il n'y a nulle part où aller. C'est le web.`))};return{help:(e,n)=>{let r=e[0];if(r&&k[r])return n.writeln(`${r}: ${k[r]}`);let i=[[t(`Files`,`Fichiers`),`ls cat cd pwd tree find file touch mkdir rm cp mv echo`],[t(`Text tools`,`Outils texte`),`grep head tail wc sort uniq rev tac tr cut base64 rot13 xxd strings sha256sum jwt urlencode seq`],[t(`Pipes`,`Pipes`),`a | b   a ; b   a && b   a || b   echo hi > file   $VAR   *.md`],[t(`About me`,`À propos`),`about projects contact now open curl gpg neofetch`],[`CTF`,`ctf  ctf list  ctf hint <id>  ctf submit cybai{...}`],[t(`Toys`,`Jouets`),`cowsay figlet lolcat fortune cal sl cmatrix snake wordle adventure`],[`Shell`,`history env export su sudo exit clear theme lang`]];for(let[e,t]of i)n.writeln(e.padEnd(13)+t);n.writeln(t("`help <command>` shows usage. Tab completes. Some things aren't listed.","`help <commande>` affiche l'usage. Tab complète. Certaines choses ne sont pas listées."))},man:(e,t)=>{let n=e[0];return n?k[n]?(t.writeln(`${n.toUpperCase()}(1)\n\nUSAGE\n    ${k[n]}`),0):(t.writeln(`No manual entry for ${n}`),1):(t.writeln(`What manual page do you want?`),1)},clear:()=>void e.term.clear(),whoami:(n,r)=>{r.writeln(e.user),e.user===`visitor`&&r.writeln(t(`(guest session — your token: curl https://www.cybai.re/ctf/whoami)`,`(session invité — ton jeton : curl https://www.cybai.re/ctf/whoami)`))},id:(t,n)=>void n.writeln(e.user===`root`?`uid=0(root) gid=0(root) groups=0(root)`:`uid=1000(visitor) gid=1000(visitor) groups=1000(visitor),1337(curious)`),hostname:(e,t)=>void t.writeln(`cybai.re`),uname:(t,n)=>{let r=x(t).flags;n.writeln(r.r?`6.18-cybai`:r.s?`CybaiOS`:`CybaiOS cybai.re 6.18-cybai #1 SMP ${new Date(e.deps.now()).getFullYear()} x86_64 Hono/Workers`)},uptime:(t,n)=>{let r=Math.max(1,Math.round((e.deps.now()-e.bootTime)/6e4));n.writeln(` ${new Date(e.deps.now()).toLocaleTimeString()} up ${r} min, 1 user, load average: 0.00, 0.01, 0.00`)},env:(t,n)=>void Object.entries(e.env).forEach(([e,t])=>n.writeln(`${e}=${t}`)),export:t=>{for(let n of t){let t=n.indexOf(`=`);t>0&&(e.env[n.slice(0,t)]=n.slice(t+1))}},history:(t,n)=>{t[0]===`-c`?(e.history=[],e.historyIndex=0):e.history.forEach((e,t)=>n.writeln(`${String(t+1).padStart(4)}  ${e}`))},date:(n,r)=>{let i=x(n,[`d`]),a=new Date(e.deps.now());if(typeof i.flags.d==`string`){let e=i.flags.d,t=e.startsWith(`@`)?Number(e.slice(1))*1e3:Date.parse(e);if(Number.isNaN(t))return r.err(`date: invalid date '${e}'`),1;a=new Date(t)}let o=i.rest.find(e=>e.startsWith(`+`));r.writeln(J(a,!!i.flags.u,o?.slice(1)));let s=Math.floor(a.getTime()/1e3);if(s>2147483647){let e=J(new Date((s-4294967296)*1e3),!0);r.writeln(t(`(in a 32-bit time_t this would wrap to ${e})`,`(avec un time_t 32 bits, ça reviendrait à ${e})`))}return 0},cal:(n,r)=>{let i=new Date(e.deps.now()),a=new Date(i.getFullYear(),i.getMonth(),1).getDay(),o=new Date(i.getFullYear(),i.getMonth()+1,0).getDate(),s=i.toLocaleString(e.term.lang===`fr`?`fr-FR`:`en-US`,{month:`long`,year:`numeric`});r.writeln(s.padStart(Math.floor((20+s.length)/2))),r.writeln(t(`Su Mo Tu We Th Fr Sa`,`Di Lu Ma Me Je Ve Sa`));let c=`   `.repeat(a);for(let e=1;e<=o;e++)c+=String(e).padStart(2)+` `,(a+e)%7==0&&(r.writeln(c.trimEnd()),c=``);c&&r.writeln(c.trimEnd())},exit:i,logout:i,su:(r,i)=>{let a=x(r).rest[0]??`root`;return a===`root`?(e.user===`root`||e.setMode({prompt:`Password:`,masked:!0,onLine:async r=>{e.endMode(),await e.deps.sleep(900),r===`cybai-root-2038`?(n(),e.print(t(`You are now root. With great power…`,`Tu es maintenant root. Un grand pouvoir…`),`text-green-500`)):e.errLine(`su: Authentication failure`)},onCtrlC:()=>{e.endMode(),e.print(`^C`)}}),0):(i.err(`su: user ${a} does not exist`),1)},sudo:(t,n)=>{let r=t.join(` `).replace(/\s+/g,` `).toLowerCase();return r===`make me a sandwich`?(n.writeln(`Okay.`),e.award(A.sudo),0):e.user===`root`?t.length?e.runStages([{argv:t,redir:null}]):O(`sudo`,n):Ee.test(r)?fe(e):t[0]===`-l`?(n.writeln(`Sorry, user visitor may not run sudo on cybai.`),1):(n.err(`visitor is not in the sudoers file. This incident will be reported.`),1)}}},Y=e=>{let t=e.replace(/\[:upper:\]/g,`A-Z`).replace(/\[:lower:\]/g,`a-z`).replace(/\[:digit:\]/g,`0-9`).replace(/\\n/g,`
+`).replace(/\\t/g,`	`),n=[];for(let e=0;e<t.length;e++)if(t.charAt(e+1)===`-`&&e+2<t.length){for(let r=t.charCodeAt(e);r<=t.charCodeAt(e+2);r++)n.push(String.fromCharCode(r));e+=2}else n.push(t.charAt(e));return n},X=e=>e.replace(/\\(n|t|\\|x[0-9a-fA-F]{2})/g,(e,t)=>t===`n`?`
+`:t===`t`?`	`:t===`\\`?`\\`:String.fromCharCode(parseInt(t.slice(1),16))),Oe=e=>e.split(`,`).map(e=>{let t=/^(\d*)-(\d*)$/.exec(e);return t?[Number(t[1]||1),Number(t[2]||9999)]:[Number(e),Number(e)]}),ke=e=>{let t=async(t,n)=>D(await T(e,t,n),n),n=e=>async(n,r)=>{let i=x(n,[`n`]),a=S(i.flags,`n`,10),o=i.rest.filter(e=>!/^-\d+$/.test(e)||(a=Number(e.slice(1)),!1)),s=C(await t(o,r));r.write((e?s.slice(Math.max(0,s.length-a)):s.slice(0,a)).join(`
+`)+`
+`)};return{echo:(e,t)=>{let n=e,r=!1,i=!1;for(;n.length&&/^-[neE]+$/.test(n[0]);)n[0].includes(`n`)&&(r=!0),n[0].includes(`e`)&&(i=!0),n=n.slice(1);let a=n.join(` `);t.write((i?X(a):a)+(r?``:`
+`))},printf:(e,t)=>{if(!e.length)return O(`printf`,t);let n=e.slice(1);return t.write(X(e[0]).replace(/%([sdxc%])/g,(e,t)=>{if(t===`%`)return`%`;let r=n.shift()??``;return t===`d`?String(parseInt(r,10)||0):t===`x`?(parseInt(r,10)||0).toString(16):t===`c`?r.charAt(0):r})),0},seq:(e,t)=>{let n=e.map(Number),r=n.length>1?n[0]:1,i=n.length>1?n[1]:n[0];if(n.length===0||Number.isNaN(r)||Number.isNaN(i))return O(`seq`,t);for(let e=r;e<=i&&e-r<1e4;e++)t.writeln(String(e));return 0},yes:(e,t)=>{let n=e.join(` `)||`y`;for(let e=0;e<200;e++)t.writeln(n)},head:n(!1),tail:n(!0),tac:async(e,n)=>void n.write(C(await t(e,n)).reverse().join(`
+`)+`
+`),rev:async(e,n)=>void n.write(C(await t(e,n)).map(e=>[...e].reverse().join(``)).join(`
+`)+`
+`),wc:async(t,n)=>{let r=x(t);for(let t of await T(e,r.rest,n)){let e=y(t.bytes).text,i=(e.match(/\n/g)??[]).length,a=(e.match(/\S+/g)??[]).length,o=t.bytes.length,s=r.flags.l?[i]:r.flags.w?[a]:r.flags.c?[o]:[i,a,o];n.writeln(s.map(e=>String(e).padStart(s.length>1?7:0)).join(``)+(t.name===`-`?``:` ${t.name}`))}},sort:async(e,n)=>{let r=x(e),i=C(await t(r.rest,n));i.sort(r.flags.n?(e,t)=>parseFloat(e)-parseFloat(t):(e,t)=>e<t?-1:+(e>t)),r.flags.r&&i.reverse(),r.flags.u&&(i=i.filter((e,t)=>t===0||e!==i[t-1])),n.write(i.join(`
+`)+`
+`)},uniq:async(e,n)=>{let r=x(e),i=[];for(let e of C(await t(r.rest,n))){let t=i[i.length-1];t&&t.l===e?t.n++:i.push({l:e,n:1})}n.write(i.map(e=>(r.flags.c?String(e.n).padStart(7)+` `:``)+e.l).join(`
+`)+`
+`)},grep:async(t,n)=>{let r=x(t);if(!r.rest.length)return O(`grep`,n);let i;try{i=new RegExp(r.rest[0],r.flags.i?`i`:``)}catch{return n.err(`grep: invalid regular expression`),2}let a=r.rest.slice(1),o=!!(r.flags.r||r.flags.R);if(o){a=[];for(let t of r.rest.length>1?r.rest.slice(1):[`.`])e.vfs.walk(e.vfs.norm(t),(e,t)=>{t.type===`file`&&a.push(e)})}let s=await T(e,a,n),c=0;for(let e of s){let t=0;C(y(e.bytes).text).forEach((a,l)=>{i.test(a)===!r.flags.v&&(t++,c++,r.flags.c||n.writeln((s.length>1||o?`${e.name}:`:``)+(r.flags.n?`${l+1}:`:``)+a))}),r.flags.c&&n.writeln((s.length>1?`${e.name}:`:``)+t)}return+!c},tr:(e,t)=>{let n=x(e),r=w(t);if(!n.rest.length)return O(`tr`,t);if(r===null)return 1;let i=Y(n.rest[0]),a=n.rest[1]?Y(n.rest[1]):[],o=``;for(let e of r){let t=i.indexOf(e);if(t<0)o+=e;else if(n.flags.d)continue;else o+=a.length?a[Math.min(t,a.length-1)]:e}return t.write(o),0},cut:async(e,n)=>{let r=x(e,[`d`,`f`]),i=typeof r.flags.d==`string`?r.flags.d:`	`,a=Oe(typeof r.flags.f==`string`?r.flags.f:`1`);n.write(C(await t(r.rest,n)).map(e=>e.split(i).filter((e,t)=>a.some(([e,n])=>t+1>=e&&t+1<=n)).join(i)).join(`
+`)+`
+`)}}},Ae=(e,t)=>{let n=[],r=``;for(let i of e.split(/\s+/).filter(Boolean))(r+` `+i).trim().length>t?(n.push(r),r=i):r=(r+` `+i).trim();return r&&n.push(r),n.length?n:[``]},je=e=>{let t=Ae(e,38),n=Math.max(...t.map(e=>e.length)),r=[` `+`_`.repeat(n+2)];return t.length===1?r.push(`< ${t[0].padEnd(n)} >`):t.forEach((e,i)=>{let a=i===0?`/`:i===t.length-1?`\\`:`|`,o=i===0?`\\`:i===t.length-1?`/`:`|`;r.push(`${a} ${e.padEnd(n)} ${o}`)}),r.push(` `+`-`.repeat(n+2)),r.push(`        \\   ^__^`,`         \\  (oo)\\_______`,`            (__)\\       )\\/\\`,`                ||----w |`,`                ||     ||`),r},Z=Object.fromEntries(`A:.###./#...#/#####/#...#/#...#;B:####./#...#/####./#...#/####.;C:.####/#..../#..../#..../.####;D:####./#...#/#...#/#...#/####.;E:#####/#..../####./#..../#####;F:#####/#..../####./#..../#....;G:.####/#..../#..##/#...#/.###.;H:#...#/#...#/#####/#...#/#...#;I:#####/..#../..#../..#../#####;J:..###/...#./...#./#..#./.##..;K:#...#/#..#./###../#..#./#...#;L:#..../#..../#..../#..../#####;M:#...#/##.##/#.#.#/#...#/#...#;N:#...#/##..#/#.#.#/#..##/#...#;O:.###./#...#/#...#/#...#/.###.;P:####./#...#/####./#..../#....;Q:.###./#...#/#.#.#/#..#./.##.#;R:####./#...#/####./#..#./#...#;S:.####/#..../.###./....#/####.;T:#####/..#../..#../..#../..#..;U:#...#/#...#/#...#/#...#/.###.;V:#...#/#...#/#...#/.#.#./..#..;W:#...#/#...#/#.#.#/##.##/#...#;X:#...#/.#.#./..#../.#.#./#...#;Y:#...#/.#.#./..#../..#../..#..;Z:#####/...#./..#../.#.../#####;0:.###./#..##/#.#.#/##..#/.###.;1:..#../.##../..#../..#../.###.;2:.###./#...#/..##./.#.../#####;3:####./....#/.###./....#/####.;4:#..#./#..#./#####/...#./...#.;5:#####/#..../####./....#/####.;6:.###./#..../####./#...#/.###.;7:#####/....#/...#./..#../..#..;8:.###./#...#/.###./#...#/.###.;9:.###./#...#/.####/....#/.###.;.:...../...../...../...../..#..;!:..#../..#../..#../...../..#..;-:...../...../.###./...../.....;_:...../...../...../...../#####;?:.###./....#/..##./...../..#..;::...../..#../...../..#../.....;/:....#/...#./..#../.#.../#....`.split(`;`).map(e=>[e.charAt(0),e.slice(2).split(`/`)])),Me=e=>{let t=[``,``,``,``,``];for(let n of e.toUpperCase().slice(0,14)){let e=Z[n]??(n===` `?[`   `,`   `,`   `,`   `,`   `]:Z[`?`]);for(let n=0;n<5;n++)t[n]+=e[n].replace(/#/g,`█`).replace(/\./g,` `)+` `}return t.map(e=>e.replace(/\s+$/,``))},Ne=(e,t)=>C(e).map((e,n)=>[...e].map((e,r)=>({t:e,c:`hsl(${(t+n*12+r*8)%360},90%,58%)`}))),Pe=e=>{let t=(e,t,n)=>e.length?e.join(` `):w(t)??n,n=(e,n)=>void Me(t(e,n,`cybai`)).forEach(e=>n.writeln(e));return{cowsay:(e,n)=>void je(t(e,n,`Moo.`)).forEach(e=>n.writeln(e)),figlet:n,banner:n,lolcat:(n,r)=>void r.rich(Ne(t(n,r,``),Math.floor(e.deps.random()*360)))}},Fe=e=>{let t={...Se(e),...ke(e),...be(e),...De(e),...Te(e),...re(e),...me(e),...Pe(e),...Ce(e)};t.printenv=t.env,t.hexdump=t.xxd;for(let[e,n]of Object.entries(t))t[e]=(t,r)=>t.length===1&&t[0]===`--help`&&k[e]?void r.writeln(`usage: ${k[e]}`):n(t,r);return t},Q=(e,t,n)=>{let r=e.charAt(t+1);if(r===`?`)return{v:String(n.lastStatus),i:t+2};if(r===`{`){let r=e.indexOf(`}`,t);if(r>0)return{v:n.env[e.slice(t+2,r)]??``,i:r+1}}let i=/^[A-Za-z_][A-Za-z0-9_]*/.exec(e.slice(t+1));return i?{v:n.env[i[0]]??``,i:t+1+i[0].length}:{v:`$`,i:t+1}},Ie=(e,t)=>{let n=[],r=0,i=``,a=!1,o=!1,s=()=>{a&&n.push({w:i,glob:o}),i=``,a=!1,o=!1};for(;r<e.length;){let c=e.charAt(r);if(c===`'`){let t=e.indexOf(`'`,r+1);t<0&&(t=e.length),i+=e.slice(r+1,t),a=!0,r=t+1}else if(c===`"`){for(r++,a=!0;r<e.length&&e.charAt(r)!==`"`;){let n=e.charAt(r);if(n===`\\`&&r+1<e.length&&'"\\$`'.includes(e.charAt(r+1)))i+=e.charAt(r+1),r+=2;else if(n===`$`){let n=Q(e,r,t);i+=n.v,r=n.i}else i+=n,r++}r++}else if(c===`\\`)i+=e.charAt(r+1),a=!0,r+=2;else if(c===`$`){let n=Q(e,r,t);i+=n.v,n.v&&(a=!0),r=n.i}else if(c===`#`&&!a)break;else if(c===` `||c===`	`)s(),r++;else if(c===`|`||c===`;`||c===`&`||c===`>`){s();let t=c;c!==`;`&&e.charAt(r+1)===c&&(t=c+c,r++),n.push({op:t}),r++}else c===`~`&&!a&&(r+1>=e.length||` /	`.includes(e.charAt(r+1)))?(i+=t.home,a=!0,r++):((c===`*`||c===`?`)&&(o=!0),i+=c,a=!0,r++)}return s(),n},Le=(e,t)=>{let n=[],r=[],i=[],a=null,o=null,s=`;`,c=()=>{(i.length||a)&&r.push({argv:i,redir:a}),i=[],a=null},l=e=>{c(),r.length&&n.push({conn:e,stages:r}),r=[]};for(let n of Ie(e,t))`op`in n?n.op===`|`?c():n.op===`>`||n.op===`>>`?o=n.op:(l(s),s=n.op===`&&`||n.op===`||`?n.op:`;`):o?(a={op:o,file:n.w},o=null):n.glob?i.push(...t.glob(n.w)):i.push(n.w);return l(s),n},$=/^(xyzzy|plugh|telnet|hack)$/,Re=class{constructor(e,t,n){l(this,`term`,void 0),l(this,`data`,void 0),l(this,`deps`,void 0),l(this,`t`,void 0),l(this,`vfs`,void 0),l(this,`cmds`,void 0),l(this,`bootTime`,void 0),l(this,`env`,void 0),l(this,`user`,`visitor`),l(this,`cwd`,`/home/visitor`),l(this,`oldpwd`,`/home/visitor`),l(this,`history`,[]),l(this,`historyIndex`,0),l(this,`lastStatus`,0),l(this,`busy`,!1),l(this,`cancelled`,!1),l(this,`mode`,null),l(this,`heardPlugh`,!1),this.term=e,this.data=t,this.deps=n,this.t=i(e.lang),this.bootTime=n.now(),this.env={USER:`visitor`,HOME:`/home/visitor`,SHELL:`/bin/cybai-sh`,HOSTNAME:`cybai.re`,TERM:`xterm-256color`,LANG:e.lang===`fr`?`fr_FR.UTF-8`:`en_US.UTF-8`},this.vfs=new V(de(t,this.t),this,n.fetch),this.cmds=Fe(this)}get home(){return this.env.HOME??`/`}pwdShort(){return this.cwd===this.home?`~`:this.cwd.startsWith(this.home+`/`)?`~`+this.cwd.slice(this.home.length):this.cwd}promptText(){return`${this.user}@cybai.re:${this.pwdShort()}${this.user===`root`?`#`:`$`}`}refreshPrompt(){let e=this.mode?.prompt;this.term.setPrompt(e??this.promptText(),this.user===`root`&&!e?`#ef4444`:void 0),this.term.setMasked(!!this.mode?.masked)}setMode(e){this.mode=e,this.refreshPrompt(),this.term.focus()}endMode(){this.mode=null,this.refreshPrompt()}print(e,t){this.term.print(e,t)}errLine(e){this.term.print(e,`text-destructive`)}award(e){this.print(``),this.print(`🏁 ${e}`,`text-green-500 font-semibold`),this.print(this.t(`   submit it with: ctf submit ${e}`,`   soumets-le avec : ctf submit ${e}`),`text-muted-foreground`)}go(e){this.deps.navigate(e)}gameApi(){return{t:this.t,lang:this.term.lang,reducedMotion:this.term.reducedMotion,width:()=>this.term.width(),print:(e,t)=>this.print(e,t),printRich:e=>this.term.printRich(e),scroll:()=>this.term.scroll(),canvas:e=>this.term.canvas(e),setMode:e=>this.setMode(e),endMode:()=>this.endMode(),award:e=>this.award(e),sleep:e=>this.deps.sleep(e),isCancelled:()=>this.cancelled,random:()=>this.deps.random()}}expansion(){return{env:this.env,lastStatus:this.lastStatus,home:this.home,glob:e=>this.vfs.glob(e)}}async runStages(e){let t=null,n=0;for(let r=0;r<e.length;r++){let i=e[r],a=r===e.length-1,o={text:``,bin:!1},s={stdin:t,last:a,write:e=>void(o.text+=e),writeln:e=>void(o.text+=e+`
+`),err:e=>this.errLine(e),bin:()=>void(o.bin=!0),rich:e=>{a&&!i.redir?this.term.printRich(e):o.text+=e.map(e=>e.map(e=>e.t).join(``)).join(`
+`)+`
+`}},c=i.argv[0],l=c&&Object.hasOwn(this.cmds,c)?this.cmds[c]:void 0;if(l){let e=await l(i.argv.slice(1),s);n=typeof e==`number`?e:0}else c&&this.errLine(c+this.t(": command not found. Try `help`."," : commande introuvable. Essaie `help`.")),n=127;t=o,a&&this.flush(o,i)}return n}flush(e,t){if(t.redir){let n=this.vfs.write(t.redir.file,e.text,t.redir.op===`>>`);n&&this.errLine(`sh: ${t.redir.file}: ${n}`)}else e.bin?e.text&&this.print(this.t(`(binary output suppressed, try xxd or strings)`,`(sortie binaire masquée, essaie xxd ou strings)`),`text-muted-foreground`):e.text!==``&&this.print(e.text.endsWith(`
+`)?e.text.slice(0,-1):e.text)}async exec(e){if(e.replace(/\s+/g,``).includes(`:(){:|:&};:`))await pe(this);else for(let t of Le(e,this.expansion()))(t.conn!==`&&`||this.lastStatus===0)&&(t.conn!==`||`||this.lastStatus!==0)&&(this.lastStatus=await this.runStages(t.stages))}async submit(e){if(this.mode?.onLine)this.print(`${this.mode.prompt??this.promptText()} ${this.mode.masked?``:e}`,`text-muted-foreground`),await this.mode.onLine(e);else if(!this.busy&&(this.print(`${this.promptText()} ${e}`,`text-muted-foreground`),e.trim())){this.history.push(e),this.historyIndex=this.history.length,this.busy=!0,this.cancelled=!1;try{await this.exec(e)}catch(e){this.errLine(`sh: `+(e instanceof Error?e.message:String(e)))}finally{this.busy=!1,this.refreshPrompt(),this.term.scroll()}}}keydown(e,t){if(this.mode?.onKey?.(e))return{prevent:!0};if(e.key===`Tab`){if(this.mode)return{prevent:!0};let e=this.complete(t);return e.options&&(this.print(`${this.promptText()} ${t}`,`text-muted-foreground`),this.print(e.options.join(`  `))),{prevent:!0,value:e.value}}return e.key===`ArrowUp`&&!this.mode?(this.historyIndex>0&&this.historyIndex--,{prevent:!0,value:this.history[this.historyIndex]??t}):e.key===`ArrowDown`&&!this.mode?(this.historyIndex=Math.min(this.historyIndex+1,this.history.length),{prevent:!0,value:this.history[this.historyIndex]??``}):e.ctrlKey&&e.key===`l`?(this.term.clear(),{prevent:!0}):e.ctrlKey&&e.key===`c`?(this.cancelled=!0,this.mode?.onCtrlC?this.mode.onCtrlC():this.print(`${this.promptText()} ${t}^C`,`text-muted-foreground`),{prevent:!0,value:this.mode?void 0:``}):{prevent:!1}}complete(e){let t=e.split(/\s+/),n=t[t.length-1]??``,r;if(t.length===1)r=Object.keys(this.cmds).filter(e=>!$.test(e));else{let e=n.lastIndexOf(`/`),t=e>=0?n.slice(0,e+1):``;r=(this.vfs.list(this.vfs.norm(t||`.`))??[]).map(e=>{let n=this.vfs.find(this.vfs.norm(t+e)).node;return t+e+(n?.type===`dir`?`/`:``)})}let i=n.slice(n.lastIndexOf(`/`)+1),a=r.filter(e=>e.startsWith(n)&&(i!==``||!e.slice(e.lastIndexOf(`/`,e.length-2)+1).startsWith(`.`))).sort();return a.length===1?(t[t.length-1]=a[0],{value:t.join(` `)+(a[0].endsWith(`/`)?``:` `)}):a.length>1?{options:a}:{}}},ze=class{constructor(e,t,n){l(this,`ui`,void 0),l(this,`lang`,void 0),l(this,`reducedMotion`,void 0),this.ui=e,this.lang=t,this.reducedMotion=n}width(){return this.ui.screen.clientWidth}scroll(){this.ui.screen.scrollTop=this.ui.screen.scrollHeight}print(t,n=``){for(let r of t.split(`
+`)){let t=e(`div`,`whitespace-pre-wrap break-words ${n}`.trim());t.textContent=r===``?`\xA0`:r,this.ui.screen.appendChild(t)}this.scroll()}printRich(t){for(let n of t){let t=e(`div`,`whitespace-pre`);for(let r of n){let n=e(`span`,r.cls??``,r.t);r.c&&(n.style.color=r.c),r.bg&&(n.style.backgroundColor=r.bg),t.appendChild(n)}this.ui.screen.appendChild(t)}this.scroll()}clear(){this.ui.screen.textContent=``}canvas(t=``){let n=e(`pre`,`font-mono leading-tight ${t}`.trim());return this.ui.screen.appendChild(n),{setText:e=>void(n.textContent=e),remove:()=>n.remove()}}setPrompt(e,t){this.ui.prompt.textContent=e,this.ui.prompt.style.color=t??``}setMasked(e){this.ui.input.type=e?`password`:`text`}focus(){this.ui.input.focus({preventScroll:!0})}},Be=[`fixed`,`inset-3`,`sm:inset-10`,`z-[90]`,`flex`,`flex-col`,`shadow-2xl`,`bg-background`],Ve=[`h-[26rem]`],He=[`min-h-0`,`flex-1`],Ue=class{constructor(e,t,n){l(this,`parts`,void 0),l(this,`canEscape`,void 0),l(this,`onChange`,void 0),l(this,`full`,!1),l(this,`minimized`,!1),l(this,`backdrop`,null),this.parts=e,this.canEscape=t,this.onChange=n;let{close:r,minimize:i,maximize:a,titlebar:o}=e;a.addEventListener(`click`,()=>this.toggleFullscreen()),i.addEventListener(`click`,()=>this.toggleMinimize()),r.addEventListener(`click`,()=>this.full?this.setFullscreen(!1):this.setMinimized(!0)),o.addEventListener(`dblclick`,()=>this.toggleFullscreen()),o.addEventListener(`click`,e=>{this.minimized&&e.target===o&&this.setMinimized(!1)}),document.addEventListener(`keydown`,e=>{e.key===`Escape`&&this.full&&this.canEscape()&&this.setFullscreen(!1)})}get isFullscreen(){return this.full}toggleFullscreen(){this.setFullscreen(!this.full)}toggleMinimize(){this.setMinimized(!this.minimized)}setMinimized(e){e&&this.full&&this.setFullscreen(!1),this.minimized=e;let{screen:t,form:n}=this.parts;t.classList.toggle(`hidden`,e),n.classList.toggle(`hidden`,e),this.parts.minimize.setAttribute(`aria-pressed`,String(e)),this.onChange()}setFullscreen(t){if(t===this.full)return;t&&this.minimized&&this.setMinimized(!1);let{slot:n,root:r,screen:i}=this.parts;this.full=t,t?(n.style.minHeight=`${r.offsetHeight}px`,this.backdrop=e(`div`,`fixed inset-0 z-[80] bg-black/60 backdrop-blur-sm`),this.backdrop.addEventListener(`click`,()=>this.setFullscreen(!1)),document.body.appendChild(this.backdrop),document.body.appendChild(r)):(this.backdrop?.remove(),this.backdrop=null,n.style.minHeight=``,n.appendChild(r)),document.documentElement.classList.toggle(`overflow-hidden`,t),r.classList.toggle(`bg-muted/40`,!t),Be.forEach(e=>r.classList.toggle(e,t)),Ve.forEach(e=>i.classList.toggle(e,!t)),He.forEach(e=>i.classList.toggle(e,t)),this.parts.maximize.setAttribute(`aria-pressed`,String(t)),this.onChange()}},We={lang:`en`,projects:[],contacts:[],challenges:0,points:0,card:``,pgp:``,pgpId:``,ctf:[],games:``},Ge=e=>new Promise((t,n)=>{if(window.__shellGames)return t(window.__shellGames);let r=document.createElement(`script`);r.src=e||`/static/shell-games.js`,r.onload=()=>window.__shellGames?t(window.__shellGames):n(Error(`empty game pack`)),r.onerror=()=>n(Error(`load failed`)),document.head.appendChild(r)}),Ke=e=>{let t=document.documentElement,n=t.classList.contains(`dark`)||!t.classList.contains(`light`)&&window.matchMedia(`(prefers-color-scheme: dark)`).matches,r=e??(n?`light`:`dark`);t.className=r;try{localStorage.setItem(`theme`,r)}catch{}return r},qe=()=>{try{return window.localStorage}catch{return null}};(()=>{let e=t(`shell`),i=t(`shell-screen`),o=t(`shell-form`),s=t(`shell-input`),c=t(`shell-prompt`);if(!e||!i||!o||!s||!c)return;let l=n(`shell-data`,We),u=a(l.lang),d=new ze({root:e,screen:i,form:o,input:s,prompt:c},u,r()),f=new Re(d,l,{fetch:(...e)=>fetch(...e),storage:qe(),sleep:e=>new Promise(t=>setTimeout(t,d.reducedMotion?0:e)),random:Math.random,now:Date.now,navigate:e=>void setTimeout(()=>location.href=e,350),setTheme:Ke,loadGames:Ge,userAgent:navigator.userAgent,screenSize:`${window.screen.width}x${window.screen.height}`});o.addEventListener(`submit`,e=>{e.preventDefault();let t=s.value;s.value=``,f.submit(t)}),s.addEventListener(`keydown`,e=>{let t=f.keydown(e,s.value);t.prevent&&e.preventDefault(),t.value!==void 0&&(s.value=t.value)}),e.addEventListener(`click`,()=>{window.getSelection()?.toString()||d.focus()});let p=t(`shell-slot`),m=t(`shell-titlebar`),h=t(`shell-close`),g=t(`shell-minimize`),_=t(`shell-maximize`);p&&m&&h&&g&&_&&new Ue({slot:p,root:e,screen:i,form:o,titlebar:m,close:h,minimize:g,maximize:_},()=>!f.mode,()=>{d.scroll(),d.focus()}),f.refreshPrompt(),d.print(f.t(`Type 'help' to list the available commands.`,`Tape 'help' pour lister les commandes disponibles.`),`text-muted-foreground`),d.print(``)})()})();

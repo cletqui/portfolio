@@ -1,5 +1,4 @@
 import { toggleLanguage } from "../utils/language";
-import { useNonce } from "../utils/security";
 import { Icon } from "../utils/icons";
 import { projects } from "../pages/projects";
 import { contacts } from "../pages/contact";
@@ -70,30 +69,15 @@ const DropdownNav = ({
   </div>
 );
 
-const mobileMenuScript = `(function(){document.addEventListener('DOMContentLoaded',function(){var btn=document.getElementById('mobile-menu-btn');var menu=document.getElementById('mobile-menu');if(!btn||!menu)return;btn.addEventListener('click',function(){var open=menu.classList.toggle('hidden');btn.setAttribute('aria-expanded',String(!open))})})})();`;
-
-const themeScript = `(function(){document.addEventListener('DOMContentLoaded',function(){var b=document.getElementById('theme-toggle');if(!b)return;b.addEventListener('click',function(){var h=document.documentElement;var d=h.classList.contains('dark')||(!h.classList.contains('light')&&window.matchMedia('(prefers-color-scheme: dark)').matches);var n=d?'light':'dark';h.className=n;localStorage.setItem('theme',n)})})})();`;
-
 const ThemeToggle = () => (
-  <>
-    <button
-      id="theme-toggle"
-      class="icon-btn"
-      title="Toggle theme"
-      type="button"
-    >
-      <span class="theme-sun">
-        <Icon name="sun" size={16} />
-      </span>
-      <span class="theme-moon">
-        <Icon name="moon" size={16} />
-      </span>
-    </button>
-    <script
-      nonce={useNonce()}
-      dangerouslySetInnerHTML={{ __html: themeScript }}
-    />
-  </>
+  <button id="theme-toggle" class="icon-btn" title="Toggle theme" type="button">
+    <span class="theme-sun">
+      <Icon name="sun" size={16} />
+    </span>
+    <span class="theme-moon">
+      <Icon name="moon" size={16} />
+    </span>
+  </button>
 );
 
 const Translate = ({ lang, path }: { lang: string; path: string }) => (
@@ -211,10 +195,6 @@ export const Header = ({ lang, path }: { lang: string; path: string }) => (
       </a>
     </div>
 
-    <script
-      nonce={useNonce()}
-      dangerouslySetInnerHTML={{ __html: mobileMenuScript }}
-    />
     <script
       type="application/json"
       id="palette-data"
