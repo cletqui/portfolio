@@ -10,6 +10,7 @@ import { deleteCookie } from "hono/cookie";
 import { collectSignals, guessConnection } from "../utils/signals";
 import {
   DeepScan,
+  GoFurther,
   HideTips,
   MapCard,
   Narrative,
@@ -454,6 +455,7 @@ app.get("/you", async (c: Context<Env>) => {
           <Snapshot lang={lang} ipInfo={ipInfo} ua={ua} signals={signals} />
           <Narrative lang={lang} ipInfo={ipInfo} ua={ua} />
           <DeepScan lang={lang} signals={signals} />
+          <GoFurther lang={lang} />
           <div class="grid gap-6 lg:grid-cols-2 items-start">
             <MapCard lang={lang} ipInfo={ipInfo} />
             <RequestHeaders lang={lang} headers={signals.headers} />
