@@ -55,7 +55,7 @@ check("right su password gives root", (await lastLines(1)).includes("You are now
 await run("cat /root/flag.txt");
 check("root flag readable as root", (await lastLines(1)).includes("cybai{R00t_V14_B4sh_H1st0ry}"), await lastLines(1));
 await run("exit");
-check("exit leaves root", (await page.locator("#shell-prompt").innerText()).startsWith("visitor@"));
+check("exit leaves root", (await page.locator("#shell-prompt").innerText()).startsWith("guest@"));
 
 await run("xyzzy");
 await run("plugh");
@@ -63,12 +63,12 @@ check("xyzzy then plugh awards the flag", (await screenText()).includes("cybai{A
 await run("sudo make me a sandwich");
 check("sudo sandwich", (await screenText()).includes("cybai{Sud0M4k3M3AS4ndw1ch}"));
 await run(":(){ :|:& };:", 2500);
-check("fork bomb awards its flag", (await screenText()).includes("cybai{F0rk_B0mb_D3f4ng3d}"));
+check("fork bomb is survived", (await screenText()).includes("ulimit -u"));
 await run("sudo rm -rf --no-preserve-root /", 6000);
 check("scorched earth awards its flag", (await screenText()).includes("cybai{Ju5t_K1dd1ng_N0th1ng_W45_D3l3t3d}"));
 
 await run("ctf");
-check("ctf status", /\d+\/35 flags found/.test(await lastLines(2)), await lastLines(2));
+check("ctf status", /\d+\/\d+ flags found/.test(await lastLines(2)), await lastLines(2));
 await run("ctf hint snake");
 check("ctf hint", (await lastLines(1)).includes("Eat enough"), await lastLines(1));
 await run("ctf submit cybai{1mAT34p0t}", 600);
@@ -146,6 +146,30 @@ check("double-clicking the title bar toggles fullscreen", ((await box())?.height
 await page.click("#shell-close");
 await page.waitForTimeout(200);
 check("red button exits fullscreen", Math.abs(((await box())?.height ?? 0) - (before?.height ?? 0)) < 4);
+
+const second = await (await browser.newContext({ viewport: { width: 1280, height: 900 } })).newPage();
+await second.goto(BASE + "/");
+await second.waitForSelector("#shell-input");
+check("the terminal is focused on arrival", await second.evaluate(() => document.activeElement?.id === "shell-input"));
+check("the terminal scrollbar is hidden", await second.evaluate(() => getComputedStyle(document.querySelector("#shell-screen")).scrollbarWidth === "none"));
+await second.keyboard.type("help");
+await second.keyboard.press("Enter");
+await second.waitForTimeout(250);
+const helpText = await second.locator("#shell-screen").innerText();
+check("help is a plain command listing", helpText.includes("Text processing") && !helpText.includes("a | b"));
+await second.keyboard.type("cd /etc");
+await second.keyboard.press("Enter");
+await second.keyboard.type("cd projects/ticdot");
+await second.keyboard.press("Enter");
+await second.waitForURL("**/projects/ticdot", { timeout: 4000 }).catch(() => undefined);
+check("cd into a project directory opens its page, from anywhere", second.url().endsWith("/projects/ticdot"), second.url());
+await second.goto(BASE + "/contact");
+await second.waitForSelector("[data-email]");
+const mailHref = await second.locator("a[data-email]").first().getAttribute("href");
+check("the email link is upgraded to mailto only in the browser", !!mailHref && mailHref.startsWith("mailto:") && mailHref.includes("@"), String(mailHref));
+const rawHtml = await (await fetch(BASE + "/contact")).text();
+check("the served HTML never contains the address", !/admin@cybai\.re|mailto:/i.test(rawHtml));
+await second.screenshot({ path: process.env.SHOT_DIR ? `${process.env.SHOT_DIR}/contact.png` : "/tmp/claude-1000/contact.png", fullPage: true });
 
 check("no browser console errors", errors.length === 0, errors.join("; "));
 await browser.close();

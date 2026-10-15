@@ -1,7 +1,9 @@
+import { decodeEmail } from "../../data/email-codec";
 import { readJson } from "../shared/dom";
 import { asLang, makeT, type Lang } from "../shared/i18n";
 import { initCopyButtons } from "./copy";
 import { installConsoleObject } from "./console";
+import { initEmail } from "./email";
 import { initEpochCountdown } from "./epoch";
 import { initErrorPath } from "./errorpage";
 import { initKonami } from "./konami";
@@ -17,7 +19,12 @@ interface PaletteData {
 
 const initPalette = (): void => {
   const data = readJson<PaletteData>("palette-data", { lang: "en", items: [] });
-  const palette = new Palette(data.items, asLang(data.lang), {
+  const items = data.items.map((item) => {
+    if (!item.email) return item;
+    const address = decodeEmail(item.email);
+    return { ...item, copy: address, hint: address };
+  });
+  const palette = new Palette(items, asLang(data.lang), {
     navigate: (url) => void (location.href = url),
     openExternal: (url) => void window.open(url, "_blank", "noopener,noreferrer"),
     toggleTheme: () => void applyTheme(),
@@ -38,6 +45,7 @@ const initPalette = (): void => {
 
 const lang = asLang(document.documentElement.lang);
 initCopyButtons();
+initEmail();
 initKonami(makeT(lang));
 installConsoleObject();
 initPalette();

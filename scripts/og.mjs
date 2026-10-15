@@ -9,8 +9,8 @@ const pages = {
   "about-me": ["About me", "threat intelligence, SIEM, and a homelab that rarely sleeps"],
   "about-you": ["About you", "what your browser tells every site it visits"],
   projects: ["Projects", "things you can see, and things you can't"],
-  ctf: ["CTF", "35 challenges hidden across this site"],
-  contact: ["Contact", "ssh me@cybai.re"],
+  ctf: ["CTF", "36 challenges hidden across this site"],
+  contact: ["Contact", "cd ~/contact"],
   now: ["Now", "what I'm up to right now"],
 };
 

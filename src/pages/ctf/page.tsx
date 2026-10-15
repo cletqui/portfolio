@@ -186,7 +186,7 @@ page.get("/", (c) => {
           </button>
         </div>
         <div class="flex flex-wrap items-center gap-2">
-          <span class="text-xs font-mono uppercase tracking-wider text-muted-foreground w-24 shrink-0">
+          <span class="text-xs font-mono uppercase tracking-wider text-muted-foreground w-28 shrink-0 whitespace-nowrap">
             {lang === "fr" ? "type :" : "type:"}
           </span>
           <div class="flex flex-wrap gap-1.5">
@@ -203,7 +203,7 @@ page.get("/", (c) => {
           </div>
         </div>
         <div class="flex flex-wrap items-center gap-2">
-          <span class="text-xs font-mono uppercase tracking-wider text-muted-foreground w-24 shrink-0">
+          <span class="text-xs font-mono uppercase tracking-wider text-muted-foreground w-28 shrink-0 whitespace-nowrap">
             {lang === "fr" ? "difficulté :" : "difficulty:"}
           </span>
           <div class="flex flex-wrap gap-1.5">
@@ -220,7 +220,7 @@ page.get("/", (c) => {
           </div>
         </div>
         <div class="flex flex-wrap items-center gap-2">
-          <span class="text-xs font-mono uppercase tracking-wider text-muted-foreground w-24 shrink-0">
+          <span class="text-xs font-mono uppercase tracking-wider text-muted-foreground w-28 shrink-0 whitespace-nowrap">
             {lang === "fr" ? "statut :" : "status:"}
           </span>
           <div class="flex flex-wrap gap-1.5">

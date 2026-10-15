@@ -1,5 +1,6 @@
 import { projects } from "../pages/projects";
 import { contacts } from "../pages/contact";
+import { EMAIL_ENC } from "../data/email";
 import { PGP } from "./pgp";
 
 export type PaletteItem = {
@@ -9,6 +10,7 @@ export type PaletteItem = {
   href?: string;
   action?: "theme" | "lang";
   copy?: string;
+  email?: string;
   external?: boolean;
 };
 
@@ -37,7 +39,7 @@ export const paletteItems = (lang: string): PaletteItem[] => {
     },
     { label: fr ? "En ce moment" : "Now", group: pages, href: "/now", hint: "/now" },
     { label: "CTF", group: pages, href: "/ctf", hint: "flags" },
-    { label: "Contact", group: pages, href: "/contact", hint: "ssh me@cybai.re" },
+    { label: "Contact", group: pages, href: "/contact", hint: "cd ~/contact" },
     ...projects
       .filter((p) => p.internal)
       .map((p) => ({
@@ -57,8 +59,7 @@ export const paletteItems = (lang: string): PaletteItem[] => {
     {
       label: fr ? "Copier mon e-mail" : "Copy my email",
       group: "Actions",
-      copy: "admin@cybai.re",
-      hint: "admin@cybai.re",
+      email: EMAIL_ENC,
     },
     {
       label: fr ? "Copier l'empreinte PGP" : "Copy my PGP fingerprint",

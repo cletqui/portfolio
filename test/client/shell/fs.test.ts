@@ -3,7 +3,7 @@ import { makeTranslator } from "../../helpers/translator";
 import { basename, buildTree, dirname, globToRegex, join, nodeSize, VFS } from "../../../src/client/shell/fs";
 import { testData, testFetch } from "../../helpers/shell";
 
-const session = { cwd: "/home/visitor", home: "/home/visitor", user: "visitor" };
+const session = { cwd: "/home/guest", home: "/home/guest", user: "guest" };
 const make = (over: Partial<typeof session> = {}) => {
   const s = { ...session, ...over };
   return { vfs: new VFS(buildTree(testData(), makeTranslator("en")), s, testFetch), s };
@@ -28,9 +28,9 @@ describe("path helpers", () => {
 describe("VFS.norm", () => {
   const { vfs } = make();
   it("resolves relative, home, dot and dot-dot paths", () => {
-    expect(vfs.norm()).toBe("/home/visitor");
-    expect(vfs.norm("~")).toBe("/home/visitor");
-    expect(vfs.norm("~/projects")).toBe("/home/visitor/projects");
+    expect(vfs.norm()).toBe("/home/guest");
+    expect(vfs.norm("~")).toBe("/home/guest");
+    expect(vfs.norm("~/projects")).toBe("/home/guest/projects");
     expect(vfs.norm("../../etc/./passwd")).toBe("/etc/passwd");
     expect(vfs.norm("/../..")).toBe("/");
   });
@@ -43,14 +43,14 @@ describe("VFS.find and permissions", () => {
     expect(vfs.find("/etc").node?.type).toBe("dir");
     expect(vfs.find("/nope").node).toBeNull();
   });
-  it("denies /root and below to visitors but not to root", () => {
+  it("denies /root and below to guests but not to root", () => {
     expect(make().vfs.find("/root/flag.txt").denied).toBe(true);
     expect(make().vfs.find("/etc/shadow").denied).toBe(true);
     expect(make({ user: "root" }).vfs.find("/root/flag.txt").denied).toBe(false);
   });
   it("lists sorted names and refuses denied directories", () => {
     const { vfs } = make();
-    expect(vfs.list("/home/visitor/projects")).toEqual(["api.md", "petithub.md"]);
+    expect(vfs.list("/home/guest/projects")).toEqual(["README.md", "api", "index.html", "petithub"]);
     expect(vfs.list("/root")).toBeNull();
     expect(vfs.list("/etc/passwd")).toBeNull();
   });
@@ -105,9 +105,12 @@ describe("VFS writes", () => {
 describe("VFS.glob and walk", () => {
   it("globs within a directory, hiding dotfiles unless asked", () => {
     const { vfs } = make();
-    expect(vfs.glob("*.md")).toEqual(["about.md"]);
-    expect(vfs.glob("projects/*.md")).toEqual(["projects/api.md", "projects/petithub.md"]);
-    expect(vfs.glob(".s*")).toEqual([".secret"]);
+    expect(vfs.glob("about/*.md")).toEqual(["about/README.md"]);
+    expect(vfs.glob("projects/*/README.md")).toEqual(["projects/api/README.md", "projects/petithub/README.md"]);
+    expect(vfs.glob("/etc/ho*")).toEqual(["/etc/hostname", "/etc/hosts"]);
+    expect(vfs.glob("*/README.md").length).toBe(6);
+    expect(vfs.glob("*.md")).toEqual(["*.md"]);
+    expect(vfs.glob(".s*")).toEqual([".secret", ".ssh"]);
     expect(vfs.glob("*.nothing")).toEqual(["*.nothing"]);
     expect(vfs.glob("*")).not.toContain(".secret");
   });
@@ -127,6 +130,6 @@ describe("nodeSize", () => {
     expect(nodeSize(vfs.find("/etc/hostname").node!)).toBe(9);
     expect(nodeSize(vfs.find("/etc").node!)).toBe(4096);
     expect(nodeSize(vfs.find("/var/backups/site.tgz").node!)).toBeGreaterThan(20);
-    expect(nodeSize(vfs.find("/home/visitor/avatar.png").node!)).toBe(92915);
+    expect(nodeSize(vfs.find("/home/guest/avatar.png").node!)).toBe(92915);
   });
 });

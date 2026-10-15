@@ -89,21 +89,32 @@ export const verdict = (e: Entropy, t: Translate): string =>
     ? t("Statistically unique among everyone online.", "Statistiquement unique parmi toutes les personnes connectées.")
     : t(`Roughly 1 in ${oneInN(e.total).toLocaleString()}`, `Environ 1 sur ${oneInN(e.total).toLocaleString()}`);
 
+const legendItem = (term: string, text: string): string =>
+  `<li class="flex gap-2"><span class="w-28 shrink-0 font-mono">${esc(term)}</span><span>${esc(text)}</span></li>`;
+
 export const entropyHtml = (state: ScanState, id: string, t: Translate): string => {
   const e = entropyOf(state.rows);
   const max = e.top[0]?.bits ?? 1;
   const bars = e.top
-    .map((r) => `<div class="flex items-center gap-2 text-xs"><span class="w-32 shrink-0 truncate opacity-70">${esc(r.label)}</span><div class="h-1.5 flex-1 overflow-hidden rounded bg-primary-foreground/15"><div class="h-full rounded bg-primary-foreground/80" style="width:${Math.round((r.bits / max) * 100)}%"></div></div><span class="w-8 text-right font-mono opacity-70">${r.bits.toFixed(1)}</span></div>`)
+    .map((r) => `<div class="flex items-center gap-2 text-xs"><span class="w-32 shrink-0 truncate opacity-70">${esc(r.label)}</span><div class="h-1.5 flex-1 overflow-hidden rounded bg-primary-foreground/15"><div class="h-full rounded bg-primary-foreground/80" style="width:${Math.round((r.bits / max) * 100)}%"></div></div><span class="w-8 text-right font-mono opacity-70">+${r.bits.toFixed(1)}</span></div>`)
     .join("");
+  const legend = [
+    legendItem(t("bit", "bit"), t("each bit halves the crowd that looks like you: 10 bits ≈ 1 in 1,000, 20 ≈ 1 in a million, 33 ≈ 1 in 8 billion, i.e. you alone.", "chaque bit divise par deux la foule qui te ressemble : 10 bits ≈ 1 sur 1 000, 20 ≈ 1 sur un million, 33 ≈ 1 sur 8 milliards, donc toi seul·e.")),
+    legendItem(t("+3.2 on a row", "+3,2 sur une ligne"), t("the bits that attribute adds. Rare values add more, common ones almost nothing.", "les bits qu'apporte cet attribut. Une valeur rare en apporte beaucoup, une valeur courante presque aucun.")),
+    legendItem(t("total", "total"), t("not a plain sum, because attributes overlap (your OS predicts your fonts). It levels off near 33.", "pas une simple somme, car les attributs se recoupent (ton OS prédit tes polices). Il plafonne vers 33.")),
+    legendItem(t("ID", "ID"), t("a hash of the stable attributes. Reload: same ID. Private window or another browser: different.", "un hash des attributs stables. Recharge : même ID. Fenêtre privée ou autre navigateur : autre ID.")),
+  ].join("");
   return (
     `<section class="card-primary"><div class="grid gap-8 md:grid-cols-[minmax(0,1fr)_minmax(0,1.2fr)]"><div class="space-y-4">` +
     `<h3 class="flex items-center gap-2 text-sm font-semibold">${icon("fp")}${esc(t("Your fingerprint", "Ton empreinte"))}</h3>` +
     `<div><div class="text-xs opacity-60">${esc(t("Fingerprint ID", "ID d'empreinte"))}</div><div class="break-all font-mono text-2xl tracking-wider">${esc(id)}</div></div>` +
-    `<div><div class="mb-1 flex items-baseline justify-between"><span class="text-xs opacity-60">${esc(t("Estimated entropy", "Entropie estimée"))}</span><span class="font-mono text-sm">~${e.total.toFixed(0)} bits</span></div>` +
-    `<div class="h-2 overflow-hidden rounded bg-primary-foreground/15"><div class="h-full rounded ${e.unique ? "bg-amber-400" : "bg-green-400"}" style="width:${e.percent}%"></div></div></div>` +
+    `<div><div class="mb-1 flex items-baseline justify-between"><span class="text-xs opacity-60">${esc(t("How identifiable you are", "À quel point on peut t'identifier"))}</span><span class="font-mono text-sm">~${e.total.toFixed(0)} / 33 bits</span></div>` +
+    `<div class="h-2 overflow-hidden rounded bg-primary-foreground/15"><div class="h-full rounded ${e.unique ? "bg-amber-400" : "bg-green-400"}" style="width:${e.percent}%"></div></div>` +
+    `<div class="mt-1 flex justify-between font-mono text-[10px] opacity-50"><span>${esc(t("blends in", "dans la masse"))}</span><span>${esc(t("unique", "unique"))}</span></div></div>` +
     `<p class="text-sm font-medium">${esc(verdict(e, t))}</p></div>` +
-    `<div class="space-y-1.5"><div class="mb-2 text-xs opacity-60">${esc(t("Biggest contributors (bits)", "Plus gros contributeurs (bits)"))}</div>${bars}</div></div>` +
-    `<p class="mt-5 border-t border-primary-foreground/15 pt-3 text-xs opacity-60">${esc(t("Bars are ballpark estimates from public fingerprinting studies. Attributes are correlated, so the total uses a saturating model rather than a plain sum. The ID hashes stable attributes only: reload, or open a private window, and compare.", "Les barres sont des estimations issues d'études publiques. Les attributs sont corrélés : le total suit un modèle saturant plutôt qu'une simple somme. L'ID hashe uniquement les attributs stables : recharge, ou ouvre une fenêtre privée, et compare."))}</p></section>`
+    `<div class="space-y-1.5"><div class="mb-2 text-xs opacity-60">${esc(t("What gives you away the most", "Ce qui te trahit le plus"))}</div>${bars}</div></div>` +
+    `<div class="mt-5 border-t border-primary-foreground/15 pt-3"><div class="mb-2 text-xs font-medium opacity-80">${esc(t("How to read this", "Comment lire ça"))}</div><ul class="space-y-1 text-xs opacity-70">${legend}</ul>` +
+    `<p class="mt-3 text-[11px] opacity-50">${esc(t("Estimates drawn from public fingerprinting studies, not a measurement of the whole web.", "Estimations tirées d'études publiques sur le fingerprinting, pas une mesure de tout le web."))}</p></div></section>`
   );
 };
 

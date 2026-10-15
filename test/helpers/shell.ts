@@ -12,6 +12,7 @@ import {
   type Term,
 } from "../../src/client/shell/types";
 import type { Lang } from "../../src/client/shared/i18n";
+import { EMAIL_ENC } from "../../src/data/email";
 import { CHALLENGES } from "../../src/data/challenges";
 
 export class TestTerm implements Term {
@@ -80,16 +81,17 @@ export const testData = (over: Partial<ShellData> = {}): ShellData => {
   return {
   ...emptyShellData,
   projects: [
-    { id: "petithub", name: "PetitHub", desc: "A GitHub explorer.", url: "https://petithub.cybai.re/", github: "https://github.com/x/petithub" },
-    { id: "api", name: "API", desc: "A worker.", url: "https://api.cybai.re/" },
+    { id: "petithub", name: "PetitHub", desc: "A GitHub explorer.", url: "https://petithub.cybai.re/", page: "/projects/petithub", github: "https://github.com/x/petithub" },
+    { id: "api", name: "API", desc: "A worker.", url: "https://api.cybai.re/", page: "/projects/api" },
   ],
   contacts: [
     { name: "GitHub", href: "https://github.com/x" },
-    { name: "Mail", href: "mailto:admin@cybai.re" },
+    { name: "Mail", email: true },
   ],
   card: "CARD",
   pgp: "9753A1844F422246185CC0ABACFAD5ECEEC88002",
   pgpId: "ACFAD5ECEEC88002",
+  email: EMAIL_ENC,
   ctf: CHALLENGES.map((c) => ({ id: c.id, name: fr ? c.nameFr : c.name, category: c.category, points: c.points, difficulty: c.difficulty, hint: fr ? c.hintFr : c.hint })),
   challenges: CHALLENGES.length,
   points: CHALLENGES.reduce((s, c) => s + c.points, 0),

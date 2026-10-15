@@ -1,5 +1,6 @@
 import { beforeEach, describe, expect, it } from "vitest";
 import { FLAGS } from "../../../src/utils/flags";
+import { ALIASES, HIDDEN, MANUAL } from "../../../src/client/shell/commands/manual";
 import { makeShell, type Harness } from "../../helpers/shell";
 
 let h: Harness;
@@ -9,26 +10,53 @@ beforeEach(() => {
 
 describe("navigation and files", () => {
   it("pwd, cd, and the prompt follow the working directory", async () => {
-    expect(await h.out("pwd")).toBe("/home/visitor");
+    expect(await h.out("pwd")).toBe("/home/guest");
     await h.run("cd /etc");
-    expect(h.term.prompt).toBe("visitor@cybai.re:/etc$");
-    await h.run("cd ~/projects");
-    expect(h.term.prompt).toBe("visitor@cybai.re:~/projects$");
+    expect(h.term.prompt).toBe("guest@cybai.re:/etc$");
+    await h.run("cd ~/.ssh");
+    expect(h.term.prompt).toBe("guest@cybai.re:~/.ssh$");
     await h.run("cd -");
     expect(await h.out("pwd")).toBe("/etc");
     await h.run("cd");
-    expect(h.term.prompt).toBe("visitor@cybai.re:~$");
+    expect(h.term.prompt).toBe("guest@cybai.re:~$");
+  });
+  it("cd into a page directory opens that page, from anywhere", async () => {
+    await h.run("cd about");
+    await h.run("cd /etc");
+    await h.run("cd projects");
+    await h.run("cd ~/projects/petithub");
+    await h.run("cd /home/guest/contact");
+    await h.run("cd ~/you");
+    await h.run("cd ~/ctf");
+    await h.run("cd ~/now");
+    expect(h.navigations).toEqual(["/about/me", "/projects", "/projects/petithub", "/contact", "/about/you", "/ctf", "/now"]);
+  });
+  it("CDPATH makes cd work from any directory and echoes the destination", async () => {
+    await h.run("cd /var/log");
+    expect(await h.out("cd about")).toContain("/home/guest/about");
+    expect(h.sh.cwd).toBe("/home/guest/about");
+    expect(await h.out("cd nowhere")).toContain("No such file or directory");
+  });
+  it("page directories read like ordinary directories", async () => {
+    expect(await h.out("ls about")).toBe("README.md  index.html  skills.txt");
+    expect(await h.out("ls -a about")).toContain(".env");
+    expect(await h.out("cat about/README.md")).toContain("# cybai.re");
+    expect(await h.out("cat contact/.env")).toContain("REPLY_WITHIN");
+    expect(await h.out("cat about/index.html")).toContain("<!-- served at /about/me -->");
+    expect(h.navigations).toEqual([]);
   });
   it("cd reports errors", async () => {
     expect(await h.out("cd /nope")).toContain("No such file or directory");
-    expect(await h.out("cd about.md")).toContain("Not a directory");
+    expect(await h.out("cd todo.txt")).toContain("Not a directory");
     expect(await h.out("cd /root")).toContain("Permission denied");
   });
   it("ls hides dotfiles, -a shows them, -l adds details", async () => {
     expect(await h.out("ls")).not.toContain(".secret");
     expect(await h.out("ls -a")).toContain(".secret");
-    expect(await h.out("ls -l")).toMatch(/-rw-r--r-- 1 visitor visitor +\d+ Oct 14 12:00 about\.md/);
-    expect(await h.out("ls projects")).toBe("api.md  petithub.md");
+    expect(await h.out("ls -l")).toMatch(/-rw-r--r-- 1 guest guest +\d+ Oct 14 12:00 todo\.txt/);
+    expect(await h.out("ls -l /etc")).toMatch(/-rw-r--r-- 1 root root +\d+ Oct 14 12:00 passwd/);
+    expect(await h.out("ls -l /etc")).toMatch(/-rw------- 1 root root +\d+ Oct 14 12:00 shadow/);
+    expect(await h.out("ls projects")).toBe("README.md  api/  index.html  petithub/");
     expect(await h.out("ls /nope")).toContain("cannot access");
     expect(await h.out("ls /root")).toContain("Permission denied");
   });
@@ -57,16 +85,16 @@ describe("navigation and files", () => {
   });
   it("find, tree and file", async () => {
     expect(await h.out("find /var/www -name '*.html'")).toBe("/var/www/html/index.html");
-    expect(await h.out("find ~/projects -type f")).toContain("petithub.md");
+    expect(await h.out("find ~/projects -type f")).toContain("petithub/README.md");
     expect(await h.out("tree /var/backups")).toMatch(/site\.tgz/);
     expect(await h.out("file avatar.png")).toBe("avatar.png: PNG image data, 512 x 512");
     expect(await h.out("file /var/backups/site.tgz")).toContain("gzip");
-    expect(await h.out("file about.md")).toContain("ASCII text");
+    expect(await h.out("file about/README.md")).toContain("ASCII text");
     expect(await h.out("file /etc")).toContain("directory");
   });
   it("globs expand against the filesystem", async () => {
-    expect(await h.out("echo *.md")).toBe("about.md");
-    expect(await h.out("cat projects/*.md | grep -c '^#'")).toBe("2");
+    expect(await h.out("echo about/*.md")).toBe("about/README.md");
+    expect(await h.out("cat projects/*/README.md | grep -c '^#'")).toBe("2");
   });
 });
 
@@ -116,7 +144,7 @@ describe("text tools", () => {
   it("grep with flags", async () => {
     expect(await h.out("grep -i CYBAI /etc/hostname")).toBe("cybai.re");
     expect(await h.out("grep -c root /etc/passwd")).toBe("1");
-    expect(await h.out("grep -n visitor /etc/passwd")).toMatch(/^4:visitor/);
+    expect(await h.out("grep -n guest /etc/passwd")).toMatch(/^6:guest/);
     expect(await h.out("grep -v x /etc/hostname")).toBe("cybai.re");
     expect(await h.out("grep -r cybai-root /var")).toBe("");
     expect(await h.out("grep '(' /etc/passwd")).toContain("invalid regular expression");
@@ -179,7 +207,7 @@ describe("encoding tools", () => {
 
 describe("system and site commands", () => {
   it("whoami, id, hostname, uname", async () => {
-    expect(await h.out("whoami")).toContain("visitor");
+    expect(await h.out("whoami")).toContain("guest");
     expect(await h.out("id")).toContain("uid=1000");
     expect(await h.out("hostname")).toBe("cybai.re");
     expect(await h.out("uname -s")).toBe("CybaiOS");
@@ -197,17 +225,40 @@ describe("system and site commands", () => {
     await h.run("history -c");
     expect(await h.out("history")).toMatch(/history$/);
   });
-  it("about, contact and projects", async () => {
-    expect(await h.out("about")).toContain("# cybai.re");
-    expect(await h.out("contact")).toContain("PGP:");
-    expect(await h.out("projects")).toContain("PetitHub");
+  it("page content is read with cat, not with dedicated commands", async () => {
+    expect(await h.out("cat contact/README.md")).toContain("PGP:");
+    expect(await h.out("cat contact/README.md")).toContain("admin@cybai.re");
+    expect(await h.out("cat projects/README.md")).toContain("PetitHub");
     expect(await h.out("gpg")).toContain("ACFAD5ECEEC88002");
+    for (const gone of ["open", "about", "contact", "projects", "now"]) expect(await h.out(gone)).toContain("command not found");
   });
-  it("open and lang navigate", async () => {
-    await h.run("open projects");
+  it("lang navigates", async () => {
     await h.run("lang");
-    expect(h.navigations).toEqual(["/projects", "/fr"]);
-    expect(await h.out("open nowhere")).toContain("usage: open");
+    expect(h.navigations).toEqual(["/fr"]);
+  });
+  it("ssh refuses unknown hosts and recognises home", async () => {
+    expect(await h.out("ssh example.org")).toContain("Could not resolve hostname");
+    expect(await h.out("ssh guest@cybai.re")).toContain("already logged in");
+    expect(await h.out("ssh")).toContain("usage: ssh");
+    expect(await h.out("ssh 1.1.1.1")).toBe("ssh: connect to host 1.1.1.1 port 22: Connection timed out");
+    expect(await h.out("ssh -p 2222 root@8.8.8.8")).toContain("port 2222: Connection timed out");
+    expect(await h.out("ssh admin@192.168.1.10")).toContain("No route to host");
+    expect(await h.out("ssh localhost -p 2222")).toContain("Connection refused");
+    expect(await h.out("ssh ::1")).toContain("already logged in");
+    expect(await h.out("ssh 2001:db8::1")).toContain("Connection timed out");
+    expect(await h.out("ssh 999.1.1.1")).toContain("Could not resolve hostname 999.1.1.1");
+    expect(await h.out("ssh -p abc host")).toContain("Bad port 'abc'");
+    expect(await h.out("ssh -p 70000 1.1.1.1")).toContain("Bad port");
+  });
+  it("curl and telnet tell IPs, private ranges and names apart", async () => {
+    expect(await h.out("curl 1.1.1.1")).toContain("curl: (7) Failed to connect to 1.1.1.1 port 443");
+    expect(await h.out("curl http://10.0.0.1")).toContain("No route to host");
+    expect(await h.out("curl http://localhost:8080")).toContain("Couldn't connect to server");
+    expect(await h.out("curl nope.invalid")).toContain("(6) Could not resolve host: nope.invalid");
+    expect(await h.out("curl ftp://cybai.re")).toContain("not supported");
+    expect(await h.out("curl https://cybai.re/teapot")).toContain("I'm a teapot");
+    expect(await h.out("telnet 1.1.1.1 80")).toContain("Connection timed out");
+    expect(await h.out("telnet nope.invalid")).toContain("could not resolve");
   });
   it("curl serves the card for the site only", async () => {
     expect(await h.out("curl cybai.re")).toBe("CARD");
@@ -221,11 +272,34 @@ describe("system and site commands", () => {
     expect(await h.out("theme light")).toBe("theme: light");
   });
   it("help lists groups and per-command usage", async () => {
-    expect(await h.out("help")).toContain("Text tools");
+    const help = await h.out("help");
+    expect(help).toContain("cybai-sh, version");
+    expect(help).toContain("Text processing");
+    expect(help).not.toContain("a | b");
     expect(await h.out("help grep")).toContain("grep [-i]");
-    expect(await h.out("grep --help")).toContain("usage: grep");
+    expect(await h.out("help ll")).toContain("ls [-a]");
+    expect(await h.out("grep --help")).toContain("grep [-i]");
+    expect(await h.out("help nothing")).toContain("no help topics match");
     expect(await h.out("man base64")).toContain("BASE64(1)");
+    expect(await h.out("man base64")).toContain("SYNOPSIS");
+    expect(await h.out("man sh")).toContain("cmd1 | cmd2");
+    expect(await h.out("man cybai")).toContain("cd about");
     expect(await h.out("man nothing")).toContain("No manual entry");
+  });
+  it("documents every command, alias and secret", () => {
+    const names = Object.keys(h.sh.cmds);
+    const undocumented = names.filter((n) => !MANUAL[n] && !ALIASES[n] && !HIDDEN.test(n));
+    expect(undocumented).toEqual([]);
+    for (const [alias, target] of Object.entries(ALIASES)) {
+      expect(h.sh.cmds[alias], alias).toBeTypeOf("function");
+      expect(MANUAL[target], target).toBeDefined();
+    }
+    for (const n of Object.keys(MANUAL)) expect(h.sh.cmds[n], n).toBeTypeOf("function");
+  });
+  it("lists each command under exactly one group, without secrets", async () => {
+    const help = await h.out("help");
+    for (const secret of ["xyzzy", "plugh", "telnet", "hack"]) expect(help).not.toMatch(new RegExp(`\\b${secret}\\b`));
+    for (const n of Object.keys(MANUAL)) expect(help.match(new RegExp(`(^|\\s)${n}(\\s|$)`, "gm"))?.length, n).toBe(1);
   });
   it("cal and uptime produce output", async () => {
     expect(await h.out("cal")).toContain("Su Mo Tu");
@@ -255,7 +329,7 @@ describe("toys", () => {
 describe("tab completion and keys", () => {
   it("completes commands and paths", () => {
     expect(h.sh.complete("cowsa")).toEqual({ value: "cowsay " });
-    expect(h.sh.complete("cat abo")).toEqual({ value: "cat about.md " });
+    expect(h.sh.complete("cat abo")).toEqual({ value: "cat about/" });
     expect(h.sh.complete("cd proj")).toEqual({ value: "cd projects/" });
     expect(h.sh.complete("cat /etc/pass")).toEqual({ value: "cat /etc/passwd " });
   });

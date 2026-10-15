@@ -20,7 +20,7 @@ describe("the root puzzle", () => {
     expect(await h.out("cat /var/backups/.pw.bak | base64 -d")).toBe(ROOT_PASSWORD);
     expect(await h.out("cat /var/log/auth.log | grep backup")).toContain(".pw.bak");
   });
-  it("keeps /root and /etc/shadow away from a visitor", async () => {
+  it("keeps /root and /etc/shadow away from a guest", async () => {
     expect(await h.out("cat /root/flag.txt")).toContain("Permission denied");
     expect(await h.out("cat /etc/shadow")).toContain("Permission denied");
     expect(await h.out("ls /root")).toContain("Permission denied");
@@ -37,7 +37,7 @@ describe("the root puzzle", () => {
     expect(h.term.lines.join("\n")).toContain("Authentication failure");
     expect(h.mode()).toBeNull();
     expect(h.term.masked).toBe(false);
-    expect(h.sh.user).toBe("visitor");
+    expect(h.sh.user).toBe("guest");
   });
   it("never echoes the typed password", async () => {
     await h.run("su root");
@@ -48,7 +48,7 @@ describe("the root puzzle", () => {
     await h.run("su root");
     h.sh.keydown({ key: "c", ctrlKey: true, metaKey: false, altKey: false }, "");
     expect(h.mode()).toBeNull();
-    expect(h.sh.user).toBe("visitor");
+    expect(h.sh.user).toBe("guest");
   });
   it("grants root with the right password and reads the flag", async () => {
     await becomeRoot();
@@ -65,8 +65,8 @@ describe("the root puzzle", () => {
     await h.run("echo pwned > /etc/motd2");
     expect(await h.out("cat /etc/motd2")).toBe("pwned");
     await h.run("exit");
-    expect(h.sh.user).toBe("visitor");
-    expect(h.sh.cwd).toBe("/home/visitor");
+    expect(h.sh.user).toBe("guest");
+    expect(h.sh.cwd).toBe("/home/guest");
     expect(h.term.promptColor).toBeUndefined();
     expect(await h.out("cat /etc/motd2")).toContain("");
   });
@@ -108,7 +108,7 @@ describe("easter eggs", () => {
       const fresh = makeShell();
       const out = await fresh.out(bomb);
       expect(out).toContain("Resource temporarily unavailable");
-      expect(out).toContain(CLIENT_FLAGS.forkbomb);
+      expect(out).not.toContain("cybai{");
       expect(fresh.sh.busy).toBe(false);
     }
   });

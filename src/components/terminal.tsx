@@ -1,6 +1,7 @@
 import { CHALLENGES, CHALLENGE_COUNT, TOTAL_POINTS } from "../data/challenges";
 import { contacts } from "../pages/contact";
 import { projects } from "../pages/projects";
+import { EMAIL_ENC } from "../data/email";
 import { asset } from "../utils/assets";
 import { plainCard } from "../utils/card";
 import { PGP } from "../utils/pgp";
@@ -12,11 +13,13 @@ export const shellData = (lang: string) => ({
     name: p.name,
     desc: lang === "fr" ? p.descriptionFr : p.description,
     url: p.href ?? `https://www.cybai.re${p.internal}`,
+    page: p.internal ?? `/projects/${p.id}`,
     github: p.github,
   })),
   contacts: contacts.map((c) => ({
     name: lang === "fr" && c.nameFr ? c.nameFr : c.name,
     href: c.href,
+    ...(c.email ? { email: true } : {}),
   })),
   ctf: CHALLENGES.map((ch) => ({
     id: ch.id,
@@ -29,6 +32,7 @@ export const shellData = (lang: string) => ({
   games: asset("/static/shell-games.js"),
   pgp: PGP.fingerprint,
   pgpId: PGP.keyId,
+  email: EMAIL_ENC,
   challenges: CHALLENGE_COUNT,
   points: TOTAL_POINTS,
   card: plainCard(lang),
@@ -82,12 +86,12 @@ export const Terminal = ({ lang }: { lang: string }) => {
               label={fr ? "Plein écran" : "Fullscreen"}
             />
             <span class="ml-2 text-xs text-muted-foreground">
-              visitor@cybai.re
+              guest@cybai.re
             </span>
           </div>
           <div
             id="shell-screen"
-            class="h-[26rem] overflow-y-auto px-4 pt-3 space-y-0.5"
+            class="no-scrollbar h-[26rem] overflow-y-auto px-4 pt-3 space-y-0.5"
             aria-live="polite"
           >
             <noscript>
@@ -104,7 +108,7 @@ export const Terminal = ({ lang }: { lang: string }) => {
               id="shell-prompt"
               class="text-green-500 shrink-0 select-none"
             >
-              visitor@cybai.re:~$
+              guest@cybai.re:~$
             </label>
             <input
               id="shell-input"

@@ -1,20 +1,37 @@
 import { Hono } from "hono";
 import type { Env } from "..";
+import { HTPASSWD } from "../data/admin";
 import { FAKE_GIT } from "../utils/fake-git";
 import { FLAGS } from "../utils/flags";
 
 const app = new Hono<Env>();
 
 app
-  .get("/teapot", (c) => {
-    c.header("X-Flag", FLAGS.teapot);
-    return c.text("I'm a teapot", 418);
-  })
+  .get("/teapot", (c) =>
+    c.text(
+      [
+        "418 I'm a teapot",
+        "",
+        "      ;,'",
+        "   _o_    ;:;'",
+        " ,-.'--;o.   ;:;'",
+        "(,'  `.  `.-.__",
+        " \\ `.__) `. ))))",
+        "  `._.______`'",
+        "",
+        "The requested entity body is short and stout.",
+        `Tip me over and pour me out: ${FLAGS.teapot}`,
+        "",
+      ].join("\n"),
+      418,
+    ),
+  )
   .post((c) => c.redirect("https://www.rfc-editor.org/rfc/rfc2324#section-2.3.2"));
 
 app.get("/rickroll", (c) => c.redirect("https://www.youtube.com/watch?v=dQw4w9WgXcQ&pp=ygUJcmljayByb2xs"));
 app.get("/fl@g.txt", (c) => c.text(FLAGS.manifest));
-app.get("/ctf.txt", (c) => c.text(FLAGS["ctf-txt"]));
+app.get("/ctf.txt", (c) => c.text("Nothing here. The scoreboard lives at /ctf.\n"));
+app.get("/.htpasswd", (c) => c.text(HTPASSWD));
 
 app.get("/.env", (c) =>
   c.text(

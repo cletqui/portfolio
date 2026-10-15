@@ -17,7 +17,7 @@ describe("security.txt", () => {
   it("follows RFC 9116: Contact, Expires, canonical and the self-hosted key", async () => {
     const body = await text("/.well-known/security.txt");
     expect(body).toMatch(/^Contact: http:\/\/localhost\/contact$/m);
-    expect(body).toMatch(/^Contact: mailto:admin@cybai\.re$/m);
+    expect(body).not.toContain("@");
     expect(body).toMatch(/^Encryption: http:\/\/localhost\/pgp\.asc$/m);
     expect(body).toMatch(/^Canonical: http:\/\/localhost\/\.well-known\/security\.txt$/m);
     expect(body).toMatch(/^Preferred-Languages: en, fr$/m);
@@ -32,15 +32,15 @@ describe("security.txt", () => {
 describe("plain files and redirects", () => {
   it("humans.txt carries the contact, PGP fingerprint and its flag", async () => {
     const body = await text("/humans.txt");
-    expect(body).toContain("Email: admin@cybai.re");
+    expect(body).toContain("Email: admin [at] cybai [dot] re");
     expect(body).toContain(`PGP: ${PGP.fingerprint}`);
     expect(body).toContain(FLAGS.humans);
     expect(body).toContain(`Last update: ${new Date().getFullYear()}`);
     expect(body).not.toMatch(/Antoine|cletqui/);
   });
-  it("serves the two text-file flags", async () => {
+  it("serves the manifest flag and a harmless ctf.txt", async () => {
     expect(await text("/fl@g.txt")).toBe(FLAGS.manifest);
-    expect(await text("/ctf.txt")).toBe(FLAGS["ctf-txt"]);
+    expect(await text("/ctf.txt")).not.toContain("cybai{");
   });
   it("redirects the legacy locations", async () => {
     for (const [from, to] of [["/robots.txt", "/.well-known/robots.txt"], ["/keybase.txt", "/.well-known/keybase.txt"]] as const) {

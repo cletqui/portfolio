@@ -38,17 +38,18 @@ describe("home content negotiation and header flags", () => {
   it("leaks the header flag on every HTML response", async () => {
     expect((await get("/", { headers: { "user-agent": "Mozilla/5.0" } })).headers.get("x-flag")).toBe(FLAGS.header);
   });
-  it("gives curl its own flag and an ANSI card", async () => {
+  it("gives curl its own flag, in the card body, and an ANSI card", async () => {
     const res = await get("/", { headers: { "user-agent": "curl/8.7.1" } });
-    expect(res.headers.get("x-curl-flag")).toBe(FLAGS.curl);
+    expect(res.headers.get("x-curl-flag")).toBeNull();
     const body = await res.text();
+    expect(body).toContain(FLAGS.curl);
     expect(body).toContain("cybai.re");
     expect(body).toContain("\u001b[");
     expect(res.headers.get("content-type")).toContain("text/plain");
   });
   it("only gives the curl flag to curl", async () => {
-    expect((await get("/", { headers: { "user-agent": "Mozilla/5.0" } })).headers.get("x-curl-flag")).toBeNull();
-    expect((await get("/", { headers: { "user-agent": "wget/1.21" } })).headers.get("x-curl-flag")).toBeNull();
+    expect(await text("/", { headers: { "user-agent": "Mozilla/5.0" } })).not.toContain(FLAGS.curl);
+    expect(await text("/", { headers: { "user-agent": "wget/1.21" } })).not.toContain(FLAGS.curl);
   });
   it.each(["wget/1.21", "HTTPie/3.2", "xh/0.22"])("serves the card to %s too", async (ua) => {
     expect(await text("/", { headers: { "user-agent": ua } })).toContain("\u001b[");
@@ -62,14 +63,15 @@ describe("home content negotiation and header flags", () => {
     expect(await text("/", { headers: { accept: "text/plain" } })).toContain("\u001b[");
     expect(await text("/", { headers: { accept: "text/html,text/plain", "user-agent": "Mozilla/5.0" } })).toContain("<!DOCTYPE html>");
   });
-  it("puts a flag on OPTIONS / and on /teapot", async () => {
+  it("puts a flag on OPTIONS / and in the /teapot body", async () => {
     const options = await get("/", { method: "OPTIONS" });
     expect(options.status).toBe(204);
     expect(options.headers.get("allow")).toContain("OPTIONS");
     expect(options.headers.get("x-flag")).toBe(FLAGS.options);
     const teapot = await get("/teapot");
     expect(teapot.status).toBe(418);
-    expect(teapot.headers.get("x-flag")).toBe(FLAGS.teapot);
+    expect(teapot.headers.get("x-flag")).toBeNull();
+    expect(await teapot.text()).toContain(FLAGS.teapot);
     expect((await get("/teapot", { method: "POST", redirect: "manual" })).status).toBe(302);
   });
 });

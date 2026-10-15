@@ -3,6 +3,7 @@ import { Env } from "..";
 
 import { Title } from "../components/layout";
 import { Icon } from "../utils/icons";
+import { EMAIL_ENC, EMAIL_MASKED, emailAddress } from "../data/email";
 import { PGP } from "../utils/pgp";
 
 /* GLOBAL CONSTANTS */
@@ -12,6 +13,7 @@ export const contacts: {
   name: string;
   nameFr?: string;
   href?: string;
+  email?: boolean;
   icon: string;
   style: string;
   handle?: string;
@@ -28,10 +30,10 @@ export const contacts: {
   },
   {
     name: "Mail",
-    href: "mailto:admin@cybai.re",
+    email: true,
     icon: "mail",
     style: "secondary",
-    handle: "admin@cybai.re",
+    handle: EMAIL_MASKED,
     group: "reach",
   },
   {
@@ -97,7 +99,7 @@ const VCARD = [
   "VERSION:3.0",
   "FN:cybai.re",
   "TITLE:Cybersecurity engineer & full-stack developer",
-  "EMAIL;TYPE=INTERNET:admin@cybai.re",
+  `EMAIL;TYPE=INTERNET:${emailAddress()}`,
   "URL:https://www.cybai.re",
   "URL;TYPE=GitHub:https://github.com/cletqui",
   "END:VCARD",
@@ -108,6 +110,7 @@ const ContactRow = ({
   name,
   nameFr,
   href,
+  email,
   icon,
   handle,
   tooltip,
@@ -121,24 +124,38 @@ const ContactRow = ({
           {lang === "fr" && nameFr ? nameFr : name}
         </span>
         {handle && (
-          <span class="block truncate font-mono text-xs text-muted-foreground">
+          <span
+            class="block truncate font-mono text-xs text-muted-foreground"
+            {...(email ? { "data-email": EMAIL_ENC, "data-email-text": "{}" } : {})}
+          >
             {handle}
           </span>
         )}
       </span>
-      {href && (
+      {(href || email) && (
         <Icon
-          name={href.startsWith("mailto:") ? "mail" : "external-link"}
+          name={email ? "mail" : "external-link"}
           size={13}
           class="text-muted-foreground/50 transition-colors group-hover:text-foreground"
         />
       )}
     </>
   );
+  if (email)
+    return (
+      <a
+        href="/contact"
+        data-email={EMAIL_ENC}
+        title={tooltip}
+        class="group flex items-center gap-3 rounded-md px-3 py-2.5 no-underline! transition-colors hover:bg-accent hover:no-underline!"
+      >
+        {inner}
+      </a>
+    );
   return href ? (
     <a
       href={href}
-      target={href.startsWith("mailto:") ? "_self" : "_blank"}
+      target="_blank"
       rel="noopener noreferrer"
       title={tooltip}
       class="group flex items-center gap-3 rounded-md px-3 py-2.5 no-underline! transition-colors hover:bg-accent hover:no-underline!"
@@ -186,17 +203,19 @@ app.get("", (c: Context<Env>) => {
             {fr ? "La voie la plus directe" : "The most direct way"}
           </div>
           <a
-            href="mailto:admin@cybai.re"
+            href="/contact"
+            data-email={EMAIL_ENC}
+            data-email-text="{}"
             class="font-mono text-lg no-underline! hover:underline!"
           >
-            admin@cybai.re
+            {EMAIL_MASKED}
           </a>
         </div>
         <div class="flex gap-2">
           <button
             type="button"
             class="btn btn-secondary"
-            data-copy="admin@cybai.re"
+            data-copy-email={EMAIL_ENC}
             data-copied={fr ? "Copié !" : "Copied!"}
           >
             <Icon name="link" size={14} />
@@ -248,7 +267,15 @@ app.get("", (c: Context<Env>) => {
       <div class="card mt-4 space-y-4">
         <h3 class="flex items-center gap-2 text-sm font-semibold">
           <Icon name="key" size={14} class="text-muted-foreground" />
-          {fr ? "Chiffrer ton message" : "Encrypt your message"}
+          <a
+            href="https://chiffrer.info"
+            target="_blank"
+            rel="noopener noreferrer"
+            title={fr ? "On dit chiffrer, pas crypter" : "Chiffrer, not crypter"}
+            class="no-underline! hover:no-underline!"
+          >
+            {fr ? "Chiffrer ton message" : "Encrypt your message"}
+          </a>
         </h3>
         <div class="space-y-1">
           <div class="font-mono text-[11px] uppercase tracking-wider text-muted-foreground">
@@ -289,7 +316,10 @@ app.get("", (c: Context<Env>) => {
             ? "Ou laisse GnuPG la trouver (WKD) : "
             : "Or let GnuPG find it (WKD): "}
           <code class="font-mono text-foreground">
-            {`gpg --locate-keys ${PGP.email}`}
+            gpg --locate-keys{" "}
+            <span data-email={EMAIL_ENC} data-email-text="{}">
+              {EMAIL_MASKED}
+            </span>
           </code>
         </p>
       </div>

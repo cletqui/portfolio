@@ -29,9 +29,9 @@ describe("ctf command", () => {
   });
   it("submits a flag to the real endpoint, records it, and updates the status", async () => {
     const out = await h.out(`ctf submit ${FLAGS.teapot}`);
-    expect(out).toMatch(/✓ RFC 2324 \+100 pts \(1\/\d+, 100 pts\)/);
-    expect(JSON.parse(h.storage.store.get("ctf_found") ?? "{}").teapot.points).toBe(100);
-    expect(await h.out("ctf")).toContain(`1/${CHALLENGES.length} flags found, 100/`);
+    expect(out).toMatch(/✓ RFC 2324 \+50 pts \(1\/\d+, 50 pts\)/);
+    expect(JSON.parse(h.storage.store.get("ctf_found") ?? "{}").teapot.points).toBe(50);
+    expect(await h.out("ctf")).toContain(`1/${CHALLENGES.length} flags found, 50/`);
     expect(await h.out("ctf list solved")).toContain("teapot");
   });
   it("does not double count a flag", async () => {

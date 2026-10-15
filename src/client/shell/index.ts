@@ -99,6 +99,7 @@ const boot = (): void => {
   }
 
   shell.refreshPrompt();
+  if (window.matchMedia("(pointer: fine)").matches) term.focus();
   term.print(shell.t("Type 'help' to list the available commands.", "Tape 'help' pour lister les commandes disponibles."), "text-muted-foreground");
   term.print("");
 };

@@ -1,3 +1,4 @@
+import { EMAIL_MASKED } from "../data/email";
 import { FLAGS } from "./flags";
 
 const ESC = "\u001b[";
@@ -18,7 +19,7 @@ const box = (lines: string[]) => {
 const link = (label: string, value: string) =>
   `${c("90", label.padEnd(9))}${c("36", value)}`;
 
-export const terminalCard = (lang: string) => {
+export const terminalCard = (lang: string, withFlag = false) => {
   const fr = lang === "fr";
   return (
     "\n" +
@@ -32,7 +33,7 @@ export const terminalCard = (lang: string) => {
       link("web", "https://www.cybai.re"),
       link("github", "https://github.com/cletqui"),
       link("bluesky", "https://bsky.app/profile/cybai.re"),
-      link("mail", "admin@cybai.re"),
+      link("mail", EMAIL_MASKED),
       link("projects", "https://www.cybai.re/projects"),
       "",
       c(
@@ -42,6 +43,7 @@ export const terminalCard = (lang: string) => {
           : "$ this site speaks more than HTML. flags hide in it → /ctf",
       ),
       c("90", fr ? "(il parle aussi JSON)" : "(it also speaks JSON)"),
+      ...(withFlag ? ["", c("90", `# ${FLAGS.curl}`)] : []),
     ]) +
     "\n\n"
   );
@@ -54,7 +56,7 @@ export const jsonCard = () => ({
     web: "https://www.cybai.re",
     github: "https://github.com/cletqui",
     bluesky: "https://bsky.app/profile/cybai.re",
-    mail: "admin@cybai.re",
+    mail: EMAIL_MASKED,
   },
   ctf: "https://www.cybai.re/ctf",
   flag: FLAGS.negotiation,

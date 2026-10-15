@@ -1,4 +1,5 @@
 import { Hono } from "hono";
+import { bodyLimit } from "hono/body-limit";
 import type { Env } from "../..";
 import { CHALLENGES } from "../../data/challenges";
 import { FLAGS, findFlag } from "../../utils/flags";
@@ -10,7 +11,7 @@ const JWT_SECRET = "letmein";
 
 const api = new Hono<Env>();
 
-api.use("/submit", rateLimit({ limit: 20, windowMs: 60_000 }));
+api.use("/submit", rateLimit({ limit: 20, windowMs: 60_000 }), bodyLimit({ maxSize: 2048, onError: (c) => c.json({ valid: false }, 413) }));
 
 api.post("/submit", async (c) => {
   const body = await c.req.json<{ flag?: string }>().catch(() => null);

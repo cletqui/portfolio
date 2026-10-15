@@ -1,6 +1,7 @@
 import { decodeBytes, encoder, latin1ToBytes } from "../../shared/bytes";
 import type { Shell } from "../shell";
 import type { IO } from "../types";
+import { USAGE } from "./manual";
 
 export interface Flags {
   flags: Record<string, string | true>;
@@ -89,40 +90,4 @@ export const usage = (name: string, io: IO): number => {
   return 2;
 };
 
-export const USAGE: Record<string, string> = {
-  ls: "ls [-a] [-l] [-1] [path...]",
-  cat: "cat [-n] [file...]  (reads stdin without args)",
-  cd: "cd [dir|-]",
-  grep: "grep [-i] [-v] [-n] [-c] [-r] pattern [file...]",
-  head: "head [-n N] [file...]",
-  tail: "tail [-n N] [file...]",
-  wc: "wc [-l|-w|-c] [file...]",
-  sort: "sort [-r] [-n] [-u] [file...]",
-  uniq: "uniq [-c] [file...]",
-  tr: "tr [-d] SET1 [SET2]   (stdin)",
-  cut: "cut -d DELIM -f LIST [file...]",
-  base64: "base64 [-d] [file]",
-  rot13: "rot13 [file]",
-  xxd: "xxd [-p] [-r] [-l LEN] [-s OFFSET] [file]",
-  strings: "strings [-n MIN] [file...]",
-  sha256sum: "sha256sum [file...]",
-  jwt: "jwt <token>",
-  find: "find [path] [-name PATTERN] [-type f|d]",
-  tree: "tree [-a] [path]",
-  file: "file <file...>",
-  ctf: "ctf [status|list [category|solved|unsolved]|hint <id>|submit <flag>]",
-  cowsay: "cowsay [text]",
-  figlet: "figlet [text]",
-  lolcat: "lolcat [text]  (or pipe into it)",
-  date: "date [-u] [-d @EPOCH] [+FORMAT]",
-  su: "su [root]",
-  echo: "echo [-n] [-e] text",
-  seq: "seq [first] last",
-  printf: "printf FORMAT [args...]",
-  urlencode: "urlencode <text>",
-  rm: "rm [-r] [-f] file...",
-  cp: "cp src dst",
-  mv: "mv src dst",
-  mkdir: "mkdir dir...",
-  touch: "touch file...",
-};
+export { USAGE } from "./manual";

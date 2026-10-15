@@ -3,6 +3,14 @@
 @source "../public/static/*.js";
 @source "./client/**/*.ts";
 
+@utility no-scrollbar {
+  scrollbar-width: none;
+  -ms-overflow-style: none;
+  &::-webkit-scrollbar {
+    display: none;
+  }
+}
+
 /* Inter */
 @font-face {
   font-family: "InterVariable";

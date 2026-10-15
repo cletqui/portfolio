@@ -2,7 +2,7 @@ import { CLIENT_FLAGS, ROOT_PASSWORD } from "../../shared/flags";
 import type { Shell } from "../shell";
 import type { CommandMap } from "../types";
 import { scorchedEarth } from "./eggs";
-import { splitFlags, usage, USAGE } from "./util";
+import { splitFlags, usage } from "./util";
 
 const SCORCH = /^rm( -[a-z]+)* --no-preserve-root( -[a-z]+)* \/\*?$/;
 
@@ -45,9 +45,9 @@ export const systemCommands = (sh: Shell): CommandMap => {
     sh.refreshPrompt();
   };
   const logout = (): void => {
-    sh.user = "visitor";
-    sh.env.USER = "visitor";
-    sh.env.HOME = "/home/visitor";
+    sh.user = "guest";
+    sh.env.USER = "guest";
+    sh.env.HOME = "/home/guest";
     sh.cwd = sh.env.HOME;
     sh.refreshPrompt();
   };
@@ -60,34 +60,13 @@ export const systemCommands = (sh: Shell): CommandMap => {
   };
 
   return {
-    help: (args, io) => {
-      const name = args[0];
-      if (name && USAGE[name]) return io.writeln(`${name}: ${USAGE[name]}`);
-      const rows: [string, string][] = [
-        [t("Files", "Fichiers"), "ls cat cd pwd tree find file touch mkdir rm cp mv echo"],
-        [t("Text tools", "Outils texte"), "grep head tail wc sort uniq rev tac tr cut base64 rot13 xxd strings sha256sum jwt urlencode seq"],
-        [t("Pipes", "Pipes"), "a | b   a ; b   a && b   a || b   echo hi > file   $VAR   *.md"],
-        [t("About me", "À propos"), "about projects contact now open curl gpg neofetch"],
-        ["CTF", "ctf  ctf list  ctf hint <id>  ctf submit cybai{...}"],
-        [t("Toys", "Jouets"), "cowsay figlet lolcat fortune cal sl cmatrix snake wordle adventure"],
-        ["Shell", "history env export su sudo exit clear theme lang"],
-      ];
-      for (const [k, v] of rows) io.writeln(k.padEnd(13) + v);
-      io.writeln(t("`help <command>` shows usage. Tab completes. Some things aren't listed.", "`help <commande>` affiche l'usage. Tab complète. Certaines choses ne sont pas listées."));
-    },
-    man: (args, io) => {
-      const name = args[0];
-      if (!name) return io.writeln("What manual page do you want?"), 1;
-      if (USAGE[name]) return io.writeln(`${name.toUpperCase()}(1)\n\nUSAGE\n    ${USAGE[name]}`), 0;
-      return io.writeln(`No manual entry for ${name}`), 1;
-    },
     clear: () => void sh.term.clear(),
     whoami: (_a, io) => {
       io.writeln(sh.user);
-      if (sh.user === "visitor") io.writeln(t("(guest session — your token: curl https://www.cybai.re/ctf/whoami)", "(session invité — ton jeton : curl https://www.cybai.re/ctf/whoami)"));
+      if (sh.user === "guest") io.writeln(t("(guest session — your token: curl https://www.cybai.re/ctf/whoami)", "(session invité — ton jeton : curl https://www.cybai.re/ctf/whoami)"));
     },
     id: (_a, io) =>
-      void io.writeln(sh.user === "root" ? "uid=0(root) gid=0(root) groups=0(root)" : "uid=1000(visitor) gid=1000(visitor) groups=1000(visitor),1337(curious)"),
+      void io.writeln(sh.user === "root" ? "uid=0(root) gid=0(root) groups=0(root)" : "uid=1000(guest) gid=1000(guest) groups=1000(guest),1337(curious)"),
     hostname: (_a, io) => void io.writeln("cybai.re"),
     uname: (args, io) => {
       const f = splitFlags(args).flags;
@@ -178,8 +157,8 @@ export const systemCommands = (sh: Shell): CommandMap => {
       }
       if (sh.user === "root") return args.length ? sh.runStages([{ argv: args, redir: null }]) : usage("sudo", io);
       if (SCORCH.test(phrase)) return scorchedEarth(sh);
-      if (args[0] === "-l") return io.writeln("Sorry, user visitor may not run sudo on cybai."), 1;
-      return io.err("visitor is not in the sudoers file. This incident will be reported."), 1;
+      if (args[0] === "-l") return io.writeln("Sorry, user guest may not run sudo on cybai."), 1;
+      return io.err("guest is not in the sudoers file. This incident will be reported."), 1;
     },
   };
 };

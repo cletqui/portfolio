@@ -1,5 +1,6 @@
 import { Hono } from "hono";
 import type { Env } from "..";
+import { EMAIL_MASKED } from "../data/email";
 import { FLAGS } from "../utils/flags";
 import { PGP } from "../utils/pgp";
 
@@ -16,7 +17,6 @@ app.get("/.well-known/security.txt", (c) => {
   return c.text(
     [
       `Contact: ${origin}/contact`,
-      "Contact: mailto:admin@cybai.re",
       `Expires: ${expires}`,
       `Encryption: ${origin}/pgp.asc`,
       "Preferred-Languages: en, fr",
@@ -40,7 +40,7 @@ app.get("/humans.txt", (c) =>
       "Hono · Tailwind CSS · Cloudflare Pages",
       "",
       "/* CONTACT */",
-      "Email: admin@cybai.re",
+      `Email: ${EMAIL_MASKED}`,
       `PGP: ${PGP.fingerprint}`,
       "",
       "/* SITE */",

@@ -44,7 +44,6 @@ export const forkBomb = async (sh: Shell): Promise<void> => {
   await deps.sleep(500);
   sh.errLine("bash: fork: Cannot allocate memory");
   sh.print(t("…the load average climbs, the fans spin up, and then ulimit -u steps in.", "…la charge grimpe, les ventilateurs s'emballent, puis ulimit -u intervient."), "text-muted-foreground");
-  sh.award(CLIENT_FLAGS.forkbomb);
   sh.busy = false;
 };
 

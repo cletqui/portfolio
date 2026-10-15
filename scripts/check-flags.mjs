@@ -1,4 +1,5 @@
 import { execFileSync } from "node:child_process";
+import { createHash } from "node:crypto";
 import { readFileSync } from "node:fs";
 import { inflateSync } from "node:zlib";
 import { FLAGS } from "../src/utils/flags.ts";
@@ -28,13 +29,12 @@ const hmac = async (data) => {
 const checks = {
   source: async () => await text("/"),
   console: async () => await text("/ctf"),
-  teapot: async () => await header("/teapot", "x-flag"),
+  teapot: async () => await text("/teapot"),
   hacker: async () => (await text("/about/me")).includes("h@ck3rm@n69420") ? FLAGS.hacker : "",
   manifest: async () => {
     const manifest = await text("/.well-known/manifest.webmanifest");
     return manifest.includes("/fl@g.txt") ? await text("/fl@g.txt") : "";
   },
-  "ctf-txt": async () => await text("/ctf.txt"),
   humans: async () => await text("/humans.txt"),
   readme: async () => readFileSync("README.md", "utf8"),
   "security-txt": async () => await text("/.well-known/security.txt"),
@@ -49,7 +49,7 @@ const checks = {
   },
   french: async () =>
     await text("/about/you", { headers: { cookie: "lang=fr" } }),
-  curl: async () => await header("/", "x-curl-flag", { headers: { "user-agent": "curl/8.7.1" } }),
+  curl: async () => await text("/", { headers: { "user-agent": "curl/8.7.1" } }),
   header: async () => await header("/", "x-flag"),
   konami: async () => await text("/static/site.js"),
   jsobj: async () => await text("/static/site.js"),
@@ -83,6 +83,25 @@ const checks = {
   jwt: async () => {
     const body = `${b64url(JSON.stringify({ alg: "HS256", typ: "JWT" }))}.${b64url(JSON.stringify({ role: "admin" }))}`;
     return await text("/ctf/admin", { headers: { authorization: `Bearer ${body}.${await hmac(body)}` } });
+  },
+  admin: async () => {
+    const htpasswd = await text("/.htpasswd");
+    const password = "trustno1";
+    const sha = createHash("sha1").update(password).digest("base64");
+    if (!htpasswd.includes(`{SHA}${sha}`)) return "";
+    const auth = `Basic ${Buffer.from(`admin:${password}`).toString("base64")}`;
+    return await text("/admin", { headers: { authorization: auth } });
+  },
+  lookup: async () => {
+    const js = await text("/static/shell.js");
+    const word = /^cybai\{(.+)\}$/.exec(FLAGS.lookup)?.[1] ?? "";
+    return js.includes(createHash("md5").update(word).digest("hex")) ? FLAGS.lookup : "";
+  },
+  crack: async () => {
+    const js = await text("/static/shell.js");
+    const word = /^cybai\{(.+)\}$/.exec(FLAGS.crack)?.[1] ?? "";
+    const hash = execFileSync("openssl", ["passwd", "-6", "-salt", "cybaisalt", word], { encoding: "utf8" }).trim();
+    return js.includes(hash) ? FLAGS.crack : "";
   },
   git: async () => {
     const { FAKE_GIT } = await import("../src/utils/fake-git.ts");
@@ -119,7 +138,7 @@ const submit = async (flag) => {
   return false;
 };
 
-const TERMINAL_ONLY = new Set(["root", "xyzzy", "wipe", "forkbomb", "adventure", "snake", "wordle"]);
+const TERMINAL_ONLY = new Set(["root", "xyzzy", "wipe", "adventure", "snake", "wordle"]);
 
 let bad = 0;
 for (const [id, flag] of Object.entries(FLAGS)) {

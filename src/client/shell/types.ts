@@ -52,13 +52,14 @@ export interface ChallengeInfo {
 
 export interface ShellData {
   lang: Lang;
-  projects: { id: string; name: string; desc: string; url: string; github?: string }[];
-  contacts: { name: string; href?: string }[];
+  projects: { id: string; name: string; desc: string; url: string; page: string; github?: string }[];
+  contacts: { name: string; href?: string; email?: boolean }[];
   challenges: number;
   points: number;
   card: string;
   pgp: string;
   pgpId: string;
+  email: string;
   ctf: ChallengeInfo[];
   games: string;
 }
@@ -72,6 +73,7 @@ export const emptyShellData: ShellData = {
   card: "",
   pgp: "",
   pgpId: "",
+  email: "",
   ctf: [],
   games: "",
 };

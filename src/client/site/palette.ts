@@ -9,6 +9,7 @@ export interface PaletteItem {
   external?: boolean;
   action?: "theme" | "lang";
   copy?: string;
+  email?: string;
 }
 
 export interface PaletteActions {

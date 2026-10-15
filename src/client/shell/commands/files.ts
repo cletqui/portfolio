@@ -4,8 +4,13 @@ import type { CommandMap } from "../types";
 import { gather, lines, splitFlags, textOf, usage } from "./util";
 import { decodeBytes } from "../../shared/bytes";
 
-const fmtMode = (node: FsNode): string =>
-  (node.type === "dir" ? "d" : "-") + (node.rootOnly ? "rwx------" : node.type === "dir" ? "rwxr-xr-x" : "rw-r--r--");
+const fmtMode = (node: FsNode): string => {
+  if (node.type === "dir") return "d" + (node.rootOnly ? "rwx------" : "rwxr-xr-x");
+  return "-" + (node.mode ?? (node.rootOnly ? "rw-------" : "rw-r--r--"));
+};
+
+const ownerOf = (abs: string, node: FsNode): string =>
+  node.rootOnly || !/^\/(home\/guest|tmp)(\/|$)/.test(abs) ? "root root" : "guest guest";
 
 export const fileCommands = (sh: Shell): CommandMap => {
   const { vfs } = sh;
@@ -45,7 +50,8 @@ export const fileCommands = (sh: Shell): CommandMap => {
         for (const n of entries) {
           const nd = nodeOf(n);
           if (!nd) continue;
-          io.writeln(`${fmtMode(nd)} ${nd.type === "dir" ? 2 : 1} ${nd.rootOnly ? "root root" : "visitor visitor"} ${String(nodeSize(nd)).padStart(6)} ${nd.mtime} ${label(n)}`);
+          const childAbs = n === "." ? abs : n === ".." ? dirname(abs) : node.type === "dir" ? join(abs, n) : abs;
+          io.writeln(`${fmtMode(nd)} ${nd.type === "dir" ? 2 : 1} ${ownerOf(childAbs, nd)} ${String(nodeSize(nd)).padStart(6)} ${nd.mtime} ${label(n)}`);
         }
       } else if (s.flags["1"]) entries.forEach((n) => io.writeln(label(n)));
       else io.writeln(entries.map(label).join("  "));
@@ -59,16 +65,36 @@ export const fileCommands = (sh: Shell): CommandMap => {
     dir: ls,
     pwd: (_a, io) => void io.writeln(sh.cwd),
     cd: (args, io) => {
-      const target = args[0] === "-" ? sh.oldpwd : (args[0] ?? sh.home);
-      const abs = vfs.norm(target);
-      const r = vfs.find(abs);
-      const shown = args[0] ?? target;
+      const arg = args[0];
+      const target = arg === "-" ? sh.oldpwd : (arg ?? sh.home);
+      let abs = vfs.norm(target);
+      let r = vfs.find(abs);
+      let viaPath = false;
+      if (!r.node && arg && !/^([/.~]|-$)/.test(arg)) {
+        for (const base of (sh.env.CDPATH ?? "").split(":")) {
+          if (!base || base === ".") continue;
+          const candidate = vfs.norm(join(vfs.norm(base), arg));
+          const hit = vfs.find(candidate);
+          if (hit.node?.type === "dir" && !hit.denied) {
+            abs = candidate;
+            r = hit;
+            viaPath = true;
+            break;
+          }
+        }
+      }
+      const shown = arg ?? target;
       if (!r.node) return io.err(`cd: ${shown}: No such file or directory`), 1;
       if (r.denied) return io.err(`cd: ${shown}: Permission denied`), 1;
       if (r.node.type !== "dir") return io.err(`cd: ${shown}: Not a directory`), 1;
       sh.oldpwd = sh.cwd;
       sh.cwd = abs;
       sh.refreshPrompt();
+      if (viaPath || arg === "-") io.writeln(abs);
+      if (r.node.page) {
+        io.writeln(`→ ${r.node.page}`);
+        sh.go(r.node.page);
+      }
       return 0;
     },
     cat: async (args, io) => {

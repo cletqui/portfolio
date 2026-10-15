@@ -1,6 +1,7 @@
 import { makeT, type Translate } from "../shared/i18n";
 import { createCommands } from "./commands";
 import { forkBomb } from "./commands/eggs";
+import { HIDDEN } from "./commands/manual";
 import { buildTree, VFS, type SessionView } from "./fs";
 import { parse, type Stage } from "./parser";
 import type { CommandMap, Deps, GameApi, IO, KeyLike, Mode, ShellData, StdStream, Term } from "./types";
@@ -15,17 +16,15 @@ export interface Completion {
   options?: string[];
 }
 
-const HIDDEN_COMMANDS = /^(xyzzy|plugh|telnet|hack)$/;
-
 export class Shell implements SessionView {
   readonly t: Translate;
   readonly vfs: VFS;
   readonly cmds: CommandMap;
   readonly bootTime: number;
   readonly env: Record<string, string>;
-  user = "visitor";
-  cwd = "/home/visitor";
-  oldpwd = "/home/visitor";
+  user = "guest";
+  cwd = "/home/guest";
+  oldpwd = "/home/guest";
   history: string[] = [];
   historyIndex = 0;
   lastStatus = 0;
@@ -42,10 +41,11 @@ export class Shell implements SessionView {
     this.t = makeT(term.lang);
     this.bootTime = deps.now();
     this.env = {
-      USER: "visitor",
-      HOME: "/home/visitor",
+      USER: "guest",
+      HOME: "/home/guest",
       SHELL: "/bin/cybai-sh",
       HOSTNAME: "cybai.re",
+      CDPATH: ".:/home/guest",
       TERM: "xterm-256color",
       LANG: term.lang === "fr" ? "fr_FR.UTF-8" : "en_US.UTF-8",
     };
@@ -250,7 +250,7 @@ export class Shell implements SessionView {
     const parts = value.split(/\s+/);
     const last = parts[parts.length - 1] ?? "";
     let pool: string[];
-    if (parts.length === 1) pool = Object.keys(this.cmds).filter((n) => !HIDDEN_COMMANDS.test(n));
+    if (parts.length === 1) pool = Object.keys(this.cmds).filter((n) => !HIDDEN.test(n));
     else {
       const slash = last.lastIndexOf("/");
       const dirPart = slash >= 0 ? last.slice(0, slash + 1) : "";

@@ -118,16 +118,13 @@ app.get("/", (c: Context<Env>) => {
   const { lang } = c.var;
   c.header("X-Flag", FLAGS.header);
   const userAgent = c.req.header("user-agent") ?? "";
-  if (userAgent.startsWith("curl/")) {
-    c.header("X-Curl-Flag", FLAGS.curl);
-  }
   const accept = c.req.header("accept") ?? "";
   if (accept.includes("application/json")) return c.json(jsonCard());
   if (
     /^(curl|wget|httpie|xh)\b/i.test(userAgent) ||
     (accept.includes("text/plain") && !accept.includes("text/html"))
   )
-    return c.text(terminalCard(lang));
+    return c.text(terminalCard(lang, userAgent.startsWith("curl/")));
   return c.render(
     <div class="mx-auto max-w-6xl px-4 py-16 space-y-16">
       <section class="grid items-center gap-10 md:grid-cols-[1fr_auto]">

@@ -84,3 +84,32 @@ describe("home page", () => {
     expect(html).toMatch(/<h1[^>]*>Cybersecurity engineer and full-stack developer<\/h1>/);
   });
 });
+
+describe("routing hygiene (Hono middlewares)", () => {
+  it("redirects trailing slashes to the canonical path", async () => {
+    const res = await get("/projects/", { redirect: "manual" });
+    expect(res.status).toBe(301);
+    expect(new URL(res.headers.get("location") ?? "", "http://localhost").pathname).toBe("/projects");
+  });
+  it("answers 405 with an Allow header for a known path and the wrong method", async () => {
+    const res = await get("/ctf/submit", { method: "GET" });
+    expect(res.status).toBe(405);
+    expect(res.headers.get("allow")).toContain("POST");
+    expect((await get("/about/me", { method: "DELETE" })).status).toBe(405);
+  });
+  it("still 404s on unknown paths", async () => {
+    expect((await get("/definitely/not/here", { method: "POST" })).status).toBe(404);
+  });
+  it("pretty-prints JSON on request", async () => {
+    const body = await text("/?pretty", { headers: { accept: "application/json" } });
+    expect(body).toContain('\n  "name"');
+  });
+  it("rejects oversized flag submissions", async () => {
+    const res = await get("/ctf/submit", {
+      method: "POST",
+      headers: { "content-type": "application/json", "content-length": "5000", "cf-connecting-ip": "203.0.113.200" },
+      body: JSON.stringify({ flag: "x".repeat(5000) }),
+    });
+    expect(res.status).toBe(413);
+  });
+});

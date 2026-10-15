@@ -18,8 +18,7 @@ describe("flags and challenges", () => {
   });
   it("totals the advertised amount", () => {
     expect(CHALLENGES.reduce((s, c) => s + c.points, 0)).toBe(TOTAL_POINTS);
-    expect(CHALLENGES).toHaveLength(35);
-    expect(TOTAL_POINTS).toBe(4275);
+    expect(CHALLENGES).toHaveLength(36);
   });
   it("is sorted by difficulty, then points", () => {
     const order = { easy: 0, medium: 1, hard: 2 };

@@ -20,6 +20,8 @@ const errors = {
   416: "Range Not Satisfiable",
   417: "Expectation Failed",
   418: "I'm a teapot",
+  429: "Too Many Requests",
+  500: "Internal Server Error",
 };
 
 export const Error = ({
