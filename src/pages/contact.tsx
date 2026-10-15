@@ -5,6 +5,7 @@ import { Title } from "../components/layout";
 import { Icon } from "../utils/icons";
 import { EMAIL_ENC, EMAIL_MASKED, emailAddress } from "../data/email";
 import { PGP } from "../utils/pgp";
+import { PHONE, PHONE_TEL } from "../data/phone";
 
 /* GLOBAL CONSTANTS */
 type ContactGroup = "reach" | "code" | "secure";
@@ -35,6 +36,16 @@ export const contacts: {
     style: "secondary",
     handle: EMAIL_MASKED,
     group: "reach",
+  },
+  {
+    name: "Phone",
+    nameFr: "Téléphone",
+    href: PHONE_TEL,
+    icon: "phone",
+    style: "secondary",
+    handle: PHONE,
+    group: "reach",
+    tooltip: "Have you tried turning it off and on again?",
   },
   {
     name: "LinkedIn",
@@ -100,6 +111,7 @@ const VCARD = [
   "FN:cybai.re",
   "TITLE:Cybersecurity engineer & full-stack developer",
   `EMAIL;TYPE=INTERNET:${emailAddress()}`,
+  `TEL;TYPE=VOICE:${PHONE}`,
   "URL:https://www.cybai.re",
   "URL;TYPE=GitHub:https://github.com/cletqui",
   "END:VCARD",
@@ -155,8 +167,9 @@ const ContactRow = ({
   return href ? (
     <a
       href={href}
-      target="_blank"
-      rel="noopener noreferrer"
+      {...(href.startsWith("tel:")
+        ? {}
+        : { target: "_blank", rel: "noopener noreferrer" })}
       title={tooltip}
       class="group flex items-center gap-3 rounded-md px-3 py-2.5 no-underline! transition-colors hover:bg-accent hover:no-underline!"
     >

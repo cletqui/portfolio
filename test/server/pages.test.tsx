@@ -26,6 +26,12 @@ describe("pages", () => {
     }
   });
 
+  it("404 page reads like a failed cd", async () => {
+    const html = await text("/nope");
+    expect(html).toContain("no such file or directory");
+    expect(html).toContain('href="/projects"');
+  });
+
   it("redirects /about to /about/me", async () => {
     const res = await get("/about");
     expect(res.status).toBe(302);

@@ -31,7 +31,7 @@ export const ALIASES: Record<string, string> = {
   logout: "exit",
 };
 
-export const HIDDEN = /^(xyzzy|plugh|telnet|hack)$/;
+export const HIDDEN = /^(xyzzy|plugh|telnet|hack|reboot|shutdown|poweroff|halt)$/;
 
 const e = (group: Group, synopsis: string, en: string, fr: string): ManualEntry => ({ group, synopsis, summary: [en, fr] });
 

@@ -2,6 +2,7 @@ import { raw } from "hono/html";
 import heartSvg from "lucide-static/icons/heart.svg?raw";
 import coffeeSvg from "lucide-static/icons/coffee.svg?raw";
 import mailSvg from "lucide-static/icons/mail.svg?raw";
+import phoneSvg from "lucide-static/icons/phone.svg?raw";
 import earthSvg from "lucide-static/icons/earth.svg?raw";
 import mapPinSvg from "lucide-static/icons/map-pin.svg?raw";
 import mapPinnedSvg from "lucide-static/icons/map-pinned.svg?raw";
@@ -86,6 +87,7 @@ const svgMap: Record<string, string> = {
   heart: heartSvg,
   coffee: coffeeSvg,
   mail: mailSvg,
+  phone: phoneSvg,
   earth: earthSvg,
   "map-pin": mapPinSvg,
   "map-pinned": mapPinnedSvg,

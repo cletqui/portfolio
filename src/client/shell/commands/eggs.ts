@@ -47,7 +47,22 @@ export const forkBomb = async (sh: Shell): Promise<void> => {
   sh.busy = false;
 };
 
+const turnItOffAndOn = (sh: Shell): CommandMap[string] => async (_a, io) => {
+  const { t, term, deps } = sh;
+  io.writeln(t("Have you tried turning it off and on again?", "Avez-vous essayé de l'éteindre et de le rallumer ?"));
+  sh.busy = true;
+  await deps.sleep(900);
+  term.clear();
+  await deps.sleep(500);
+  sh.print(t("It works now.", "Ça marche maintenant."), "text-muted-foreground");
+  sh.busy = false;
+};
+
 export const eggCommands = (sh: Shell): CommandMap => ({
+  reboot: turnItOffAndOn(sh),
+  shutdown: turnItOffAndOn(sh),
+  poweroff: turnItOffAndOn(sh),
+  halt: turnItOffAndOn(sh),
   xyzzy: (_a, io) => {
     sh.heardPlugh = true;
     io.writeln('A hollow voice says "Plugh."');

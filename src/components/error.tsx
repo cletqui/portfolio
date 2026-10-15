@@ -24,6 +24,15 @@ const errors = {
   500: "Internal Server Error",
 };
 
+const DIRS = [
+  ["about", "/about/me"],
+  ["you", "/about/you"],
+  ["projects", "/projects"],
+  ["ctf", "/ctf"],
+  ["contact", "/contact"],
+  ["now", "/now"],
+];
+
 export const Error = ({
   lang,
   error,
@@ -53,8 +62,19 @@ export const Error = ({
           <span class="text-destructive select-none shrink-0">✗</span>
           <span class="text-destructive break-all">
             <span id="error-path-2">/</span>
-            {`: ${errors[error].toLowerCase()}`}
+            {`: ${error === 404 ? "no such file or directory" : errors[error].toLowerCase()}`}
           </span>
+        </div>
+        <div class="flex gap-3">
+          <span class="text-green-500 select-none shrink-0">$</span>
+          <span>ls /</span>
+        </div>
+        <div class="flex flex-wrap gap-x-4 gap-y-1 pl-6">
+          {DIRS.map(([name, href]) => (
+            <a href={href} class="text-foreground no-underline! hover:underline!">
+              {name}
+            </a>
+          ))}
         </div>
         <div class="flex gap-3 opacity-50">
           <span class="text-green-500 select-none shrink-0">$</span>
