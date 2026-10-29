@@ -69,7 +69,7 @@ export const Error = ({
           <span class="text-green-500 select-none shrink-0">$</span>
           <span>ls /</span>
         </div>
-        <div class="flex flex-wrap gap-x-4 gap-y-1 pl-6">
+        <div class="grid grid-cols-3 gap-y-1 pl-6">
           {DIRS.map(([name, href]) => (
             <a href={href} class="text-foreground no-underline! hover:underline!">
               {name}

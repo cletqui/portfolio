@@ -6,6 +6,7 @@ dist/
 graphify-out/
 CLAUDE.md
 FLAGS.md
+WRITEUP.md
 
 # dev
 .yarn/
