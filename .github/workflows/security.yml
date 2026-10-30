@@ -112,7 +112,8 @@ jobs:
       CF_ACCESS_CLIENT_ID: ${{ secrets.CF_ACCESS_CLIENT_ID }}
       CF_ACCESS_CLIENT_SECRET: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}
       PRODUCT_TYPE: Personal
-      PRODUCT: cybai.re portfolio
+      PRODUCT: portfolio
+      MIN_SEVERITY: High
       BRANCH: ${{ github.ref_name }}
       COMMIT: ${{ github.sha }}
     steps:
@@ -130,8 +131,11 @@ jobs:
               "$DOJO_TOKEN" "$CF_ACCESS_CLIENT_ID" "$CF_ACCESS_CLIENT_SECRET") "$@"
           }
 
-          code=$(dojo -o /dev/null -w '%{http_code}' "${DOJO_URL}/api/v2/user_profile/") || code=000
+          code=$(dojo -D "$RUNNER_TEMP/probe.headers" -o "$RUNNER_TEMP/probe.body" -w '%{http_code}' "${DOJO_URL}/api/v2/user_profile/") || code=000
           if [ "$code" != 200 ]; then
+            grep -iE '^(server|cf-mitigated|cf-ray|www-authenticate|content-type|location):' "$RUNNER_TEMP/probe.headers" 2>/dev/null | tr -d '\r' | cut -c1-160 | sed -E 's/(kid=)[0-9a-f]+/\1.../'
+            head -c 300 "$RUNNER_TEMP/probe.body" 2>/dev/null | tr -s '[:space:]' ' '
+            echo
             echo "::warning::DefectDojo not reachable (HTTP ${code}); results kept as workflow artifacts, re-run this job to import"
             exit 0
           fi
@@ -152,7 +156,7 @@ jobs:
               --form "engagement_name=${engagement}" \
               --form "test_title=${engagement}" \
               --form "auto_create_context=true" \
-              --form "minimum_severity=Info" \
+              --form "minimum_severity=${MIN_SEVERITY}" \
               --form "active=true" \
               --form "verified=false" \
               --form "close_old_findings=true" \
