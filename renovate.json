@@ -19,31 +19,6 @@
   "lockFileMaintenance": {
     "enabled": false
   },
-  "customManagers": [
-    {
-      "customType": "regex",
-      "managerFilePatterns": [
-        "/^\\.github/workflows/.+\\.ya?ml$/"
-      ],
-      "matchStrings": [
-        "OSV_SCANNER_VERSION: \"(?<currentValue>[^\"]+)\""
-      ],
-      "depNameTemplate": "google/osv-scanner",
-      "datasourceTemplate": "github-releases",
-      "extractVersionTemplate": "^v(?<version>.+)$"
-    },
-    {
-      "customType": "regex",
-      "managerFilePatterns": [
-        "/^\\.github/workflows/.+\\.ya?ml$/"
-      ],
-      "matchStrings": [
-        "SEMGREP_VERSION: \"(?<currentValue>[^\"]+)\""
-      ],
-      "depNameTemplate": "semgrep",
-      "datasourceTemplate": "pypi"
-    }
-  ],
   "packageRules": [
     {
       "description": "Dev dependencies, minor and patch",
@@ -73,12 +48,6 @@
         "github-actions"
       ],
       "groupName": "github actions"
-    },
-    {
-      "matchManagers": [
-        "custom.regex"
-      ],
-      "groupName": "security tooling"
     }
   ]
 }
