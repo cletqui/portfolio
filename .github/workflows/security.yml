@@ -1,0 +1,167 @@
+name: Security
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  schedule:
+    - cron: "23 5 * * 1"
+  workflow_dispatch:
+
+permissions: {}
+
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: ${{ github.event_name == 'pull_request' }}
+
+env:
+  OSV_SCANNER_VERSION: "2.7.0"
+  SEMGREP_VERSION: "1.183.0"
+
+jobs:
+  osv-scanner:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Install osv-scanner
+        run: |
+          base="https://github.com/google/osv-scanner/releases/download/v${OSV_SCANNER_VERSION}"
+          curl -fsSLo osv-scanner_linux_amd64 "${base}/osv-scanner_linux_amd64"
+          curl -fsSLo osv-scanner_SHA256SUMS "${base}/osv-scanner_SHA256SUMS"
+          grep ' osv-scanner_linux_amd64$' osv-scanner_SHA256SUMS | sha256sum -c -
+          chmod +x osv-scanner_linux_amd64
+      - name: Scan
+        run: |
+          rc=0
+          ./osv-scanner_linux_amd64 scan source --format json --lockfile bun.lock > osv-scanner.json || rc=$?
+          [ "$rc" -le 1 ] || exit "$rc"
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: ${{ !cancelled() }}
+        with:
+          name: results-osv-scanner
+          path: osv-scanner.json
+          if-no-files-found: warn
+          retention-days: 30
+
+  semgrep:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - name: Install semgrep
+        run: pipx install "semgrep==${SEMGREP_VERSION}"
+      - name: Scan
+        run: |
+          semgrep scan \
+            --config p/typescript \
+            --config p/javascript \
+            --config p/nodejs \
+            --config p/owasp-top-ten \
+            --metrics=off \
+            --json \
+            --output semgrep.json
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: ${{ !cancelled() }}
+        with:
+          name: results-semgrep
+          path: semgrep.json
+          if-no-files-found: warn
+          retention-days: 30
+
+  codeql:
+    if: ${{ github.event_name != 'pull_request' || github.event.pull_request.head.repo.full_name == github.repository }}
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      security-events: write
+    steps:
+      - uses: actions/checkout@11d5960a326750d5838078e36cf38b85af677262 # v4
+        with:
+          persist-credentials: false
+      - uses: github/codeql-action/init@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4
+        with:
+          languages: javascript-typescript
+          build-mode: none
+      - uses: github/codeql-action/analyze@9b3254085494b55a0f7c4c2b3d2d52cc712ce370 # v4
+        with:
+          category: /language:javascript-typescript
+          output: codeql-results
+      - uses: actions/upload-artifact@ea165f8d65b6e75b540449e92b4886f43607fa02 # v4
+        if: ${{ !cancelled() }}
+        with:
+          name: results-codeql
+          path: codeql-results/*.sarif
+          if-no-files-found: warn
+          retention-days: 30
+
+  defectdojo:
+    needs: [osv-scanner, semgrep, codeql]
+    if: ${{ !cancelled() && github.event_name != 'pull_request' && github.repository == 'cletqui/portfolio' }}
+    runs-on: ubuntu-latest
+    permissions: {}
+    env:
+      DOJO_URL: ${{ vars.DOJO_URL }}
+      DOJO_TOKEN: ${{ secrets.DOJO_TOKEN }}
+      CF_ACCESS_CLIENT_ID: ${{ secrets.CF_ACCESS_CLIENT_ID }}
+      CF_ACCESS_CLIENT_SECRET: ${{ secrets.CF_ACCESS_CLIENT_SECRET }}
+      PRODUCT_TYPE: Personal
+      PRODUCT: cybai.re portfolio
+      BRANCH: ${{ github.ref_name }}
+      COMMIT: ${{ github.sha }}
+    steps:
+      - uses: actions/download-artifact@d3f86a106a0bac45b974a628896c90dbdf5c8093 # v4
+        with:
+          pattern: results-*
+          merge-multiple: true
+      - name: Import into DefectDojo
+        shell: bash
+        run: |
+          set -uo pipefail
+
+          dojo() {
+            curl -sS -m 180 -K <(printf 'header = "Authorization: Token %s"\nheader = "CF-Access-Client-Id: %s"\nheader = "CF-Access-Client-Secret: %s"\n' \
+              "$DOJO_TOKEN" "$CF_ACCESS_CLIENT_ID" "$CF_ACCESS_CLIENT_SECRET") "$@"
+          }
+
+          code=$(dojo -o /dev/null -w '%{http_code}' "${DOJO_URL}/api/v2/user_profile/") || code=000
+          if [ "$code" != 200 ]; then
+            echo "::warning::DefectDojo not reachable (HTTP ${code}); results kept as workflow artifacts, re-run this job to import"
+            exit 0
+          fi
+
+          failed=0
+          import() {
+            local engagement=$1 file=$2 scan_type=$3
+            if [ -z "$file" ] || [ ! -s "$file" ]; then
+              echo "::warning::no result file for ${engagement}, skipped"
+              return 0
+            fi
+            echo "importing ${engagement} (${scan_type})"
+            dojo --fail-with-body -o /dev/null -X POST "${DOJO_URL}/api/v2/reimport-scan/" \
+              --form "scan_type=${scan_type}" \
+              --form "file=@${file}" \
+              --form "product_type_name=${PRODUCT_TYPE}" \
+              --form "product_name=${PRODUCT}" \
+              --form "engagement_name=${engagement}" \
+              --form "test_title=${engagement}" \
+              --form "auto_create_context=true" \
+              --form "minimum_severity=Info" \
+              --form "active=true" \
+              --form "verified=false" \
+              --form "close_old_findings=true" \
+              --form "branch_tag=${BRANCH}" \
+              --form "commit_hash=${COMMIT}" || failed=1
+          }
+
+          import osv-scanner osv-scanner.json "OSV Scan"
+          import semgrep semgrep.json "Semgrep JSON Report"
+          import codeql "$(find . -maxdepth 1 -name '*.sarif' | head -n 1)" "CodeQL Scan"
+
+          exit "$failed"
